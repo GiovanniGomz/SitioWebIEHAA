@@ -1,0 +1,5 @@
+1.0.0:
+    - 'First version of inventario'
+1.0.1:
+    - 'Create Inventarios Table'
+    - v1.0.1/create_inventarios_table.php
