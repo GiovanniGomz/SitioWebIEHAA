@@ -1,1 +1,14 @@
-{% partial '@list' %}
+
+<div class="container documento">
+
+    <h1 class="text-center">Modulo de documentos</h1>
+
+    <div class="d-flex flex-row-reverse bd-highlight">
+        <button type="button" class="btn btn-primary btn-nuevo float-right">Nuevo</button>
+    </div>
+
+
+    {% partial '@listado' %}
+</div>
+
+<script src="{{ '/assets/js/documento/documento.js'|theme}}"></script>

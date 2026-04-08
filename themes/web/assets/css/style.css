@@ -1,0 +1,11 @@
+/* Modulo de documentos */
+
+.documento .btn-nuevo {
+    padding: 10px 30px;
+    margin-bottom: 20px;
+}
+
+.documento h1 {
+    margin-top: 20px;
+    font-weight: bold;
+}
