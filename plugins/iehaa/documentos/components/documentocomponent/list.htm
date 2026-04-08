@@ -1,0 +1,7 @@
+<div>
+    {% for documento in documentos %}
+    <p>{{ documento.nombre }}</p>
+    {% else %}
+    <p>No hay documentos</p>
+    {% endfor %}
+</div>

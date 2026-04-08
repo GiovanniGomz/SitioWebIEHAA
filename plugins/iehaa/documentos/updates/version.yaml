@@ -1,0 +1,5 @@
+1.0.0:
+    - 'First version of Documentos'
+1.0.1:
+    - 'Create Documentos Table'
+    - v1.0.1/create_documentos_table.php

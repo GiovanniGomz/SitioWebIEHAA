@@ -59,10 +59,10 @@ return [
         ],
         'pgsql' => [
             'charset' => 'utf8',
-            'database' => env('DB_DATABASE', 'data_iehaa'),
+            'database' => env('DB_DATABASE'),
             'driver' => 'pgsql',
-            'host' => env('DB_HOST', 'localhost'),
-            'password' => env('DB_PASSWORD', 'root'),
+            'host' => env('DB_HOST'),
+            'password' => env('DB_PASSWORD'),
             'port' => env('DB_PORT', '5432'),
             'prefix' => '',
             'prefix_indexes' => true,

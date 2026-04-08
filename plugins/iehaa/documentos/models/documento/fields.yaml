@@ -1,0 +1,14 @@
+# ===================================
+#  Form Field Definitions
+# ===================================
+
+fields:
+    id:
+        label: "id"
+        disabled: true
+    nombre:
+        label: "nombre"
+        type: "text"
+    archivo:
+        label: "archivo"
+        type: "file"
