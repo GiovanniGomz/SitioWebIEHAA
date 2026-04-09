@@ -4,11 +4,15 @@
     <h1 class="text-center">Modulo de documentos</h1>
 
     <div class="d-flex flex-row-reverse bd-highlight">
-        <button type="button" class="btn btn-primary btn-nuevo float-right">Nuevo</button>
+        <button type="button" class="btn btn-primary btn-nuevo float-right" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Nuevo</button>
     </div>
 
 
     {% partial '@listado' %}
+</div>
+
+<div class="container formulario-contenedor">
+    {% partial '@formulario' %}
 </div>
 
 <script src="{{ '/assets/js/documento/documento.js'|theme}}"></script>
