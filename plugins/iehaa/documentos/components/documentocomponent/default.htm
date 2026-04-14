@@ -1,14 +1,15 @@
-
 <div class="container documento">
 
     <h1 class="text-center">Modulo de documentos</h1>
 
     <div class="d-flex flex-row-reverse bd-highlight">
-        <button type="button" class="btn btn-primary btn-nuevo float-right" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Nuevo</button>
+        <button type="button" id="btnRegistrar" class="btn btn-primary btn-nuevo float-right" data-bs-toggle="modal"
+            data-bs-target="#staticBackdrop">Nuevo</button>
     </div>
 
-
-    {% partial '@listado' %}
+    <div id="listado">
+        {% partial '@listado' %}
+    </div>
 </div>
 
 <div class="container formulario-contenedor">

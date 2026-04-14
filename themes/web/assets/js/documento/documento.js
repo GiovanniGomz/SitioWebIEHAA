@@ -14,3 +14,17 @@ function inicarTabla() {
         pagingType: "simple"
     });
 }
+
+$(document).on('ajaxDone', '[data-request="documentocomponent::onCreate"]', function (event, context, data) {
+
+    if (data.status === 'success') {
+        flashy.success('¡Almacenado correctamente!');
+        document.querySelector('#btnRegistrar').click();
+        limpiar();
+    }
+});
+
+function limpiar() {
+    document.querySelector('#nombre').value = '';
+    document.querySelector('#archivo').value = '';
+}

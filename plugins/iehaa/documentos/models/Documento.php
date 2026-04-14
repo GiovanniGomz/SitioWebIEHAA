@@ -2,6 +2,7 @@
 
 namespace IEHAA\Documentos\Models;
 
+use Illuminate\Validation\Rule;
 use Winter\Storm\Database\Model;
 
 /**
@@ -21,6 +22,8 @@ class Documento extends Model
      */
     protected $guarded = ['*'];
 
+    public $timestamps = false;
+
     /**
      * @var array Fillable fields
      */
@@ -29,10 +32,7 @@ class Documento extends Model
     /**
      * @var array Validation rules for attributes
      */
-    public $rules = [
-        'nombre' => 'required',
-        'archivo' => 'required'
-    ];
+    public $rules = [];
 
     /**
      * @var array Attributes to be cast to native types

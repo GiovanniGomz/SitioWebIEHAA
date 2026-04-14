@@ -1,27 +1,49 @@
 <!-- Modal -->
-<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="staticBackdropLabel">Nuevo Documento</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <form action="">
-            <div class="mb-3">
-                <label for="nombre" class="form-label">Nombre</label>
-                <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Escriba el nombre del documento">
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">
+                    Nuevo Documento
+                </h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="mb-3">
-                <label for="archivo" class="form-label">Documento</label>
-                <input class="form-control" type="file" id="archivo" name="archivo">
+            <div class="modal-body">
+                <div data-validate-error class="alert alert-danger" style="display:none;">
+                    <p data-message></p>
+                </div>
+                <form data-request="documentocomponent::onCreate" data-request-validate data-request-flash
+                    data-request-files data-request-update="'@listado': '#listado'" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <div class="validacion">
+                            <label for="nombre" class="form-label">Nombre</label>
+                            <span data-validate-for="nombre"
+                                class="text-danger small mb-1 validacion-descripcion"></span>
+                        </div>
+                        <input type="text" class="form-control" id="nombre" name="nombre"
+                            placeholder="Escriba el nombre del documento" />
+
+                    </div>
+                    <div class="mb-3">
+                        <div class="validacion">
+                            <label for="archivo" class="form-label">Documento</label>
+                            <span data-validate-for="archivo"
+                                class="text-danger small mb-1 validacion-descripcion"></span>
+                        </div>
+                        <input class="form-control" type="file" id="archivo" name="archivo" accept="application/pdf" />
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            Guardar
+                        </button>
+                    </div>
+                </form>
             </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-        <button type="button" class="btn btn-primary">Guardar</button>
-      </div>
+        </div>
     </div>
-  </div>
 </div>

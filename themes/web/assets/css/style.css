@@ -9,3 +9,13 @@
     margin-top: 20px;
     font-weight: bold;
 }
+
+/* validacion */
+.validacion {
+    display: flex;
+    justify-content: space-between;
+}
+
+.validacion-descripcion {
+    font-weight: bold;
+}
