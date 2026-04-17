@@ -10,6 +10,22 @@
     font-weight: bold;
 }
 
+.contenedor-pdf {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.pdf {
+    color: red;
+    font-size: 40px;
+}
+
+.contenedor-pdf p {
+    margin-top: 10px;
+}
+
 /* validacion */
 .validacion {
     display: flex;

@@ -83,4 +83,14 @@ class DocumentoComponent extends ComponentBase
             'status' => 'success'
         ];
     }
+
+    function onGetDocumento()
+    {
+        $id = post('id');
+        $documento = Documento::find($id);
+
+        return ['documento' => $documento];
+    }
+
+    function onActualizar() {}
 }

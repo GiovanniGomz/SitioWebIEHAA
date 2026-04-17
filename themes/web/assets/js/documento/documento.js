@@ -28,3 +28,14 @@ function limpiar() {
     document.querySelector('#nombre').value = '';
     document.querySelector('#archivo').value = '';
 }
+
+function cargarFormulario(data) {
+    const { documento } = data;
+
+    console.log(documento);
+
+    document.querySelector('#nombre').value = documento.nombre;
+    document.querySelector('#id').value = documento.id;
+    document.querySelector('#archivo-tmp').value = documento.archivo;
+    document.querySelector('#pdf-descripcion').textContent = documento.archivo;
+}
