@@ -64,12 +64,12 @@ class DocumentoComponent extends ComponentBase
         $documento->nombre = $data['nombre'];
 
         if ($archivo) {
-            $uploadPath = 'uploads/documentos/';
+            $uploadPath = 'storage/app/uploads/public/documentos/';
             if (!is_dir($uploadPath)) {
                 mkdir($uploadPath, 0777, true);
             }
 
-            $nombreArchivo = time() . '_' . $archivo->getClientOriginalName();
+            $nombreArchivo = $archivo->getClientOriginalName() . '_' . time();
             $archivo->move($uploadPath, $nombreArchivo);
             $documento->archivo = $nombreArchivo;
         }

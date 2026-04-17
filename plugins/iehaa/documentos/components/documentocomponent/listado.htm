@@ -1,36 +1,38 @@
 <table class="table" id="tabla-documento">
-  <thead>
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col">Nombre</th>
-      <th scope="col">Documento</th>
-      <th scope="col">Acciones</th>
-    </tr>
-  </thead>
-  <tbody>
-    
-    {% set contador = 1 %}
-    {% for documento in documentos %}
-    <tr>
-        <th scope="row">{{ contador }}</th>
-        <td>{{ documento.nombre }}</td>
-        <td>
-            <button type="button" class="btn btn-secondary">
-                Descargar
-            </button>
-        </td>
-        <td>
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-                <i class="bi bi-pencil-square"></i>
-            </button>
-            <button type="button" class="btn btn-danger">
-                <i class="bi bi-trash"></i>
-            </button>
-        </td>
-    </tr>
-    {% set contador = contador + 1 %}
-    {% else %}
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Nombre</th>
+            <th scope="col">Documento</th>
+            <th scope="col">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        {% set contador = 1 %}
+        {% for documento in documentos %}
+        <tr>
+            <th scope="row">{{ contador }}</th>
+            <td>{{ documento.nombre }}</td>
+            <td>
+                <a type="button" class="btn btn-secondary"
+                    href="{{ ('storage/app/uploads/public/documentos/' ~ documento.archivo ) }}"
+                    download="{{ documento.nombre }}">
+                    Descargar
+                </a>
+            </td>
+            <td>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                    <i class="bi bi-pencil-square"></i>
+                </button>
+                <button type="button" class="btn btn-danger">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </td>
+        </tr>
+        {% set contador = contador + 1 %}
+        {% else %}
         <p>No hay documentos</p>
-    {% endfor %}
-  </tbody>
+        {% endfor %}
+    </tbody>
 </table>
