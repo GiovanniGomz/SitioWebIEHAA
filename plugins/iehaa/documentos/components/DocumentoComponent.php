@@ -36,15 +36,81 @@ class DocumentoComponent extends ComponentBase
         $this->page['documentos'] = Documento::all();
     }
 
-    public function onCreate()
+    public function onRegistrar()
     {
         $data = Input::all();
         $archivo = Input::file('archivo');
 
-        if (!$archivo) {
-            $data['archivo'] = '';
+        //Llave primaria
+        $id = $data['id'];
+
+
+        if ($id) { //Actualizando
+            $this->validacionesModificar($data, $archivo);
+
+            $documento = Documento::find($id);
+            $documento->nombre = $data['nombre'];
+
+            if ($archivo) {
+                $documento->archivo = $this->guardarArchivo($archivo, $data['archivo_tmp']);
+            } else {
+                //Si no viene archivo es porque no se esta cambiando
+                $documento->archivo = $data['archivo_tmp'];
+            }
+
+            $mensaje = '¡Modificado correctamente!';
+        } else {
+            //Creando nuevo registro
+
+            $documento = new Documento();
+            $documento->nombre = $data['nombre'];
+
+            $this->validacionesRegistrar($data);
+
+            $documento->archivo = $this->guardarArchivo($archivo);
+
+            $mensaje = '¡Almacenado correctamente!';
         }
 
+        $documento->save();
+
+        return [
+            '#listado' => $this->renderPartial('@listado', [
+                'documentos' => Documento::all()
+            ]),
+            'estado' => 'exito',
+            'mensaje' => $mensaje
+        ];
+    }
+
+    function onGetDocumento()
+    {
+        $id = post('id');
+        $documento = Documento::find($id);
+
+        return ['documento' => $documento];
+    }
+
+    function onEliminar()
+    {
+        $id = post('id');
+        $documento = Documento::find($id);
+
+        $this->eliminarArchivo($documento->archivo);
+
+        $documento->delete();
+
+        return [
+            '#listado' => $this->renderPartial('@listado', [
+                'documentos' => Documento::all()
+            ]),
+            'estado' => 'exito',
+            'mensaje' => '¡Eliminado con exito!'
+        ];
+    }
+
+    public function validacionesRegistrar($data)
+    {
         $rules = [
             'nombre' => 'required|min:3',
             'archivo' => 'required'
@@ -61,37 +127,10 @@ class DocumentoComponent extends ComponentBase
         if ($validator->fails()) {
             throw new ValidationException($validator);
         }
-
-        $documento = new Documento();
-        $documento->nombre = $data['nombre'];
-
-        if ($archivo) {
-            $uploadPath = 'storage/app/uploads/public/documentos/';
-            if (!is_dir($uploadPath)) {
-                mkdir($uploadPath, 0777, true);
-            }
-
-            $nombreArchivo =  time() . '_' .  $archivo->getClientOriginalName();
-            $archivo->move($uploadPath, $nombreArchivo);
-            $documento->archivo = $nombreArchivo;
-        }
-
-        $documento->save();
-
-        return [
-            '#listado' => $this->renderPartial('@listado', [
-                'documentos' => Documento::all()
-            ]),
-            'estado' => 'exito',
-            'mensaje' => '¡Almacenado correctamente!'
-        ];
     }
 
-    public function onActualizar()
+    public function validacionesModificar($data, $archivo)
     {
-        $data = Input::all();
-        $archivo = Input::file('archivo');
-
         if (!$archivo && !$data['archivo_tmp']) {
 
             $rules = [
@@ -122,43 +161,25 @@ class DocumentoComponent extends ComponentBase
         if ($validator->fails()) {
             throw new ValidationException($validator);
         }
-
-        $documento = Documento::find($data['id']);
-        $documento->nombre = $data['nombre'];
-
-        if ($archivo) {
-            $uploadPath = 'storage/app/uploads/public/documentos/';
-
-            //Eliminar el archivo
-            Storage::delete('uploads/public/documentos/' . $data['archivo_tmp']);
-
-            if (!is_dir($uploadPath)) {
-                mkdir($uploadPath, 0777, true);
-            }
-
-            $nombreArchivo = $archivo->getClientOriginalName() . '_' . time();
-            $archivo->move($uploadPath, $nombreArchivo);
-            $documento->archivo = $nombreArchivo;
-        } else {
-            //Si no viene archivo es porque no se esta cambiando
-            $documento->archivo = $data['archivo_tmp'];
-        }
-
-        $documento->save();
-
-        return [
-            '#listado' => $this->renderPartial('@listado', [
-                'documentos' => Documento::all()
-            ]),
-            'status' => 'success'
-        ];
     }
 
-    function onGetDocumento()
+    public function guardarArchivo($archivo, $nombreArchivo = false)
     {
-        $id = post('id');
-        $documento = Documento::find($id);
+        $uploadPath = 'storage/app/uploads/public/documentos/';
 
-        return ['documento' => $documento];
+        if ($nombreArchivo) $this->eliminarArchivo($nombreArchivo);
+
+        if (!is_dir($uploadPath)) {
+            mkdir($uploadPath, 0777, true);
+        }
+
+        $nombreArchivo = time() . '_' . $archivo->getClientOriginalName();
+        $archivo->move($uploadPath, $nombreArchivo);
+        return $nombreArchivo;
+    }
+
+    public function eliminarArchivo($nombreArchivo)
+    {
+        Storage::delete('uploads/public/documentos/' . $nombreArchivo);
     }
 }

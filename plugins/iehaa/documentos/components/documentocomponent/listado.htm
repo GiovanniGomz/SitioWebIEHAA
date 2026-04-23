@@ -22,19 +22,18 @@
                 </a>
             </td>
             <td>
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-actualizar"
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal"
                     data-request="documentocomponent::onGetDocumento" data-request-data="id: {{ documento.id }}"
                     data-request-success="cargarFormulario(data)">
                     <i class="bi bi-pencil-square"></i>
                 </button>
-                <button type="button" class="btn btn-danger">
+                <button type="button" class="btn btn-danger" data-request="documentocomponent::onEliminar"
+                    data-request-data="id: {{ documento.id }}" data-request-success="onEliminar(data)">
                     <i class="bi bi-trash"></i>
                 </button>
             </td>
         </tr>
         {% set contador = contador + 1 %}
-        {% else %}
-        <p>No hay documentos</p>
         {% endfor %}
     </tbody>
 </table>

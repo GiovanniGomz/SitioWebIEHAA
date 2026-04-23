@@ -1,10 +1,10 @@
 <div class="container documento">
 
-    <h1 class="text-center">Modulo de documentos</h1>
+    <h1 class="text-center">Modulo de descargas</h1>
 
     <div class="d-flex flex-row-reverse bd-highlight">
-        <button type="button" id="btnRegistrar" class="btn btn-primary btn-nuevo float-right" data-bs-toggle="modal"
-            data-bs-target="#modal-registrar">Nuevo</button>
+        <button type="button" class="btn btn-primary btn-nuevo float-right" id="btnModalUp" data-bs-toggle="modal"
+            data-bs-target="#modal">Nuevo</button>
     </div>
 
     <div id="listado">
@@ -12,85 +12,8 @@
     </div>
 </div>
 
-<!-- Formulario Actualizar -->
-<div class="container formulario-contenedor">
-    <div class="modal fade" id="modal-actualizar" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="staticBackdropLabel">
-                        Actualizar Documento
-                    </h1>
-                    <button type="button" class="btn-close" id="btn-close" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                </div>
+<!-- Formulario -->
+{% partial '@formulario' %}
 
-                <div class="modal-body">
-                    <div data-validate-error class="alert alert-danger" style="display:none;">
-                        <p data-message></p>
-                    </div>
-                    <form id="form-actualizar" data-request="documentocomponent::onActualizar" data-request-validate
-                        data-request-flash data-request-files data-request-update="'@listado': '#listado'"
-                        enctype="multipart/form-data">
-
-                        {% partial '@formulario' actualizar=true %}
-
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" onclick="limpiar('actualizar')"
-                                data-bs-dismiss="modal">
-                                Cancelar
-                            </button>
-                            <button type="submit" class="btn btn-primary">
-                                Actualizar
-                            </button>
-                        </div>
-                    </form>
-                </div>
-
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Formulario Registrar -->
-<div class="container formulario-contenedor">
-    <div class="modal fade" id="modal-registrar" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="staticBackdropLabel">
-                        Nuevo Documento
-                    </h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-
-                <div class="modal-body">
-                    <div data-validate-error class="alert alert-danger" style="display:none;">
-                        <p data-message></p>
-                    </div>
-                    <form id="formulario-registrar" data-request="documentocomponent::onCreate" data-request-validate
-                        data-request-flash data-request-success="onCrear(data)" data-request-files
-                        data-request-update="'@listado': '#listado'" enctype="multipart/form-data">
-
-                        {% partial '@formulario' %}
-
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" onclick="limpiar('registrar')"
-                                data-bs-dismiss="modal">
-                                Cancelar
-                            </button>
-                            <button type="submit" class="btn btn-primary">
-                                Guardar
-                            </button>
-                        </div>
-                    </form>
-                </div>
-
-            </div>
-        </div>
-    </div>
-</div>
 
 <script src="{{ '/assets/js/documento/documento.js'|theme}}"></script>

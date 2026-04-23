@@ -15,9 +15,7 @@ function inicarTabla() {
     });
 }
 
-function onCrear(data) {
-
-    console.log(data);
+function onRegistrar(data) {
 
     if (data.estado === 'exito') {
         Swal.fire(
@@ -26,39 +24,77 @@ function onCrear(data) {
             'success'
         );
 
-        document.querySelector('#btnRegistrar').click();
-        limpiar('registrar');
+        document.querySelector('#btnModalUp').click();
+        resetear();
+
+        inicarTabla();
     }
 }
 
-$(document).on('ajaxDone', '[data-request="documentocomponent::onActualizar"]', function (event, context, data) {
+function onEliminar(data) {
 
-    if (data.status === 'success') {
-        flashy.success('¡Modificado correctamente!');
-        document.querySelector('#btn-close').click();
-        limpiar('actualizar');
+    if (data.estado === 'exito') {
+        Swal.fire(
+            data.mensaje,
+            data.mensaje,
+            'success'
+        );
+
+        inicarTabla();
     }
-});
+}
 
+function avisoEliminar() {
 
-function limpiar(accion) {
-    document.querySelector(`#formulario-${accion} #nombre`).value = '';
-    document.querySelector(`#formulario-${accion} #archivo`).value = '';
-    document.querySelector(`#formulario-${accion} #archivo_tmp`).value = '';
-    document.querySelector(`#formulario-${accion} #id`).value = '';
-
-    if (accion === 'actualizar') {
-        document.querySelector(`#formulario-actualizar #pdf-descripcion`).textContent = '';
-    }
 }
 
 function cargarFormulario(data) {
     const { documento } = data;
+    const contenedorPDF = document.querySelector('#contenedor-pdf');
 
-    console.log(documento);
+    modoModificar();
 
     document.querySelector('#nombre').value = documento.nombre;
     document.querySelector('#id').value = documento.id;
     document.querySelector('#archivo_tmp').value = documento.archivo;
+
+    if (contenedorPDF) {
+        contenedorPDF.classList.remove('ocultar');
+    }
+
     document.querySelector('#pdf-descripcion').textContent = documento.archivo;
+}
+
+function resetear() {
+    modoRegistrar();
+    limpiar();
+}
+
+function modoModificar() {
+    const titulo = document.querySelector('#formulario-titulo');
+    const btnRegistrar = document.querySelector('#btnRegistrar');
+
+    titulo.textContent = 'Modificar Documento';
+    btnRegistrar.textContent = 'Guardar Cambios';
+}
+
+function modoRegistrar() {
+    const titulo = document.querySelector('#formulario-titulo');
+    const btnRegistrar = document.querySelector('#btnRegistrar');
+
+    titulo.textContent = 'Registrar Documento';
+    btnRegistrar.textContent = 'Registrar';
+}
+
+function limpiar() {
+    const contenedorPDF = document.querySelector('#contenedor-pdf');
+
+    if (contenedorPDF) {
+        contenedorPDF.classList.add('ocultar');
+    }
+
+    document.querySelector('#nombre').value = '';
+    document.querySelector('#archivo').value = '';
+    document.querySelector('#archivo_tmp').value = '';
+    document.querySelector('#id').value = '';
 }

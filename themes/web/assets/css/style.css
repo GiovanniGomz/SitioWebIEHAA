@@ -35,3 +35,7 @@
 .validacion-descripcion {
     font-weight: bold;
 }
+
+.ocultar {
+    display: none;
+}
