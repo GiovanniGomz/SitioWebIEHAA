@@ -3,13 +3,25 @@ $(document).ready(function () {
 });
 
 function iniciarApp() {
-    inicarTabla();
+    iniciarTabla();
+    eventos();
 }
 
-function inicarTabla() {
+function eventos() {
+    document.addEventListener('click', function (e) {
+        const btn = e.target.closest('.btn-eliminar');
+
+        if (btn) {
+            avisoEliminar(btn.dataset.id);
+        }
+    });
+}
+
+function iniciarTabla() {
     $('#tabla-documento').DataTable({
-        "language": {
-            "url": "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
+        destroy: true,
+        language: {
+            url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
         },
         pagingType: "simple"
     });
@@ -27,7 +39,7 @@ function onRegistrar(data) {
         document.querySelector('#btnModalUp').click();
         resetear();
 
-        inicarTabla();
+        iniciarTabla();
     }
 }
 
@@ -40,12 +52,32 @@ function onEliminar(data) {
             'success'
         );
 
-        inicarTabla();
+        if (data['#listado']) {
+            document.querySelector('#listado').innerHTML = data['#listado'];
+        }
+
+        setTimeout(() => {
+            iniciarTabla();
+        }, 0);
     }
 }
 
-function avisoEliminar() {
-
+function avisoEliminar(id) {
+    Swal.fire({
+        title: "¿Eliminar Documento?",
+        showCancelButton: true,
+        confirmButtonText: "Sí",
+        cancelButtonText: 'No'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.request('documentocomponent::onEliminar', {
+                data: { id: id },
+                success: function (data) {
+                    onEliminar(data);
+                }
+            });
+        }
+    });
 }
 
 function cargarFormulario(data) {
@@ -97,4 +129,14 @@ function limpiar() {
     document.querySelector('#archivo').value = '';
     document.querySelector('#archivo_tmp').value = '';
     document.querySelector('#id').value = '';
+
+    limpiarErrores();
+}
+
+function limpiarErrores() {
+    const errores = document.querySelectorAll('.validacion-descripcion');
+
+    errores.forEach(error => {
+        error.textContent = '';
+    });
 }

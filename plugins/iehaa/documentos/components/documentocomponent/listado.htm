@@ -2,8 +2,8 @@
     <thead>
         <tr>
             <th scope="col">#</th>
-            <th scope="col">Nombre</th>
-            <th scope="col">Documento</th>
+            <th scope="col">Titulo</th>
+            <th scope="col">Archivo</th>
             <th scope="col">Acciones</th>
         </tr>
     </thead>
@@ -27,8 +27,7 @@
                     data-request-success="cargarFormulario(data)">
                     <i class="bi bi-pencil-square"></i>
                 </button>
-                <button type="button" class="btn btn-danger" data-request="documentocomponent::onEliminar"
-                    data-request-data="id: {{ documento.id }}" data-request-success="onEliminar(data)">
+                <button type="button" class="btn btn-danger btn-eliminar" data-id="{{ documento.id }}">
                     <i class="bi bi-trash"></i>
                 </button>
             </td>

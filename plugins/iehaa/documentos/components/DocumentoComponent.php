@@ -94,11 +94,14 @@ class DocumentoComponent extends ComponentBase
     function onEliminar()
     {
         $id = post('id');
+        $id = intval($id);
         $documento = Documento::find($id);
 
         $this->eliminarArchivo($documento->archivo);
 
         $documento->delete();
+
+        \Log::info(Documento::all());
 
         return [
             '#listado' => $this->renderPartial('@listado', [
