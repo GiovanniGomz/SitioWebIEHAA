@@ -22,7 +22,8 @@
                     <h1 class="modal-title fs-5" id="staticBackdropLabel">
                         Actualizar Documento
                     </h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" id="btn-close" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
 
                 <div class="modal-body">
@@ -36,7 +37,8 @@
                         {% partial '@formulario' actualizar=true %}
 
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <button type="button" class="btn btn-secondary" onclick="limpiar('actualizar')"
+                                data-bs-dismiss="modal">
                                 Cancelar
                             </button>
                             <button type="submit" class="btn btn-primary">
@@ -68,13 +70,15 @@
                     <div data-validate-error class="alert alert-danger" style="display:none;">
                         <p data-message></p>
                     </div>
-                    <form data-request="documentocomponent::onCreate" data-request-validate data-request-flash
-                        data-request-files data-request-update="'@listado': '#listado'" enctype="multipart/form-data">
+                    <form id="formulario-registrar" data-request="documentocomponent::onCreate" data-request-validate
+                        data-request-flash data-request-success="onCrear(data)" data-request-files
+                        data-request-update="'@listado': '#listado'" enctype="multipart/form-data">
 
                         {% partial '@formulario' %}
 
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <button type="button" class="btn btn-secondary" onclick="limpiar('registrar')"
+                                data-bs-dismiss="modal">
                                 Cancelar
                             </button>
                             <button type="submit" class="btn btn-primary">

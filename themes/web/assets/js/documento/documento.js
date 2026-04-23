@@ -15,18 +15,41 @@ function inicarTabla() {
     });
 }
 
-$(document).on('ajaxDone', '[data-request="documentocomponent::onCreate"]', function (event, context, data) {
+function onCrear(data) {
+
+    console.log(data);
+
+    if (data.estado === 'exito') {
+        Swal.fire(
+            data.mensaje,
+            data.mensaje,
+            'success'
+        );
+
+        document.querySelector('#btnRegistrar').click();
+        limpiar('registrar');
+    }
+}
+
+$(document).on('ajaxDone', '[data-request="documentocomponent::onActualizar"]', function (event, context, data) {
 
     if (data.status === 'success') {
-        flashy.success('¡Almacenado correctamente!');
-        document.querySelector('#btnRegistrar').click();
-        limpiar();
+        flashy.success('¡Modificado correctamente!');
+        document.querySelector('#btn-close').click();
+        limpiar('actualizar');
     }
 });
 
-function limpiar() {
-    document.querySelector('#nombre').value = '';
-    document.querySelector('#archivo').value = '';
+
+function limpiar(accion) {
+    document.querySelector(`#formulario-${accion} #nombre`).value = '';
+    document.querySelector(`#formulario-${accion} #archivo`).value = '';
+    document.querySelector(`#formulario-${accion} #archivo_tmp`).value = '';
+    document.querySelector(`#formulario-${accion} #id`).value = '';
+
+    if (accion === 'actualizar') {
+        document.querySelector(`#formulario-actualizar #pdf-descripcion`).textContent = '';
+    }
 }
 
 function cargarFormulario(data) {
@@ -36,6 +59,6 @@ function cargarFormulario(data) {
 
     document.querySelector('#nombre').value = documento.nombre;
     document.querySelector('#id').value = documento.id;
-    document.querySelector('#archivo-tmp').value = documento.archivo;
+    document.querySelector('#archivo_tmp').value = documento.archivo;
     document.querySelector('#pdf-descripcion').textContent = documento.archivo;
 }

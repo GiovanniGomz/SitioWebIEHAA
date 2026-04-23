@@ -8,6 +8,8 @@ use Winter\Storm\Support\Facades\Input;
 use Winter\Storm\Exception\ValidationException;
 use Winter\Storm\Support\Facades\Validator;
 
+use Illuminate\Support\Facades\Storage;
+
 class DocumentoComponent extends ComponentBase
 {
     /**
@@ -69,9 +71,77 @@ class DocumentoComponent extends ComponentBase
                 mkdir($uploadPath, 0777, true);
             }
 
+            $nombreArchivo =  time() . '_' .  $archivo->getClientOriginalName();
+            $archivo->move($uploadPath, $nombreArchivo);
+            $documento->archivo = $nombreArchivo;
+        }
+
+        $documento->save();
+
+        return [
+            '#listado' => $this->renderPartial('@listado', [
+                'documentos' => Documento::all()
+            ]),
+            'estado' => 'exito',
+            'mensaje' => '¡Almacenado correctamente!'
+        ];
+    }
+
+    public function onActualizar()
+    {
+        $data = Input::all();
+        $archivo = Input::file('archivo');
+
+        if (!$archivo && !$data['archivo_tmp']) {
+
+            $rules = [
+                'nombre' => 'required|min:3',
+                'archivo' => 'required'
+            ];
+
+            $customMessages = [
+                'nombre.required' => '* Campo obligatorio.',
+                'nombre.min'      => 'Minimo 3 caracteres',
+                'archivo.required' => '* Campo obligatorio'
+            ];
+        } else {
+            $rules = [
+                'nombre' => 'required|min:3',
+            ];
+
+            $customMessages = [
+                'nombre.required' => '* Campo obligatorio.',
+                'nombre.min'      => 'Minimo 3 caracteres',
+            ];
+        }
+
+
+
+        $validator = Validator::make($data, $rules, $customMessages);
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
+
+        $documento = Documento::find($data['id']);
+        $documento->nombre = $data['nombre'];
+
+        if ($archivo) {
+            $uploadPath = 'storage/app/uploads/public/documentos/';
+
+            //Eliminar el archivo
+            Storage::delete('uploads/public/documentos/' . $data['archivo_tmp']);
+
+            if (!is_dir($uploadPath)) {
+                mkdir($uploadPath, 0777, true);
+            }
+
             $nombreArchivo = $archivo->getClientOriginalName() . '_' . time();
             $archivo->move($uploadPath, $nombreArchivo);
             $documento->archivo = $nombreArchivo;
+        } else {
+            //Si no viene archivo es porque no se esta cambiando
+            $documento->archivo = $data['archivo_tmp'];
         }
 
         $documento->save();
@@ -91,6 +161,4 @@ class DocumentoComponent extends ComponentBase
 
         return ['documento' => $documento];
     }
-
-    function onActualizar() {}
 }
