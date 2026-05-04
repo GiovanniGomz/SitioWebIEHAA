@@ -1,0 +1,66 @@
+<div class="container formulario-contenedor">
+    <div class="modal fade" id="modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="formulario-titulo">
+                        Registrar Documento
+                    </h1>
+                    <button type="button" class="btn-close" id="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                        onclick="resetear()"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div data-validate-error class="alert alert-danger" style="display:none;">
+                        <p data-message></p>
+                    </div>
+                    <form id="formulario" data-request="documentocomponent::onRegistrar" data-request-validate
+                        data-request-flash data-request-success="onRegistrar(data)" data-request-files
+                        data-request-update="'@listado': '#listado'" enctype="multipart/form-data">
+
+                        <div class="mb-3">
+                            <div class="validacion">
+                                <label for="nombre" class="form-label">Nombre</label>
+                                <span data-validate-for="nombre"
+                                    class="text-danger small mb-1 validacion-descripcion"></span>
+                            </div>
+                            <input type="text" class="form-control" id="nombre" name="nombre"
+                                placeholder="Escriba el nombre del documento" />
+
+                        </div>
+                        <div class="mb-3">
+                            <div class="validacion">
+                                <label for="archivo" class="form-label">Documento</label>
+                                <span data-validate-for="archivo"
+                                    class="text-danger small mb-1 validacion-descripcion"></span>
+                            </div>
+
+                            <div id="contenedor-pdf" class="contenedor-pdf ocultar">
+                                <i class="bi bi-file-earmark-pdf-fill pdf"></i>
+                                <p id="pdf-descripcion"></p>
+                            </div>
+
+                            <input class="form-control" type="file" id="archivo" name="archivo"
+                                accept="application/pdf" />
+                        </div>
+
+                        <input type="hidden" name="id" id="id">
+                        <input type="hidden" name="archivo_tmp" id="archivo_tmp">
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" onclick="resetear()"
+                                data-bs-dismiss="modal">
+                                Cancelar
+                            </button>
+                            <button type="submit" class="btn btn-primary" id="btnRegistrar">
+                                Registrar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

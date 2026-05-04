@@ -1,0 +1,31 @@
+# ===================================
+#  Form Behavior Config
+# ===================================
+
+# Record name
+name: 'iehaa.documentos::lang.models.documento.label'
+
+# Model Form Field configuration
+form: $/iehaa/documentos/models/documento/fields.yaml
+
+# Model Class name
+modelClass: IEHAA\Documentos\Models\Documento
+
+# Default redirect location
+defaultRedirect: iehaa/documentos/documentos
+
+# Create page
+create:
+    title: backend::lang.form.create_title
+    redirect: iehaa/documentos/documentos/update/:id
+    redirectClose: iehaa/documentos/documentos
+
+# Update page
+update:
+    title: backend::lang.form.update_title
+    redirect: iehaa/documentos/documentos
+    redirectClose: iehaa/documentos/documentos
+
+# Preview page
+preview:
+    title: backend::lang.form.preview_title

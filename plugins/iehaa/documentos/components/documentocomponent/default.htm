@@ -1,0 +1,19 @@
+<div class="container documento">
+
+    <h1 class="text-center">Modulo de descargas</h1>
+
+    <div class="d-flex flex-row-reverse bd-highlight">
+        <button type="button" class="btn btn-primary btn-nuevo float-right" id="btnModalUp" data-bs-toggle="modal"
+            data-bs-target="#modal">Nuevo</button>
+    </div>
+
+    <div id="listado">
+        {% partial '@listado' %}
+    </div>
+</div>
+
+<!-- Formulario -->
+{% partial '@formulario' %}
+
+
+<script src="{{ '/assets/js/documento/documento.js'|theme}}"></script>
