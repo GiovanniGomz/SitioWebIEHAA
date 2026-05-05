@@ -10,6 +10,8 @@ use Winter\Storm\Support\Facades\Validator;
 
 use Illuminate\Support\Facades\Storage;
 
+use Barryvdh\DomPDF\Facade\Pdf;
+
 class DocumentoComponent extends ComponentBase
 {
     /**
@@ -52,6 +54,7 @@ class DocumentoComponent extends ComponentBase
             $documento->nombre = $data['nombre'];
 
             if ($archivo) {
+                $documento->peso = $this->calcularPeso($archivo);
                 $documento->archivo = $this->guardarArchivo($archivo, $data['archivo_tmp']);
             } else {
                 //Si no viene archivo es porque no se esta cambiando
@@ -67,6 +70,7 @@ class DocumentoComponent extends ComponentBase
 
             $this->validacionesRegistrar($data);
 
+            $documento->peso = $this->calcularPeso($archivo);
             $documento->archivo = $this->guardarArchivo($archivo);
 
             $mensaje = '¡Almacenado correctamente!';
@@ -184,5 +188,37 @@ class DocumentoComponent extends ComponentBase
     public function eliminarArchivo($nombreArchivo)
     {
         Storage::delete('uploads/public/documentos/' . $nombreArchivo);
+    }
+
+    public function generarPDF()
+    {
+        \Log::info(json_encode(Documento::all()));
+
+        $data = [
+            'fecha' => now(),
+            'archivos' => Documento::all(),
+            'titulo' => 'Listado de documentos'
+        ];
+
+        $pdf = Pdf::loadView('iehaa.documentos::reporte', $data);
+
+        return $pdf->download('reporte_documentos.pdf');
+    }
+
+    public function calcularPeso($documento)
+    {
+        $sizeDocumento = $documento->getSize();
+
+        $peso = $this->formatearDocumento($sizeDocumento);
+
+        return $peso;
+    }
+
+    public function formatearDocumento($bytes, $decimales = 2)
+    {
+        $size = ['B', 'KB', 'MB', 'GB', 'TB'];
+        $factor = floor((strlen($bytes) - 1) / 3);
+
+        return sprintf("%.{$decimales}f", $bytes / pow(1024, $factor)) . ' ' . $size[$factor];
     }
 }

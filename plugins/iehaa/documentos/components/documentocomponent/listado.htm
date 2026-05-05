@@ -3,6 +3,7 @@
         <tr>
             <th scope="col">#</th>
             <th scope="col">Titulo</th>
+            <th scope="col">Peso</th>
             <th scope="col">Archivo</th>
             <th scope="col">Acciones</th>
         </tr>
@@ -14,6 +15,7 @@
         <tr>
             <th scope="row">{{ contador }}</th>
             <td>{{ documento.nombre }}</td>
+            <td>{{ documento.peso }}</td>
             <td>
                 <a type="button" class="btn btn-secondary"
                     href="{{ ('storage/app/uploads/public/documentos/' ~ documento.archivo ) }}"

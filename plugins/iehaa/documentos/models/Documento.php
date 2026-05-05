@@ -27,7 +27,7 @@ class Documento extends Model
     /**
      * @var array Fillable fields
      */
-    protected $fillable = ['id', 'nombre', 'archivo'];
+    protected $fillable = ['id', 'nombre', 'archivo', 'peso'];
 
     /**
      * @var array Validation rules for attributes
