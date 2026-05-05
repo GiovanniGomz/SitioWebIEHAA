@@ -39,3 +39,33 @@
 .ocultar {
     display: none;
 }
+
+/* Reportes */
+.reportes {
+    display: flex;
+    gap: 2rem;
+    padding: 0;
+}
+
+.reportes section {
+    cursor: pointer;
+}
+
+.reporte-excel a {
+    color: #1d6f42;
+}
+
+.reporte-pdf a {
+    color: #dc3545;
+}
+
+.resportes section {
+    padding: 0;
+}
+
+.botonera {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0;
+}

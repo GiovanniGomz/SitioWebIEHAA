@@ -13,11 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
+        Schema::dropIfExists('data.documentos');
+
         Schema::create('data.documentos', function (Blueprint $table) {
-            Schema::dropIfExists('data.documentos');
             $table->increments('id');
             $table->string('nombre');
             $table->string('archivo');
+            $table->string('peso');
         });
     }
 

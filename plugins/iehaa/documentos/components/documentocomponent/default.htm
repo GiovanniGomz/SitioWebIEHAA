@@ -2,10 +2,33 @@
 
     <h1 class="text-center">Modulo de descargas</h1>
 
-    <div class="d-flex flex-row-reverse bd-highlight">
-        <button type="button" class="btn btn-primary btn-nuevo float-right" id="btnModalUp" data-bs-toggle="modal"
-            data-bs-target="#modal">Nuevo</button>
-    </div>
+    <section class="botonera">
+
+        <section class="reportes">
+            <!--PDF-->
+            <section class="reporte-pdf">
+                <a href="/reportePDFDescarga">
+                    <i class="bi bi-file-earmark-pdf"></i>
+                    Generar PDF
+                </a>
+            </section>
+
+
+            <!--Excel-->
+            <section class="reporte-excel">
+                <a href="/reporte">
+                    <i class="bi bi-file-earmark-spreadsheet"></i>
+                    Generar Excel
+                </a>
+            </section>
+        </section>
+
+        <div class="">
+            <button type="button" class="btn btn-primary btn-nuevo float-right" id="btnModalUp" data-bs-toggle="modal"
+                data-bs-target="#modal">Nuevo</button>
+        </div>
+
+    </section>
 
     <div id="listado">
         {% partial '@listado' %}
