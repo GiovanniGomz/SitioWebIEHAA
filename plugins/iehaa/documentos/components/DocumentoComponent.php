@@ -12,6 +12,12 @@ use Illuminate\Support\Facades\Storage;
 
 use Barryvdh\DomPDF\Facade\Pdf;
 
+require 'vendor/autoload.php';
+
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+
 class DocumentoComponent extends ComponentBase
 {
     /**
@@ -203,6 +209,83 @@ class DocumentoComponent extends ComponentBase
         $pdf = Pdf::loadView('iehaa.documentos::reporte', $data);
 
         return $pdf->download('reporte_documentos.pdf');
+    }
+
+    public function generarExcel()
+    {
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $sheet->setTitle('Documentos IEHAA');
+
+        // Estilos
+        $headerStyle = [
+            'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF'], 'size' => 12],
+            'fill' => ['fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID, 'startColor' => ['rgb' => '1F4E79']],
+            'alignment' => ['horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER],
+            'borders' => ['allBorders' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN]],
+        ];
+
+        $titleStyle = [
+            'font' => ['bold' => true, 'size' => 16],
+            'alignment' => ['horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER],
+        ];
+
+        $sheet->mergeCells('A1:C1');
+        $sheet->setCellValue('A1', 'INSTITUTO DE ESTUDIOS HISTÓRICOS, ANTROPOLÓGICOS Y ARQUEOLÓGICOS');
+        $sheet->getStyle('A1')->applyFromArray($titleStyle);
+
+        $sheet->mergeCells('A2:C2');
+        $sheet->setCellValue('A2', 'Reporte de Descargas');
+        $sheet->getStyle('A2')->getFont()->setBold(true)->setSize(14);
+
+        $sheet->getStyle('A2')->getAlignment()
+            ->setHorizontal(Alignment::HORIZONTAL_CENTER)
+            ->setVertical(Alignment::VERTICAL_CENTER);
+
+        $sheet->setCellValue('A3', 'Fecha de generación: ' . now()->format('d/m/Y H:i:s'));
+
+        $sheet->setCellValue('A5', '#');
+        $sheet->setCellValue('B5', 'Nombre del Documento');
+        $sheet->setCellValue('C5', 'Peso');
+
+        $sheet->getStyle('A5:C5')->applyFromArray($headerStyle);
+
+        $sheet->getColumnDimension('A')->setWidth(8);
+        $sheet->getColumnDimension('B')->setWidth(80);
+        $sheet->getColumnDimension('C')->setWidth(20);
+
+        $documentos = Documento::all();
+
+        $fila = 6;
+        foreach ($documentos as $doc) {
+            $sheet->setCellValue('A' . $fila, $doc['id']);
+            $sheet->setCellValue('B' . $fila, $doc['nombre']);
+            $sheet->setCellValue('C' . $fila, $doc['peso']);
+
+            $sheet->getStyle('C' . $fila)->getAlignment()->setHorizontal('right');
+
+            $fila++;
+        }
+
+        $ultimaFila = $fila - 1;
+        $sheet->setCellValue('B' . $fila, 'TOTAL DOCUMENTOS:');
+        $sheet->setCellValue('C' . $fila, ($fila - 6) . ' documentos');
+        $sheet->getStyle('B' . $fila . ':C' . $fila)->getFont()->setBold(true);
+
+        $sheet->getStyle('A5:C' . $ultimaFila)->getBorders()->applyFromArray([
+            'allBorders' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN]
+        ]);
+
+        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+
+        $filename = 'Reporte_Documentos_IEHAA_' . now()->format('Ymd_His') . '.xlsx';
+
+        return response()->streamDownload(function () use ($writer) {
+            $writer->save('php://output');
+        }, $filename, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ]);
     }
 
     public function calcularPeso($documento)
