@@ -1,0 +1,24 @@
+<div class="contenedor-archiveros">
+
+    {% for archivero in archiveros %}
+
+    <div class="archivero">
+        <i class="bi bi-collection"></i>
+
+        <span>{{ archivero.codigo }}</span>
+
+        <div class="archivero-botonera">
+            <button class="boton boton-modificar" data-bs-toggle="modal" data-bs-target="#modal"
+                data-request="archiveroComponent::onGetArchivero" data-request-data="id: {{ archivero.id }}"
+                data-request-success="cargarFormulario(data)">
+                <i class="bi bi-pencil-square"></i>
+            </button>
+
+            <button type="button" class="boton boton-eliminar" data-id="{{ archivero.id }}">
+                <i class="bi bi-trash"></i>
+            </button>
+        </div>
+    </div>
+
+    {% endfor %}
+</div>
