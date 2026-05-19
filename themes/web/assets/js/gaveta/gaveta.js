@@ -22,7 +22,7 @@ function eventos() {
 }
 
 function redireccionar(url) {
-    window.location.href = '/gavetas?id=' + url;
+    window.location.href = '/carpetas?id=' + url;
 }
 
 function onRegistrar(data) {
@@ -40,12 +40,12 @@ function onRegistrar(data) {
 }
 
 function cargarFormulario(data) {
-    const { archivero } = data;
+    const { gaveta } = data;
 
     modoModificar();
 
-    document.querySelector('#codigo').value = archivero.codigo;
-    document.querySelector('#id').value = archivero.id;
+    document.querySelector('#codigo').value = gaveta.codigo;
+    document.querySelector('#id').value = gaveta.id;
 }
 
 function resetear() {
@@ -57,7 +57,7 @@ function modoModificar() {
     const titulo = document.querySelector('#formulario-titulo');
     const btnRegistrar = document.querySelector('#btnRegistrar');
 
-    titulo.textContent = 'Modificar Archivero';
+    titulo.textContent = 'Modificar Gaveta';
     btnRegistrar.textContent = 'Guardar Cambios';
 }
 
@@ -65,7 +65,7 @@ function modoRegistrar() {
     const titulo = document.querySelector('#formulario-titulo');
     const btnRegistrar = document.querySelector('#btnRegistrar');
 
-    titulo.textContent = 'Registrar Archivero';
+    titulo.textContent = 'Registrar Gaveta';
     btnRegistrar.textContent = 'Registrar';
 }
 
@@ -87,13 +87,13 @@ function limpiarErrores() {
 function avisoEliminar(id) {
 
     Swal.fire({
-        title: "¿Eliminar Archivero?",
+        title: "¿Eliminar Gaveta?",
         showCancelButton: true,
         confirmButtonText: "Sí",
         cancelButtonText: 'No'
     }).then((result) => {
         if (result.isConfirmed) {
-            $.request('archiveroComponent::onEliminar', {
+            $.request('gavetaComponent::onEliminar', {
                 data: { id: id },
                 success: function (data) {
                     onEliminar(data);

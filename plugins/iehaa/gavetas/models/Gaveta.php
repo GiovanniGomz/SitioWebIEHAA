@@ -1,20 +1,20 @@
 <?php
 
-namespace Iehaa\Archiveros\Models;
+namespace Iehaa\Gavetas\Models;
 
 use Winter\Storm\Database\Model;
 
 /**
- * Archivero Model
+ * Gaveta Model
  */
-class Archivero extends Model
+class Gaveta extends Model
 {
     use \Winter\Storm\Database\Traits\Validation;
 
     /**
      * @var string The database table used by the model.
      */
-    public $table = 'data.archiveros';
+    public $table = 'data.gavetas';
 
     /**
      * @var array Guarded fields
@@ -26,7 +26,7 @@ class Archivero extends Model
     /**
      * @var array Fillable fields
      */
-    protected $fillable = ['id', 'codigo', 'url'];
+    protected $fillable = ['id', 'codigo', 'url', 'archivero_id'];
 
     /**
      * @var array Validation rules for attributes
@@ -68,7 +68,12 @@ class Archivero extends Model
     public $hasMany = [];
     public $hasOneThrough = [];
     public $hasManyThrough = [];
-    public $belongsTo = [];
+    public $belongsTo = [
+        'Archivero' => [
+            'IEHAA\Archiveros\Models\Archivero',
+            'key' => 'archivero_id'
+        ]
+    ];
     public $belongsToMany = [];
     public $morphTo = [];
     public $morphOne = [];

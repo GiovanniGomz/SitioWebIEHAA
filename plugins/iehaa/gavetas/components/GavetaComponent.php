@@ -1,14 +1,15 @@
 <?php
 
-namespace Iehaa\Archiveros\Components;
+namespace Iehaa\Gavetas\Components;
 
 use Cms\Classes\ComponentBase;
 use Iehaa\Archiveros\Models\Archivero;
+use Iehaa\Gavetas\Models\Gaveta;
 use Winter\Storm\Support\Facades\Input;
 use Winter\Storm\Exception\ValidationException;
 use Winter\Storm\Support\Facades\Validator;
 
-class ArchiveroComponent extends ComponentBase
+class GavetaComponent extends ComponentBase
 {
     /**
      * Gets the details for the component
@@ -16,8 +17,8 @@ class ArchiveroComponent extends ComponentBase
     public function componentDetails()
     {
         return [
-            'name'        => 'archiveroComponent',
-            'description' => 'Modulo de archiveros'
+            'name'        => 'gavetaComponent',
+            'description' => 'Modulo de gavetas'
         ];
     }
 
@@ -31,7 +32,16 @@ class ArchiveroComponent extends ComponentBase
 
     public function onRun()
     {
-        $this->page['archiveros'] = Archivero::all();
+        $this->page['gavetas'] = $this->obtenerGavetas();
+    }
+
+    public function obtenerGavetas()
+    {
+        $url = get('id');
+
+        return Gaveta::whereHas('Archivero', function ($query) use ($url) {
+            $query->where('url', $url);
+        })->get();
     }
 
     public function onRegistrar()
@@ -45,39 +55,47 @@ class ArchiveroComponent extends ComponentBase
         if ($id) { //Actualizando
             $this->validaciones($data);
 
-            $archivero = Archivero::find($id);
-            $archivero->codigo = $data['codigo'];
+            $gaveta = Gaveta::find($id);
+            $gaveta->codigo = $data['codigo'];
 
             $mensaje = '¡Modificado correctamente!';
         } else {
             //Creando nuevo registro
 
-            $archivero = new Archivero();
-            $archivero->codigo = $data['codigo'];
-            $archivero->url = $this->generarURL();
+            $url = get('id');
+            $archivero = Archivero::where('url', $url)->first();
+
+            if (!$archivero) {
+                exit;
+            }
+
+            $gaveta = new Gaveta();
+            $gaveta->codigo = $data['codigo'];
+            $gaveta->url = $this->generarURL();
+            $gaveta->archivero_id = $archivero->id;
 
             $this->validaciones($data);
 
             $mensaje = '¡Almacenado correctamente!';
         }
 
-        $archivero->save();
+        $gaveta->save();
 
         return [
             '#listado' => $this->renderPartial('@listado', [
-                'archiveros' => Archivero::all()
+                'gavetas' => $this->obtenerGavetas()
             ]),
             'estado' => 'exito',
             'mensaje' => $mensaje
         ];
     }
 
-    function onGetArchivero()
+    function onGetGaveta()
     {
         $id = post('id');
-        $archivero = Archivero::find($id);
+        $gaveta = Gaveta::find($id);
 
-        return ['archivero' => $archivero];
+        return ['gaveta' => $gaveta];
     }
 
     function onEliminar()
@@ -87,13 +105,13 @@ class ArchiveroComponent extends ComponentBase
         $id = post('id');
         $id = intval($id);
 
-        $archivero = Archivero::find($id);
+        $gaveta = Gaveta::find($id);
 
-        $archivero->delete();
+        $gaveta->delete();
 
         return [
             '#listado' => $this->renderPartial('@listado', [
-                'archiveros' => Archivero::all()
+                'gavetas' => $this->obtenerGavetas()
             ]),
             'estado' => 'exito',
             'mensaje' => '¡Eliminado con exito!'

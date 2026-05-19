@@ -14,12 +14,17 @@ return new class extends Migration
     public function up()
     {
         Schema::dropIfExists('data.gavetas');
-        Schema::dropIfExists('data.archiveros');
 
-        Schema::create('data.archiveros', function (Blueprint $table) {
+        Schema::create('data.gavetas', function (Blueprint $table) {
             $table->increments('id');
             $table->string('codigo');
             $table->string('url');
+
+            $table->unsignedInteger('archivero_id');
+
+            $table->foreign('archivero_id')
+                ->references('id')
+                ->on('data.archiveros');
         });
     }
 
@@ -30,6 +35,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('data.archiveros');
+        Schema::dropIfExists('data.gavetas');
     }
 };
