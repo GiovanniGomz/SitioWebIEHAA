@@ -1,4 +1,4 @@
-<div class="contenedor-archiveros">
+<div class="contenedor-archiveros {% if archiveros|length == 0 %} d-block text-center {% endif %}">
 
     {% for archivero in archiveros %}
 
@@ -19,6 +19,10 @@
             </button>
         </div>
     </div>
+
+    {% else %}
+
+    <p class="mensaje">No hay registros disponibles</p>
 
     {% endfor %}
 </div>

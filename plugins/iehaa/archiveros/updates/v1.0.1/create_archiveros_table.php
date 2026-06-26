@@ -13,7 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
+        Schema::dropIfExists('data.fabio');
+
+        Schema::dropIfExists('data.carpetas');
+
         Schema::dropIfExists('data.gavetas');
+
         Schema::dropIfExists('data.archiveros');
 
         Schema::create('data.archiveros', function (Blueprint $table) {

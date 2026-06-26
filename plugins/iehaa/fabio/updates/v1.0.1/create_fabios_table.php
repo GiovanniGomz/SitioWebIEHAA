@@ -15,20 +15,16 @@ return new class extends Migration
     {
         Schema::dropIfExists('data.fabio');
 
-        Schema::dropIfExists('data.carpetas');
-
-        Schema::dropIfExists('data.gavetas');
-
-        Schema::create('data.gavetas', function (Blueprint $table) {
+        Schema::create('data.fabio', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('codigo');
-            $table->string('url');
+            $table->string('nombre');
+            $table->string('archivo');
 
-            $table->unsignedInteger('archivero_id');
+            $table->unsignedInteger('carpeta_id');
 
-            $table->foreign('archivero_id')
+            $table->foreign('carpeta_id')
                 ->references('id')
-                ->on('data.archiveros');
+                ->on('data.carpetas');
         });
     }
 
@@ -39,6 +35,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('data.gavetas');
+        Schema::dropIfExists('data.fabio');
     }
 };
