@@ -1,0 +1,8 @@
+# ===================================
+#  Form Field Definitions
+# ===================================
+
+fields:
+    id:
+        label: 'iehaa.fabio::lang.models.general.id'
+        disabled: true
