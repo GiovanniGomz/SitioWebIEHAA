@@ -4,4 +4,10 @@ document.addEventListener('DOMContentLoaded', function () {
         page: 6,
         pagination: true
     });
+
+    new List('investigacionesList', {
+        valueNames: ['titulo', 'descripcion'],
+        page: 6,
+        pagination: true
+    });
 });
