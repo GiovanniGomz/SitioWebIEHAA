@@ -136,3 +136,39 @@
 .archivero-botonera .boton-eliminar {
     background-color: #dc3545;
 }
+
+/* paginación */
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 2rem;
+    list-style: none;
+    padding-left: 0;
+}
+
+.pagination li a {
+    display: block;
+    padding: 8px 14px;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    color: #0d6efd;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.pagination li a:hover {
+    background: #0d6efd;
+    color: #fff;
+}
+
+.pagination li.active a {
+    background: #0d6efd;
+    color: #fff;
+    border-color: #0d6efd;
+}
+
+.pagination li.disabled a {
+    opacity: 0.5;
+    pointer-events: none;
+}
