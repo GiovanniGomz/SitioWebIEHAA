@@ -22,8 +22,8 @@ return new class extends Migration
             $table->string('carnet');
             $table->string('email');
             $table->string('telefono');
-            $table->string('profesion');
-            $table->string('grado');
+            $table->integer('facultad');
+            $table->integer('grado');
         });
     }
 

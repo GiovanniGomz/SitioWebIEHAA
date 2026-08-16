@@ -26,7 +26,7 @@ class Investigador extends Model
     /**
      * @var array Fillable fields
      */
-    protected $fillable = ['id', 'nombre', 'apellido', 'carnet', 'email', 'telefono', 'profesion', 'grado'];
+    protected $fillable = ['id', 'nombre', 'apellido', 'carnet', 'email', 'telefono', 'facultad', 'grado'];
 
     /**
      * @var array Validation rules for attributes

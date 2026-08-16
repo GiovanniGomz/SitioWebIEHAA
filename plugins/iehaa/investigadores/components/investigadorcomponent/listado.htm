@@ -1,0 +1,43 @@
+<table class="table" id="tabla-investigador">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Nombre Completo</th>
+            <th scope="col">Carnet</th>
+            <th scope="col">Email</th>
+            <th scope="col">Facultad</th>
+            <th scope="col">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% set contador = 1 %} {% for investigador in investigadores %}
+        <tr>
+            <th scope="row">{{ contador }}</th>
+            <td>{{ investigador.nombre }} {{ investigador.apellido }}</td>
+            <td>{{ investigador.carnet }}</td>
+            <td>{{ investigador.email }}</td>
+            <td>{{ investigador.facultad }}</td>
+            <td>
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modal"
+                    data-request="investigadorComponent::onGetInvestigador"
+                    data-request-data="id: {{ investigador.id }}"
+                    data-request-success="cargarFormulario(data)"
+                >
+                    <i class="bi bi-pencil-square"></i>
+                </button>
+                <button
+                    type="button"
+                    class="btn btn-danger btn-eliminar"
+                    data-id="{{ investigador.id }}"
+                >
+                    <i class="bi bi-trash"></i>
+                </button>
+            </td>
+        </tr>
+        {% set contador = contador + 1 %} {% endfor %}
+    </tbody>
+</table>

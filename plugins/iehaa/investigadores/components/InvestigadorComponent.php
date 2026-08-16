@@ -22,8 +22,72 @@ class InvestigadorComponent extends ComponentBase
         ];
     }
 
+    public function onRun()
+    {
+
+
+        $this->page['investigadores'] = $this->obtenerTodos();
+    }
+
+    public function obtenerTodos()
+    {
+        $investigadores = Investigador::all();
+
+        foreach ($investigadores as $investigador) {
+            $investigador->facultad = $this->obtenerFacultad($investigador->facultad);
+        }
+
+        return $investigadores;
+    }
+
+    public function obtenerFacultad(int $valor)
+    {
+        switch ($valor) {
+            case 1:
+                return "Facultad de Agronomía";
+                break;
+            case 2:
+                return "Facultad de Ciencias Económicas";
+                break;
+            case 3:
+                return "Facultad de Ciencias y Humanidades";
+                break;
+            case 4:
+                return "Facultad de Ciencias Naturales y Matemática";
+                break;
+            case 5:
+                return "Facultad de Ingeniería y Arquitectura";
+                break;
+            case 6:
+                return "Facultad de Jurisprudencia y Ciencias Sociales";
+                break;
+            case 7:
+                return "Facultad de Medicina";
+                break;
+            case 8:
+                return "Facultad de Odontología";
+                break;
+            case 9:
+                return "Facultad de Química y Farmacia";
+                break;
+            case 10:
+                return "Facultad Multidisciplinaria de Occidente";
+                break;
+            case 11:
+                return "Facultad Multidisciplinaria de Oriente";
+                break;
+            case 12:
+                return "Facultad Multidisciplinaria Paracentral";
+                break;
+            default:
+                return "Error al obtener facultad";
+        }
+    }
+
     public function onRegistrar()
     {
+        \Log::info("Acceso a funcion onRegistrar");
+
         $data = Input::all();
 
         //Llave primaria
@@ -39,8 +103,8 @@ class InvestigadorComponent extends ComponentBase
             $investigador->email = $data['email'];
             $investigador->carnet = $data['carnet'];
             $investigador->telefono = $data['telefono'];
-            $investigador->profesion = $data['profesion'];
-            $investigador->grado = $data['grado'];
+            $investigador->facultad = $data['facultad'] ?? '';
+            $investigador->grado = $data['grado'] ?? '';
 
             $mensaje = '¡Modificado correctamente!';
         } else {
@@ -52,22 +116,41 @@ class InvestigadorComponent extends ComponentBase
             $investigador->email = $data['email'];
             $investigador->carnet = $data['carnet'];
             $investigador->telefono = $data['telefono'];
-            $investigador->profesion = $data['profesion'];
-            $investigador->grado = $data['grado'];
+            $investigador->facultad = $data['facultad'] ?? '';
+            $investigador->grado = $data['grado'] ?? '';
 
             $this->validaciones($data);
 
             $mensaje = '¡Almacenado correctamente!';
         }
 
+        \Log::info("Paso validaciones");
+
         $investigador->save();
 
         return [
             '#listado' => $this->renderPartial('@listado', [
-                'investigadores' => Investigador::all()
+                'investigadores' => $this->obtenerTodos()
             ]),
             'estado' => 'exito',
             'mensaje' => $mensaje
+        ];
+    }
+
+    function onEliminar()
+    {
+        $id = post('id');
+        $id = intval($id);
+        $investigador = Investigador::find($id);
+
+        $investigador->delete();
+
+        return [
+            '#listado' => $this->renderPartial('@listado', [
+                'investigadores' => $this->obtenerTodos()
+            ]),
+            'estado' => 'exito',
+            'mensaje' => '¡Eliminado con exito!'
         ];
     }
 
@@ -79,8 +162,8 @@ class InvestigadorComponent extends ComponentBase
             'telefono' => 'required|max:8',
             'email' => 'required|max:60',
             'carnet' => 'required|max:7',
-            'profesion' => 'required|max:60',
-            'grado' => 'required|max:30'
+            'facultad' => 'required',
+            'grado' => 'required'
         ];
 
         $customMessages = [
@@ -94,10 +177,8 @@ class InvestigadorComponent extends ComponentBase
             'email.max'      => 'Maximo 60 caracteres',
             'carnet.required' => '* Campo obligatorio.',
             'carnet.max'      => 'Maximo 7 caracteres',
-            'profesion.required' => '* Campo obligatorio.',
-            'profesion.max'      => 'Maximo 60 caracteres',
-            'grado.required' => '* Campo obligatorio.',
-            'grado.max'      => 'Maximo 30 caracteres'
+            'facultad.required' => '* Campo obligatorio.',
+            'grado.required' => '* Campo obligatorio.'
         ];
 
         $validator = Validator::make($data, $rules, $customMessages);
@@ -105,6 +186,14 @@ class InvestigadorComponent extends ComponentBase
         if ($validator->fails()) {
             throw new ValidationException($validator);
         }
+    }
+
+    function onGetInvestigador()
+    {
+        $id = post('id');
+        $investigador = Investigador::find($id);
+
+        return ['investigador' => $investigador];
     }
 
     /**
