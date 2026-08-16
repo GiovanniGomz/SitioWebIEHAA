@@ -129,6 +129,7 @@ function limpiar() {
     document.querySelector('#telefono').value = '';
     document.querySelector('#facultad').value = '';
     document.querySelector('#grado').value = '';
+    document.querySelector('#email').value = '';
     document.querySelector('#id').value = '';
 
     limpiarErrores();
