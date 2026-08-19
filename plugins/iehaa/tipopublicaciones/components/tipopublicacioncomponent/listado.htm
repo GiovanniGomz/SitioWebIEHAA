@@ -1,0 +1,37 @@
+<table class="table" id="tabla-tipos">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Nombre</th>
+            <th scope="col">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% set contador = 1 %} {% for tipo_publicacion in tipo_publicaciones %}
+        <tr>
+            <th scope="row">{{ contador }}</th>
+            <td>{{ tipo_publicacion.nombre }}</td>
+            <td>
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modal"
+                    data-request="TipoPublicacionComponent::onGetTipoPublicacion"
+                    data-request-data="id: {{ tipo_publicacion.id }}"
+                    data-request-success="cargarFormulario(data)"
+                >
+                    <i class="bi bi-pencil-square"></i>
+                </button>
+                <button
+                    type="button"
+                    class="btn btn-danger btn-eliminar"
+                    data-id="{{ tipo_publicacion.id }}"
+                >
+                    <i class="bi bi-trash"></i>
+                </button>
+            </td>
+        </tr>
+        {% set contador = contador + 1 %} {% endfor %}
+    </tbody>
+</table>

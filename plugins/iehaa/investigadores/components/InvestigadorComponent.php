@@ -4,7 +4,6 @@ namespace Iehaa\Investigadores\Components;
 
 use Cms\Classes\ComponentBase;
 use Iehaa\Investigadores\Models\Investigador;
-use IEHAA\Documentos\Models\Documento;
 use Winter\Storm\Support\Facades\Input;
 use Winter\Storm\Exception\ValidationException;
 use Winter\Storm\Support\Facades\Validator;
