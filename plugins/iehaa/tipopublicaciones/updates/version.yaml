@@ -1,0 +1,5 @@
+1.0.0:
+    - "First version of tipopublicaciones"
+1.0.2:
+    - "Create TipoPublicaciones Table"
+    - v1.0.1/create_tipo_publicaciones_table.php
