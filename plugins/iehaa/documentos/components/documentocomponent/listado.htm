@@ -1,4 +1,4 @@
-<table class="table" id="tabla-documento">
+<table class="table table-sm" id="tabla-documento">
     <thead>
         <tr>
             <th scope="col">#</th>
@@ -9,32 +9,42 @@
         </tr>
     </thead>
     <tbody>
-
-        {% set contador = 1 %}
-        {% for documento in documentos %}
+        {% set contador = 1 %} {% for documento in documentos %}
         <tr>
             <th scope="row">{{ contador }}</th>
             <td>{{ documento.nombre }}</td>
             <td>{{ documento.peso }}</td>
             <td>
-                <a type="button" class="btn btn-secondary"
+                <a
+                    type="button"
+                    class="btn btn-secondary"
                     href="{{ ('storage/app/uploads/public/documentos/' ~ documento.archivo ) }}"
-                    download="{{ documento.nombre }}">
+                    download="{{ documento.nombre }}"
+                >
                     Descargar
                 </a>
             </td>
             <td>
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal"
-                    data-request="documentocomponent::onGetDocumento" data-request-data="id: {{ documento.id }}"
-                    data-request-success="cargarFormulario(data)">
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modal"
+                    data-request="documentocomponent::onGetDocumento"
+                    data-request-data="id: {{ documento.id }}"
+                    data-request-success="cargarFormulario(data)"
+                >
                     <i class="bi bi-pencil-square"></i>
                 </button>
-                <button type="button" class="btn btn-danger btn-eliminar" data-id="{{ documento.id }}">
+                <button
+                    type="button"
+                    class="btn btn-danger btn-eliminar"
+                    data-id="{{ documento.id }}"
+                >
                     <i class="bi bi-trash"></i>
                 </button>
             </td>
         </tr>
-        {% set contador = contador + 1 %}
-        {% endfor %}
+        {% set contador = contador + 1 %} {% endfor %}
     </tbody>
 </table>
