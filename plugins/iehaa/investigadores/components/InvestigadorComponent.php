@@ -8,6 +8,14 @@ use Winter\Storm\Support\Facades\Input;
 use Winter\Storm\Exception\ValidationException;
 use Winter\Storm\Support\Facades\Validator;
 
+use Barryvdh\DomPDF\Facade\Pdf;
+
+require 'vendor/autoload.php';
+
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+
 class InvestigadorComponent extends ComponentBase
 {
     /**
@@ -34,6 +42,7 @@ class InvestigadorComponent extends ComponentBase
 
         foreach ($investigadores as $investigador) {
             $investigador->facultad = $this->obtenerFacultad($investigador->facultad);
+            $investigador->grado = $this->obtenerGrado($investigador->grado);
         }
 
         return $investigadores;
@@ -80,6 +89,26 @@ class InvestigadorComponent extends ComponentBase
                 break;
             default:
                 return "Error al obtener facultad";
+        }
+    }
+
+    public function obtenerGrado(int $valor)
+    {
+        switch ($valor) {
+            case 1:
+                return "Estudiante";
+                break;
+            case 2:
+                return "Educación superior";
+                break;
+            case 3:
+                return "Maestria";
+                break;
+            case 4:
+                return "Doctorado";
+                break;
+            default:
+                return "error";
         }
     }
 
@@ -193,6 +222,108 @@ class InvestigadorComponent extends ComponentBase
         $investigador = Investigador::find($id);
 
         return ['investigador' => $investigador];
+    }
+
+    public function generarPDF()
+    {
+        $investigadores = $this->obtenerTodos();
+
+        \Log::info(json_encode($investigadores));
+
+        $data = [
+            'fecha' => now(),
+            'investigadores' => $investigadores,
+            'titulo' => 'Listado de investigadores'
+        ];
+
+        $pdf = Pdf::loadView('iehaa.investigadores::reporte', $data);
+
+        return $pdf->download('reporte_investigadores.pdf');
+    }
+
+    public function generarExcel()
+    {
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $sheet->setTitle('Investigadores IEHAA');
+
+        // Estilos
+        $headerStyle = [
+            'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF'], 'size' => 12],
+            'fill' => ['fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID, 'startColor' => ['rgb' => '1F4E79']],
+            'alignment' => ['horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER],
+            'borders' => ['allBorders' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN]],
+        ];
+
+        $titleStyle = [
+            'font' => ['bold' => true, 'size' => 16],
+            'alignment' => ['horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER],
+        ];
+
+        $sheet->mergeCells('A1:E1');
+        $sheet->setCellValue('A1', 'INSTITUTO DE ESTUDIOS HISTÓRICOS, ANTROPOLÓGICOS Y ARQUEOLÓGICOS');
+        $sheet->getStyle('A1')->applyFromArray($titleStyle);
+
+        $sheet->mergeCells('A2:E2');
+        $sheet->setCellValue('A2', 'Reporte de Investigadores');
+        $sheet->getStyle('A2')->getFont()->setBold(true)->setSize(14);
+
+        $sheet->getStyle('A2')->getAlignment()
+            ->setHorizontal(Alignment::HORIZONTAL_CENTER)
+            ->setVertical(Alignment::VERTICAL_CENTER);
+
+        $sheet->setCellValue('A3', 'Fecha de generación: ' . now()->format('d/m/Y H:i:s'));
+
+        $sheet->setCellValue('A5', '#');
+        $sheet->setCellValue('B5', 'Nombre completo');
+        $sheet->setCellValue('C5', 'Carnet');
+        $sheet->setCellValue('D5', 'Facultad');
+        $sheet->setCellValue('E5', 'Grado academico');
+
+        $sheet->getStyle('A5:E5')->applyFromArray($headerStyle);
+
+        $sheet->getColumnDimension('A')->setWidth(8);
+        $sheet->getColumnDimension('B')->setWidth(80);
+        $sheet->getColumnDimension('C')->setWidth(20);
+        $sheet->getColumnDimension('D')->setWidth(80);
+        $sheet->getColumnDimension('E')->setWidth(20);
+
+        $investigadores = $this->obtenerTodos();
+
+        $fila = 6;
+        $contador = 1;
+        foreach ($investigadores as $doc) {
+            $sheet->setCellValue('A' . $fila, $contador);
+            $sheet->setCellValue('B' . $fila, $doc['nombre'] . ' ' . $doc['apellido']);
+            $sheet->setCellValue('C' . $fila, $doc['carnet']);
+            $sheet->setCellValue('D' . $fila, $doc['facultad']);
+            $sheet->setCellValue('E' . $fila, $doc['grado']);
+
+            //$sheet->getStyle('D' . $fila)->getAlignment()->setHorizontal('right');
+
+            $fila++;
+            $contador++;
+        }
+
+        $ultimaFila = $fila - 1;
+        $sheet->setCellValue('B' . $fila, 'TOTAL INVESTIGADORES:');
+        $sheet->setCellValue('E' . $fila, ($fila - 6) . ' investigadores');
+        $sheet->getStyle('B' . $fila . ':E' . $fila)->getFont()->setBold(true);
+
+        $sheet->getStyle('A5:E' . $ultimaFila)->getBorders()->applyFromArray([
+            'allBorders' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN]
+        ]);
+
+        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+
+        $filename = 'Reporte_investigadores' . now()->format('Ymd_His') . '.xlsx';
+
+        return response()->streamDownload(function () use ($writer) {
+            $writer->save('php://output');
+        }, $filename, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ]);
     }
 
     /**

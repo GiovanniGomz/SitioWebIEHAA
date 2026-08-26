@@ -8,6 +8,14 @@ use Winter\Storm\Support\Facades\Input;
 use Winter\Storm\Exception\ValidationException;
 use Winter\Storm\Support\Facades\Validator;
 
+use Barryvdh\DomPDF\Facade\Pdf;
+
+require 'vendor/autoload.php';
+
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+
 class TipoPublicacionComponent extends ComponentBase
 {
     /**
@@ -116,6 +124,24 @@ class TipoPublicacionComponent extends ComponentBase
 
         return ['tipo_publicacion' => $tipo_publicaciones];
     }
+
+    public function generarPDF()
+    {
+        $tipoPublicaciones = $this->obtenerTodos();
+
+        \Log::info(json_encode($tipoPublicaciones));
+
+        $data = [
+            'fecha' => now(),
+            'tipos' => $tipoPublicaciones,
+            'titulo' => 'Listado de tipos de publicaciones'
+        ];
+
+        $pdf = Pdf::loadView('iehaa.tipopublicaciones::reporte', $data);
+
+        return $pdf->download('reporte_tipo_publicaciones.pdf');
+    }
+
 
     /**
      * Returns the properties provided by the component
