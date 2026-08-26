@@ -187,11 +187,13 @@ class TipoPublicacionComponent extends ComponentBase
         $tipoPublicaciones = $this->obtenerTodos();
 
         $fila = 6;
+        $contador = 1;
         foreach ($tipoPublicaciones as $doc) {
-            $sheet->setCellValue('A' . $fila, $doc['id']);
+            $sheet->setCellValue('A' . $fila, $contador);
             $sheet->setCellValue('B' . $fila, $doc['nombre']);
 
             $fila++;
+            $contador++;
         }
 
         $ultimaFila = $fila - 1;
