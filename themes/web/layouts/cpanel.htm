@@ -48,6 +48,18 @@
 </head>
 
 <body class="index-page">
+    <div id="loader" class="loader-overlay ocultar">
+        <div class="loader-content">
+            <img src="{{ 'assets/img/universidad.png'|theme }}" alt="Logo UES" class="loader-logo">
+
+            <div class="spinner-border text-primary mt-3" role="status">
+                <span class="visually-hidden">Cargando...</span>
+            </div>
+
+            <p class="loader-text">Espere por favor...</p>
+        </div>
+    </div>
+
     {% partial 'site/cpanel/header' %} {% page %} {% partial 'site/cpanel/footer' %}
 
     <!-- Scroll Top -->
