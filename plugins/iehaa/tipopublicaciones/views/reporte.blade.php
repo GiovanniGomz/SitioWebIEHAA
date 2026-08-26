@@ -115,7 +115,7 @@
                 <div class="value">{{ $loop->iteration ?? 'IEHAA-2026-0001' }}</div>
             </div>
             <div class="info-item">
-                <div class="label">Tipo de publiación</div>
+                <div class="label">Tipo de publicación</div>
                 <div class="value">{{ $tipo['nombre'] ?? '' }}</div>
             </div>
         </div>

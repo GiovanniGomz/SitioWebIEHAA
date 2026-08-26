@@ -7,7 +7,6 @@ Route::get('/reportePDFTipoPublicaciones', function () {
     return (new \IEHAA\Tipopublicaciones\Components\TipoPublicacionComponent())->generarPdf();
 });
 
-/*
-Route::get('/reporteExcelDescarga', function () {
-    return (new \IEHAA\Documentos\Components\DocumentoComponent())->generarExcel();
-});*/
+Route::get('/reporteExcelTipoPublicaciones', function () {
+    return (new \IEHAA\Tipopublicaciones\Components\TipoPublicacionComponent())->generarExcel();
+});
