@@ -72,11 +72,13 @@
     display: flex;
     gap: 2rem;
     padding: 0;
+    border: none !important;
 }
 
 .reportes section {
     cursor: pointer;
     padding: 20px;
+    border: none !important;
 }
 
 .reporte-excel a {
@@ -97,6 +99,7 @@
     align-items: center;
     padding: 0;
     margin-top: 30px;
+    border: none !important;
 }
 
 /* Archivero */

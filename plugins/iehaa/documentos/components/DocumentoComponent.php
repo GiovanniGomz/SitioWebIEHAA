@@ -258,14 +258,16 @@ class DocumentoComponent extends ComponentBase
         $documentos = Documento::all();
 
         $fila = 6;
+        $contador = 1;
         foreach ($documentos as $doc) {
-            $sheet->setCellValue('A' . $fila, $doc['id']);
+            $sheet->setCellValue('A' . $fila, $contador);
             $sheet->setCellValue('B' . $fila, $doc['nombre']);
             $sheet->setCellValue('C' . $fila, $doc['peso']);
 
             $sheet->getStyle('C' . $fila)->getAlignment()->setHorizontal('right');
 
             $fila++;
+            $contador++;
         }
 
         $ultimaFila = $fila - 1;
