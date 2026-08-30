@@ -124,7 +124,7 @@
     @endforeach
 
     <div class="footer">
-        Universidad de El Salvador • IEHAA • Ciudad Universitaria, San Salvador, El Salvador - now()->format('d \d\e F \d\e Y')
+        Universidad de El Salvador • IEHAA • Ciudad Universitaria, San Salvador, El Salvador - {{ now()->format('d \d\e F \d\e Y \a \l\a\s H:i') }}
     </div>
 
 </body>

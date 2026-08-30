@@ -1,0 +1,28 @@
+<table class="table" id="tabla-tipos">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Nombre</th>
+            <th scope="col">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% set contador = 1 %} {% for tipo_investigador in tipo_investigadores
+        %}
+        <tr>
+            <th scope="row">{{ contador }}</th>
+            <td>{{ tipo_investigador.nombre }}</td>
+            <td>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal"
+                    data-request="tipoInvestigadorComponent::onGetTipoInvestigador"
+                    data-request-data="id: {{ tipo_investigador.id }}" data-request-success="cargarFormulario(data)">
+                    <i class="bi bi-pencil-square"></i>
+                </button>
+                <button type="button" class="btn btn-danger btn-eliminar" data-id="{{ tipo_investigador.id }}">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </td>
+        </tr>
+        {% set contador = contador + 1 %} {% endfor %}
+    </tbody>
+</table>
