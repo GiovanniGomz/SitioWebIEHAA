@@ -106,7 +106,7 @@
 
     <!-- Información del documento -->
 
-    @foreach ($archivos as $archivo)
+    @foreach ($categorias as $categoria)
 
     <div class="info-box">
         <div class="info-grid">
@@ -115,12 +115,8 @@
                 <div class="value">{{ $loop->iteration ?? 'IEHAA-2026-0001' }}</div>
             </div>
             <div class="info-item">
-                <div class="label">Nombre del Documento</div>
-                <div class="value">{{ $archivo['nombre'] ?? 'Titulo del documento' }}</div>
-            </div>
-            <div class="info-item">
-                <div class="label">Peso del Documento</div>
-                <div class="value">{{ $archivo['peso'] ?? '0.00 MB' }}</div>
+                <div class="label">Categoria de investigador</div>
+                <div class="value">{{ $categoria['nombre'] ?? '' }}</div>
             </div>
         </div>
     </div>

@@ -1,14 +1,15 @@
 <?php
 
-namespace Iehaa\Tipopublicaciones\Components;
+namespace Iehaa\Categoriainvestigadores\Components;
 
 use Cms\Classes\ComponentBase;
-use Iehaa\Tipopublicaciones\Models\TipoPublicaciones;
+
 use Winter\Storm\Support\Facades\Input;
 use Winter\Storm\Exception\ValidationException;
 use Winter\Storm\Support\Facades\Validator;
 
 use Barryvdh\DomPDF\Facade\Pdf;
+use Iehaa\Categoriainvestigadores\Models\CategoriaInvestigador;
 
 require 'vendor/autoload.php';
 
@@ -16,7 +17,7 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 
-class TipoPublicacionComponent extends ComponentBase
+class CategoriaInvestigadorComponent extends ComponentBase
 {
     /**
      * Gets the details for the component
@@ -24,21 +25,21 @@ class TipoPublicacionComponent extends ComponentBase
     public function componentDetails()
     {
         return [
-            'name'        => 'TipoPublicacionComponent',
-            'description' => 'Modulo de tipo de publicaciones'
+            'name'        => 'categoriaInvestigadorComponent',
+            'description' => 'Modulo de categoria de Investigadores'
         ];
     }
 
     public function onRun()
     {
-        $this->page['tipo_publicaciones'] = $this->obtenerTodos();
+        $this->page['categoria_investigadores'] = $this->obtenerTodos();
     }
 
     public function obtenerTodos()
     {
-        $tipo_publicaciones = TipoPublicaciones::all();
+        $categoriaInvestigadores = CategoriaInvestigador::all();
 
-        return $tipo_publicaciones;
+        return $categoriaInvestigadores;
     }
 
     public function onRegistrar()
@@ -54,15 +55,15 @@ class TipoPublicacionComponent extends ComponentBase
         if ($id) { //Actualizando
             $this->validaciones($data);
 
-            $tipo_publicaciones = TipoPublicaciones::find($id);
-            $tipo_publicaciones->nombre = $data['nombre'];
+            $categoriaInvestigador = CategoriaInvestigador::find($id);
+            $categoriaInvestigador->nombre = $data['nombre'];
 
             $mensaje = '¡Modificado correctamente!';
         } else {
             //Creando nuevo registro
 
-            $tipo_publicaciones = new TipoPublicaciones();
-            $tipo_publicaciones->nombre = $data['nombre'];
+            $categoriaInvestigador = new CategoriaInvestigador();
+            $categoriaInvestigador->nombre = $data['nombre'];
 
             $this->validaciones($data);
 
@@ -71,11 +72,11 @@ class TipoPublicacionComponent extends ComponentBase
 
         \Log::info("Paso validaciones");
 
-        $tipo_publicaciones->save();
+        $categoriaInvestigador->save();
 
         return [
             '#listado' => $this->renderPartial('@listado', [
-                'tipo_publicaciones' => $this->obtenerTodos()
+                'categoria_investigadores' => $this->obtenerTodos()
             ]),
             'estado' => 'exito',
             'mensaje' => $mensaje
@@ -86,13 +87,13 @@ class TipoPublicacionComponent extends ComponentBase
     {
         $id = post('id');
         $id = intval($id);
-        $tipo_publicaciones = TipoPublicaciones::find($id);
+        $categoriaInvestigador = CategoriaInvestigador::find($id);
 
-        $tipo_publicaciones->delete();
+        $categoriaInvestigador->delete();
 
         return [
             '#listado' => $this->renderPartial('@listado', [
-                'tipo_publicaciones' => $this->obtenerTodos()
+                'categoria_investigadores' => $this->obtenerTodos()
             ]),
             'estado' => 'exito',
             'mensaje' => '¡Eliminado con exito!'
@@ -117,29 +118,29 @@ class TipoPublicacionComponent extends ComponentBase
         }
     }
 
-    function onGetTipoPublicacion()
+    function onGetCategoriaInvestigador()
     {
         $id = post('id');
-        $tipo_publicaciones = TipoPublicaciones::find($id);
+        $categoriaInvestigador = CategoriaInvestigador::find($id);
 
-        return ['tipo_publicacion' => $tipo_publicaciones];
+        return ['categoria_investigador' => $categoriaInvestigador];
     }
 
     public function generarPDF()
     {
-        $tipoPublicaciones = $this->obtenerTodos();
+        $categoriaInvestigador = $this->obtenerTodos();
 
-        \Log::info(json_encode($tipoPublicaciones));
+        \Log::info(json_encode($categoriaInvestigador));
 
         $data = [
             'fecha' => now(),
-            'tipos' => $tipoPublicaciones,
-            'titulo' => 'Listado de tipos de publicaciones'
+            'categorias' => $categoriaInvestigador,
+            'titulo' => 'Listado de categoria de investigadores'
         ];
 
-        $pdf = Pdf::loadView('iehaa.tipopublicaciones::reporte', $data);
+        $pdf = Pdf::loadView('iehaa.categoriainvestigadores::reporte', $data);
 
-        return $pdf->download('reporte_tipo_publicaciones.pdf');
+        return $pdf->download('reporte_categoria_investigadores.pdf');
     }
 
     public function generarExcel()
@@ -147,7 +148,7 @@ class TipoPublicacionComponent extends ComponentBase
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
 
-        $sheet->setTitle('Tipos de publicaciones IEHAA');
+        $sheet->setTitle('Categoria investigadores IEHAA');
 
         // Estilos
         $headerStyle = [
@@ -167,7 +168,7 @@ class TipoPublicacionComponent extends ComponentBase
         $sheet->getStyle('A1')->applyFromArray($titleStyle);
 
         $sheet->mergeCells('A2:B2');
-        $sheet->setCellValue('A2', 'Reporte de Tipo de publicaciones');
+        $sheet->setCellValue('A2', 'Reporte de Categoria de investigadores');
         $sheet->getStyle('A2')->getFont()->setBold(true)->setSize(14);
 
         $sheet->getStyle('A2')->getAlignment()
@@ -177,18 +178,18 @@ class TipoPublicacionComponent extends ComponentBase
         $sheet->setCellValue('A3', 'Fecha de generación: ' . now()->format('d/m/Y H:i:s'));
 
         $sheet->setCellValue('A5', '#');
-        $sheet->setCellValue('B5', 'Tipo de publicación');
+        $sheet->setCellValue('B5', 'Categoria de investigador');
 
         $sheet->getStyle('A5:B5')->applyFromArray($headerStyle);
 
         $sheet->getColumnDimension('A')->setWidth(8);
         $sheet->getColumnDimension('B')->setWidth(80);
 
-        $tipoPublicaciones = $this->obtenerTodos();
+        $categoriaInvestigadores = $this->obtenerTodos();
 
         $fila = 6;
         $contador = 1;
-        foreach ($tipoPublicaciones as $doc) {
+        foreach ($categoriaInvestigadores as $doc) {
             $sheet->setCellValue('A' . $fila, $contador);
             $sheet->setCellValue('B' . $fila, $doc['nombre']);
 
@@ -197,8 +198,8 @@ class TipoPublicacionComponent extends ComponentBase
         }
 
         $ultimaFila = $fila - 1;
-        $sheet->setCellValue('B' . $fila, 'TOTAL TIPOS DE PUBLICACIONES:');
-        $sheet->setCellValue('B' . $fila, ($fila - 6) . ' tipo de publicaciones');
+        $sheet->setCellValue('B' . $fila, 'TOTAL CATEGORIA DE INVESTIGADORES:');
+        $sheet->setCellValue('B' . $fila, ($fila - 6) . ' categoria de investigadores');
         $sheet->getStyle('B' . $fila . ':B' . $fila)->getFont()->setBold(true);
 
         $sheet->getStyle('A5:B' . $ultimaFila)->getBorders()->applyFromArray([
@@ -207,7 +208,7 @@ class TipoPublicacionComponent extends ComponentBase
 
         $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
 
-        $filename = 'Reporte_tipo_publicaciones_IEHAA_' . now()->format('Ymd_His') . '.xlsx';
+        $filename = 'Reporte_categoria_investigadores_IEHAA_' . now()->format('Ymd_His') . '.xlsx';
 
         return response()->streamDownload(function () use ($writer) {
             $writer->save('php://output');
