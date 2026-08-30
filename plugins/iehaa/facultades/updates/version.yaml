@@ -1,0 +1,5 @@
+1.0.0:
+    - 'First version of facultades'
+1.0.2:
+    - 'Create Facultads Table'
+    - v1.0.1/create_facultads_table.php

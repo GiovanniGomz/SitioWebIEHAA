@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Credenciales de acceso</title>
+</head>
+
+<body>
+
+    <h2>Credenciales de acceso</h2>
+
+    <p>Hola {{ nombre }},</p>
+
+    <p>
+        Se ha creado correctamente tu cuenta.
+        A continuación encontrarás tus credenciales para acceder al sistema:
+    </p>
+
+    <p>
+        <strong>Correo:</strong> {{ email }}<br>
+        <strong>Contraseña:</strong> {{ password }}
+    </p>
+
+    <p>
+        Puedes acceder al sistema desde el siguiente enlace:
+    </p>
+
+    <p>
+        <a href="{{ loginUrl }}">
+            Iniciar sesión
+        </a>
+    </p>
+
+    <p>
+        Por seguridad, te recomendamos cambiar tu contraseña después
+        de iniciar sesión.
+    </p>
+
+</body>
+
+</html>

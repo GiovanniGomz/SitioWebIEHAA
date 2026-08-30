@@ -1,14 +1,7 @@
 <!-- Sidebar -->
 <aside id="sidebar" class="sidebar">
-    <div
-        class="sidebar-brand d-flex align-items-center justify-content-center px-3 py-3"
-    >
-        <img
-            src="{{ 'assets/img/ues.png'|theme}}"
-            alt=""
-            data-aos="fade-in"
-            class="img-ues"
-        />
+    <div class="sidebar-brand d-flex align-items-center justify-content-center px-3 py-3">
+        <img src="{{ 'assets/img/ues.png'|theme}}" alt="" data-aos="fade-in" class="img-ues" />
     </div>
 
     <div class="sidebar-user px-3 py-3 border-bottom border-secondary">
@@ -53,6 +46,11 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a class="nav-link" href="/facultades">
+                    <i class="bi bi-buildings"></i> Facultades
+                </a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" href="/descargas">
                     <i class="bi bi-book"></i> Descargas
                 </a>
@@ -87,14 +85,9 @@
 
 <!-- Topbar -->
 <header class="topbar" id="header">
-    <div
-        class="d-flex align-items-center justify-content-between w-100 px-3 px-lg-4"
-    >
+    <div class="d-flex align-items-center justify-content-between w-100 px-3 px-lg-4">
         <div class="d-flex align-items-center">
-            <button
-                class="btn btn-link text-dark d-lg-none me-2"
-                id="sidebarToggle"
-            >
+            <button class="btn btn-link text-dark d-lg-none me-2" id="sidebarToggle">
                 <i class="bi bi-list fs-4"></i>
             </button>
         </div>
@@ -102,76 +95,52 @@
         <div class="d-flex align-items-center gap-3">
             <!-- Notificaciones -->
             <div class="dropdown">
-                <button
-                    class="btn btn-link text-dark position-relative p-0"
-                    data-bs-toggle="dropdown"
-                >
+                <button class="btn btn-link text-dark position-relative p-0" data-bs-toggle="dropdown">
                     <i class="bi bi-bell fs-5"></i>
-                    <span
-                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                        style="font-size: 0.6rem"
-                    >
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                        style="font-size: 0.6rem">
                         3
                     </span>
                 </button>
-                <ul
-                    class="dropdown-menu dropdown-menu-end shadow-sm"
-                    style="min-width: 280px"
-                >
+                <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="min-width: 280px">
                     <li class="dropdown-header fw-semibold">Notificaciones</li>
                     <li>
                         <hr class="dropdown-divider" />
                     </li>
                     <li>
-                        <a class="dropdown-item small" href="#"
-                            >Nuevo usuario registrado</a
-                        >
+                        <a class="dropdown-item small" href="#">Nuevo usuario registrado</a>
                     </li>
                     <li>
-                        <a class="dropdown-item small" href="#"
-                            >Reporte generado</a
-                        >
+                        <a class="dropdown-item small" href="#">Reporte generado</a>
                     </li>
                     <li>
-                        <a class="dropdown-item small" href="#"
-                            >Actualización disponible</a
-                        >
+                        <a class="dropdown-item small" href="#">Actualización disponible</a>
                     </li>
                 </ul>
             </div>
 
             <!-- Usuario -->
             <div class="dropdown">
-                <button
-                    class="btn btn-link text-dark d-flex align-items-center p-0"
-                    data-bs-toggle="dropdown"
-                >
+                <button class="btn btn-link text-dark d-flex align-items-center p-0" data-bs-toggle="dropdown">
                     <div class="avatar-circle-sm me-2">
                         <i class="bi bi-person-fill"></i>
                     </div>
-                    <span class="d-none d-md-inline small fw-medium"
-                        >Admin</span
-                    >
+                    <span class="d-none d-md-inline small fw-medium">Admin</span>
                     <i class="bi bi-chevron-down ms-1 small"></i>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end shadow-sm">
                     <li>
-                        <a class="dropdown-item" href="#"
-                            ><i class="bi bi-person me-2"></i> Perfil</a
-                        >
+                        <a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i> Perfil</a>
                     </li>
                     <li>
-                        <a class="dropdown-item" href="#"
-                            ><i class="bi bi-gear me-2"></i> Ajustes</a
-                        >
+                        <a class="dropdown-item" href="#"><i class="bi bi-gear me-2"></i> Ajustes</a>
                     </li>
                     <li>
                         <hr class="dropdown-divider" />
                     </li>
                     <li>
-                        <a class="dropdown-item text-danger" href="#"
-                            ><i class="bi bi-box-arrow-right me-2"></i> Salir</a
-                        >
+                        <a class="dropdown-item text-danger" href="#"><i class="bi bi-box-arrow-right me-2"></i>
+                            Salir</a>
                     </li>
                 </ul>
             </div>
