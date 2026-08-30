@@ -1,0 +1,5 @@
+1.0.0:
+    - 'First version of tipoinvestigadores'
+1.0.2:
+    - 'Create TipoInvestigadors Table'
+    - v1.0.1/create_tipo_investigadors_table.php

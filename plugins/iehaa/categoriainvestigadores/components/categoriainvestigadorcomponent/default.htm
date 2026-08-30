@@ -7,19 +7,19 @@
                 </a>
             </li>
             <li class="breadcrumb-item">
-                <a href="/facultades">Facultades</a>
+                <a href="/categoria_investigadores">Categoria de Investigadores</a>
             </li>
             <li class="breadcrumb-item active" aria-current="page">Listado</li>
         </ol>
     </nav>
 
-    <h1 class="text-center">Modulo de Facultades</h1>
+    <h1 class="text-center">Modulo de Categoria de Investigadores</h1>
 
     <section class="botonera">
         <section class="reportes">
             <!--PDF-->
             <section class="reporte-pdf">
-                <a href="/reportePDFFacultades">
+                <a href="/reportePDFCategoriaInvestigadores">
                     <i class="bi bi-file-earmark-pdf"></i>
                     Generar PDF
                 </a>
@@ -27,7 +27,7 @@
 
             <!--Excel-->
             <section class="reporte-excel">
-                <a href="/reporteExcelFacultades">
+                <a href="/reporteExcelCategoriaInvestigadores">
                     <i class="bi bi-file-earmark-spreadsheet"></i>
                     Generar Excel
                 </a>
@@ -35,13 +35,8 @@
         </section>
 
         <div class="">
-            <button
-                type="button"
-                class="btn btn-primary btn-nuevo float-right"
-                id="btnModalUp"
-                data-bs-toggle="modal"
-                data-bs-target="#modal"
-            >
+            <button type="button" class="btn btn-primary btn-nuevo float-right" id="btnModalUp" data-bs-toggle="modal"
+                data-bs-target="#modal">
                 Nuevo
             </button>
         </div>
@@ -53,4 +48,4 @@
 <!-- Formulario -->
 {% partial '@formulario' %}
 
-<script src="{{ '/assets/js/facultad/facultad.js'|theme}}"></script>
+<script src="{{ '/assets/js/categoria_investigadores/categoria_investigadores.js'|theme}}"></script>
