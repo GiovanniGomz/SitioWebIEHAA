@@ -1,0 +1,37 @@
+<table class="table" id="tabla-facultades">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Nombre</th>
+            <th scope="col">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% set contador = 1 %} {% for facultad in facultades %}
+        <tr>
+            <th scope="row">{{ contador }}</th>
+            <td>{{ facultad.nombre }}</td>
+            <td>
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modal"
+                    data-request="facultadComponent::onGetFacultad"
+                    data-request-data="id: {{ facultad.id }}"
+                    data-request-success="cargarFormulario(data)"
+                >
+                    <i class="bi bi-pencil-square"></i>
+                </button>
+                <button
+                    type="button"
+                    class="btn btn-danger btn-eliminar"
+                    data-id="{{ facultad.id }}"
+                >
+                    <i class="bi bi-trash"></i>
+                </button>
+            </td>
+        </tr>
+        {% set contador = contador + 1 %} {% endfor %}
+    </tbody>
+</table>

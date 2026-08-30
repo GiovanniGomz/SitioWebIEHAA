@@ -12,6 +12,8 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 require 'vendor/autoload.php';
 
+use Mail;
+
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
@@ -154,7 +156,13 @@ class InvestigadorComponent extends ComponentBase
 
         \Log::info("Paso validaciones");
 
-        $investigador->save();
+        $bandera = $investigador->save();
+
+        if ($bandera && $id == null) {
+            \Log::info("Acceso a condicion if");
+
+            $this->sendEmail($investigador);
+        }
 
         return [
             '#listado' => $this->renderPartial('@listado', [
@@ -324,6 +332,38 @@ class InvestigadorComponent extends ComponentBase
         }, $filename, [
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         ]);
+    }
+
+    function sendEmail(Investigador $investigador)
+    {
+        \Log::info("Acceso a sendEmail");
+
+        $password = $this->generarPassword();
+
+        $data = [
+            'nombre' => $investigador->nombre . ' ' . $investigador->apellido,
+            'email' => $investigador->email,
+            'password' => $password,
+            'loginUrl' => url('/login')
+        ];
+
+        \Log::info($password);
+        \Log::info($data);
+
+        Mail::send(
+            'iehaa.investigadores::mail.credenciales',
+            $data,
+            function ($message) use ($investigador) {
+                $message->to($investigador->email);
+                $message->subject('Credenciales de acceso');
+            }
+        );
+    }
+
+    function generarPassword()
+    {
+        $password = str()->random(10);
+        return $password;
     }
 
     /**

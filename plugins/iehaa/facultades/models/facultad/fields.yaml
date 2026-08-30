@@ -1,0 +1,8 @@
+# ===================================
+#  Form Field Definitions
+# ===================================
+
+fields:
+    id:
+        label: 'iehaa.facultades::lang.models.general.id'
+        disabled: true
