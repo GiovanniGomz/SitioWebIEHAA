@@ -85,16 +85,38 @@ function avisoEliminar(id) {
 function cargarFormulario(data) {
     const { investigador } = data;
 
+    console.log(investigador);
+
     modoModificar();
 
     document.querySelector('#nombre').value = investigador.nombre;
     document.querySelector('#apellido').value = investigador.apellido;
     document.querySelector('#carnet').value = investigador.carnet;
     document.querySelector('#telefono').value = investigador.telefono;
-    document.querySelector('#facultad').value = investigador.facultad;
-    document.querySelector('#grado').value = investigador.grado;
+    document.querySelector('#facultad').value = investigador.facultad_id;
+    document.querySelector('#categoria_investigador').value = investigador.categoria_investigador_id;
     document.querySelector('#email').value = investigador.email;
+    document.querySelector('#tipo_investigador').value = investigador.tipo_investigador_id;
+    document.querySelector('#sexo').value = investigador.sexo;
+    document.querySelector('#descripcion').value = investigador.descripcion;
     document.querySelector('#id').value = investigador.id;
+
+    llenarPublicaciones(investigador.publicaciones);
+
+
+    //Este método se activa cuando queremos obtener los datos del registro a modificar
+    function llenarPublicaciones(listaPublicaciones) {
+
+        console.log(`Valor de lista Publicacion: ${listaPublicaciones}`);
+
+        if (listaPublicaciones !== '') {
+            publicaciones = JSON.parse(listaPublicaciones);
+        }
+        console.log(publicaciones);
+
+        actualizarPublicacionesJSON();
+        mostrarPublicaciones();
+    }
 }
 
 function resetear() {
