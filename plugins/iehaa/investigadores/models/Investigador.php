@@ -26,7 +26,7 @@ class Investigador extends Model
     /**
      * @var array Fillable fields
      */
-    protected $fillable = ['id', 'nombre', 'apellido', 'carnet', 'email', 'telefono', 'facultad', 'grado'];
+    protected $fillable = ['id', 'nombre', 'apellido', 'carnet', 'email', 'telefono', 'facultad', 'grado', 'facultad_id', 'tipo_investigador_id', 'categoria_investigador_id', 'sexo', 'publicaciones', 'descripcion'];
 
     /**
      * @var array Validation rules for attributes
@@ -68,7 +68,20 @@ class Investigador extends Model
     public $hasMany = [];
     public $hasOneThrough = [];
     public $hasManyThrough = [];
-    public $belongsTo = [];
+    public $belongsTo = [
+        'facultad' => [
+            'IEHAA\Facultades\Models\Facultad',
+            'key' => 'facultad_id'
+        ],
+        'tipo_investigador' => [
+            'IEHAA\Tipoinvestigadores\Models\TipoInvestigador',
+            'key' => 'tipo_investigador_id'
+        ],
+        'categoria_investigador' => [
+            'IEHAA\Categoriainvestigadores\Models\CategoriaInvestigador',
+            'key' => 'categoria_investigador_id'
+        ]
+    ];
     public $belongsToMany = [];
     public $morphTo = [];
     public $morphOne = [];

@@ -22,8 +22,26 @@ return new class extends Migration
             $table->string('carnet');
             $table->string('email');
             $table->string('telefono');
-            $table->integer('facultad');
-            $table->integer('grado');
+
+            $table->unsignedInteger('facultad_id');
+            $table->unsignedInteger('tipo_investigador_id');
+            $table->unsignedInteger('categoria_investigador_id');
+
+            $table->string('sexo');
+            $table->string('publicaciones');
+            $table->text('descripcion');
+
+            $table->foreign('facultad_id')
+                ->references('id')
+                ->on('data.facultades');
+
+            $table->foreign('tipo_investigador_id')
+                ->references('id')
+                ->on('data.tipo_investigadores');
+
+            $table->foreign('categoria_investigador_id')
+                ->references('id')
+                ->on('data.categoria_investigadores');
         });
     }
 
