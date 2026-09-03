@@ -1,267 +1,207 @@
 <div class="container formulario-contenedor">
-    <div
-        class="modal fade"
-        id="modal"
-        data-bs-backdrop="static"
-        data-bs-keyboard="false"
-        tabindex="-1"
-        aria-labelledby="staticBackdropLabel"
-        aria-hidden="true"
-    >
+    <div class="modal fade" id="modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
                     <h1 class="modal-title fs-5" id="formulario-titulo">
                         Registrar Investigador
                     </h1>
-                    <button
-                        type="button"
-                        class="btn-close"
-                        id="btn-close"
-                        data-bs-dismiss="modal"
-                        aria-label="Close"
-                        onclick="resetear()"
-                    ></button>
+                    <button type="button" class="btn-close" id="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                        onclick="resetear()"></button>
                 </div>
 
                 <div class="modal-body">
-                    <div
-                        data-validate-error
-                        class="alert alert-danger"
-                        style="display: none"
-                    >
+                    <div data-validate-error class="alert alert-danger" style="display: none">
                         <p data-message></p>
                     </div>
-                    <form
-                        id="formulario"
-                        data-request="investigadorComponent::onRegistrar"
-                        data-request-validate
-                        data-request-flash
-                        data-request-success="onRegistrar(data)"
-                        data-request-files
-                        data-request-update="'@listado': '#listado'"
-                        enctype="multipart/form-data"
-                    >
+                    <form id="formulario" data-request="investigadorComponent::onRegistrar" data-request-validate
+                        data-request-flash data-request-success="onRegistrar(data)" data-request-files
+                        data-request-update="'@listado': '#listado'" enctype="multipart/form-data">
                         <div class="container">
-                            <div class="row">
-                                <div class="mb-3 col">
-                                    <div class="validacion">
-                                        <label for="nombre" class="form-label"
-                                            >Nombre</label
-                                        >
-                                        <span
-                                            data-validate-for="nombre"
-                                            class="text-danger small mb-1 validacion-descripcion"
-                                        ></span>
+                            <div style="height: 300px; overflow-y: auto; overflow-x: hidden;">
+                                <div class="row">
+                                    <div class="mb-3 col">
+                                        <div class="validacion">
+                                            <label for="nombre" class="form-label">Nombre</label>
+                                            <span data-validate-for="nombre"
+                                                class="text-danger small mb-1 validacion-descripcion"></span>
+                                        </div>
+                                        <input type="text" class="form-control" id="nombre" name="nombre"
+                                            placeholder="Escriba el nombre" />
                                     </div>
-                                    <input
-                                        type="text"
-                                        class="form-control"
-                                        id="nombre"
-                                        name="nombre"
-                                        placeholder="Escriba el nombre"
-                                    />
-                                </div>
-                                <div class="mb-3 col">
-                                    <div class="validacion">
-                                        <label for="apellido" class="form-label"
-                                            >Apellido</label
-                                        >
-                                        <span
-                                            data-validate-for="apellido"
-                                            class="text-danger small mb-1 validacion-descripcion"
-                                        ></span>
+                                    <div class="mb-3 col">
+                                        <div class="validacion">
+                                            <label for="apellido" class="form-label">Apellido</label>
+                                            <span data-validate-for="apellido"
+                                                class="text-danger small mb-1 validacion-descripcion"></span>
+                                        </div>
+                                        <input type="text" class="form-control" id="apellido" name="apellido"
+                                            placeholder="Escriba el apellido" />
                                     </div>
-                                    <input
-                                        type="text"
-                                        class="form-control"
-                                        id="apellido"
-                                        name="apellido"
-                                        placeholder="Escriba el apellido"
-                                    />
-                                </div>
-                                <div class="mb-3 col">
-                                    <div class="validacion">
-                                        <label for="carnet" class="form-label"
-                                            >Carnet</label
-                                        >
-                                        <span
-                                            data-validate-for="carnet"
-                                            class="text-danger small mb-1 validacion-descripcion"
-                                        ></span>
+                                    <div class="mb-3 col">
+                                        <div class="validacion">
+                                            <label for="carnet" class="form-label">Carnet</label>
+                                            <span data-validate-for="carnet"
+                                                class="text-danger small mb-1 validacion-descripcion"></span>
+                                        </div>
+                                        <input type="text" class="form-control" id="carnet" name="carnet"
+                                            placeholder="Escriba el carnet" />
                                     </div>
-                                    <input
-                                        type="text"
-                                        class="form-control"
-                                        id="carnet"
-                                        name="carnet"
-                                        placeholder="Escriba el carnet"
-                                    />
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="mb-3 col">
-                                    <div class="validacion">
-                                        <label for="telefono" class="form-label"
-                                            >Teléfono</label
-                                        >
-                                        <span
-                                            data-validate-for="telefono"
-                                            class="text-danger small mb-1 validacion-descripcion"
-                                        ></span>
-                                    </div>
-                                    <input
-                                        type="text"
-                                        class="form-control"
-                                        id="telefono"
-                                        name="telefono"
-                                        placeholder="Escriba el teléfono"
-                                    />
                                 </div>
 
-                                <div class="mb-3 col">
-                                    <div class="validacion">
-                                        <label for="tipo" class="form-label">
-                                            Facultad
-                                        </label>
-                                        <span
-                                            data-validate-for="facultad"
-                                            class="text-danger small mb-1 validacion-descripcion"
-                                        ></span>
+                                <div class="row">
+                                    <div class="mb-3 col">
+                                        <div class="validacion">
+                                            <label for="telefono" class="form-label">Teléfono</label>
+                                            <span data-validate-for="telefono"
+                                                class="text-danger small mb-1 validacion-descripcion"></span>
+                                        </div>
+                                        <input type="text" class="form-control" id="telefono" name="telefono"
+                                            placeholder="Escriba el teléfono" />
                                     </div>
 
-                                    <select
-                                        class="form-select"
-                                        id="facultad"
-                                        name="facultad"
-                                    >
-                                        <option value="" selected disabled>
-                                            Seleccione
-                                        </option>
-                                        <option value="1">
-                                            Facultad de Agronomía
-                                        </option>
-                                        <option value="2">
-                                            Facultad de Ciencias Económicas
-                                        </option>
-                                        <option value="3">
-                                            Facultad de Ciencias y Humanidades
-                                        </option>
-                                        <option value="4">
-                                            Facultad de Ciencias Naturales y
-                                            Matemática
-                                        </option>
-                                        <option value="5">
-                                            Facultad de Ingeniería y
-                                            Arquitectura
-                                        </option>
-                                        <option value="6">
-                                            Facultad de Jurisprudencia y
-                                            Ciencias Sociales
-                                        </option>
-                                        <option value="7">
-                                            Facultad de Medicina
-                                        </option>
-                                        <option value="8">
-                                            Facultad de Odontología
-                                        </option>
-                                        <option value="9">
-                                            Facultad de Química y Farmacia
-                                        </option>
+                                    <div class="mb-3 col">
+                                        <div class="validacion">
+                                            <label for="tipo" class="form-label">
+                                                Facultad
+                                            </label>
+                                            <span data-validate-for="facultad"
+                                                class="text-danger small mb-1 validacion-descripcion"></span>
+                                        </div>
 
-                                        <option value="10">
-                                            Facultad Multidisciplinaria de
-                                            Occidente
-                                        </option>
-                                        <option value="11">
-                                            Facultad Multidisciplinaria de
-                                            Oriente
-                                        </option>
-                                        <option value="12">
-                                            Facultad Multidisciplinaria
-                                            Paracentral
-                                        </option>
-                                    </select>
+                                        <select class="form-select" id="facultad" name="facultad">
+                                            <option value="" selected disabled>
+                                                Seleccione
+                                            </option>
+
+                                            {% for facultad in facultades %}
+                                            <option value="{{ facultad.id }}">
+                                                {{ facultad.nombre }}
+                                            </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="mb-3 col">
+                                        <div class="validacion">
+                                            <label for="categoria_investigador" class="form-label">
+                                                Categoria
+                                            </label>
+                                            <span data-validate-for="categoria_investigador"
+                                                class="text-danger small mb-1 validacion-descripcion"></span>
+                                        </div>
+
+                                        <select class="form-select" id="categoria_investigador"
+                                            name="categoria_investigador">
+                                            <option value="" selected disabled>
+                                                Seleccione
+                                            </option>
+
+                                            {% for categoria in categorias %}
+                                            <option value="{{ categoria.id }}">
+                                                {{ categoria.nombre }}
+                                            </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
                                 </div>
-                                <div class="mb-3 col">
-                                    <div class="validacion">
-                                        <label for="tipo" class="form-label">
-                                            Grado académico
-                                        </label>
-                                        <span
-                                            data-validate-for="grado"
-                                            class="text-danger small mb-1 validacion-descripcion"
-                                        ></span>
-                                    </div>
 
-                                    <select
-                                        class="form-select"
-                                        id="grado"
-                                        name="grado"
-                                    >
-                                        <option value="" selected disabled>
-                                            Seleccione
-                                        </option>
-                                        <option value="1">Estudiante</option>
-                                        <option value="2">
-                                            Educación superior
-                                        </option>
-                                        <option value="3">Maestria</option>
-                                        <option value="4">Doctorado</option>
-                                    </select>
+                                <div class="row">
+                                    <div class="mb-3 col">
+                                        <div class="validacion">
+                                            <label for="email" class="form-label">Email</label>
+                                            <span data-validate-for="email"
+                                                class="text-danger small mb-1 validacion-descripcion"></span>
+                                        </div>
+                                        <input type="email" class="form-control" id="email" name="email"
+                                            placeholder="Escriba el email" />
+                                    </div>
+                                    <div class="mb-3 col">
+                                        <div class="validacion">
+                                            <label for="tipo_investigador" class="form-label">
+                                                Tipo Investigador
+                                            </label>
+                                            <span data-validate-for="tipo_investigador"
+                                                class="text-danger small mb-1 validacion-descripcion"></span>
+                                        </div>
+
+                                        <select class="form-select" id="tipo_investigador" name="tipo_investigador">
+                                            <option value="" selected disabled>
+                                                Seleccione
+                                            </option>
+
+                                            {% for tipo in tipo_investigadores %}
+                                            <option value="{{ tipo.id }}">
+                                                {{ tipo.nombre }}
+                                            </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="mb-3 col">
+                                        <div class="validacion">
+                                            <label for="sexo" class="form-label">
+                                                Sexo
+                                            </label>
+                                            <span data-validate-for="sexo"
+                                                class="text-danger small mb-1 validacion-descripcion"></span>
+                                        </div>
+
+                                        <select class="form-select" id="sexo" name="sexo">
+                                            <option value="" selected disabled>
+                                                Seleccione
+                                            </option>
+                                            <option value="Masculino">Masculino</option>
+                                            <option value="Femenino">Femenino</option>
+                                        </select>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div class="row">
-                                <div class="mb-3 col">
-                                    <div class="validacion">
-                                        <label for="email" class="form-label"
-                                            >Email</label
-                                        >
-                                        <span
-                                            data-validate-for="email"
-                                            class="text-danger small mb-1 validacion-descripcion"
-                                        ></span>
+                                <!-- PUBLICACIONES -->
+                                <div class="row">
+                                    <div class="mb-3 col"> <label class="form-label">Publicaciones</label>
+                                        <!-- Campos para agregar publicación -->
+                                        <div class="row g-2 mb-2">
+                                            <div class="col-md-5"> <input type="text" class="form-control"
+                                                    id="publicacion_nombre" placeholder="Nombre de la publicación">
+                                            </div>
+                                            <div class="col-md-5"> <input type="url" class="form-control"
+                                                    id="publicacion_url" placeholder="URL de la publicación"> </div>
+                                            <div class="col-md-2"> <button type="button" class="btn btn-success w-100"
+                                                    onclick="agregarPublicacion()"> Agregar </button> </div>
+                                        </div> <!-- Lista de publicaciones agregadas -->
+                                        <div id="lista-publicaciones" class="mt-3"> </div>
                                     </div>
-                                    <input
-                                        type="email"
-                                        class="form-control"
-                                        id="email"
-                                        name="email"
-                                        placeholder="Escriba el email"
-                                    />
+                                </div>
+
+                                <div class="row">
+                                    <div class="mb-3 col">
+                                        <div class="validacion">
+                                            <label for="descripcion" class="form-label">Descripción</label>
+                                            <span data-validate-for="descripcion"
+                                                class="text-danger small mb-1 validacion-descripcion"></span>
+                                        </div>
+                                        <textarea class="form-control" id="descripcion" name="descripcion" rows="6"
+                                            placeholder="Mensaje"></textarea>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-
-                        <input type="hidden" name="id" id="id" />
-                        <input
-                            type="hidden"
-                            name="archivo_tmp"
-                            id="archivo_tmp"
-                        />
-
-                        <div class="modal-footer">
-                            <button
-                                type="button"
-                                class="btn btn-secondary"
-                                onclick="resetear()"
-                                data-bs-dismiss="modal"
-                            >
-                                Cancelar
-                            </button>
-                            <button
-                                type="submit"
-                                class="btn btn-primary"
-                                id="btnRegistrar"
-                            >
-                                Registrar
-                            </button>
-                        </div>
-                    </form>
                 </div>
+
+                <input type="hidden" name="id" id="id" />
+                <input type="hidden" name="publicaciones" id="publicaciones" value="[]">
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="resetear()" data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary" id="btnRegistrar">
+                        Registrar
+                    </button>
+                </div>
+                </form>
             </div>
         </div>
     </div>
+</div>
 </div>

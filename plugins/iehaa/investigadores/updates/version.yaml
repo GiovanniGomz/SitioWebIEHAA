@@ -1,5 +1,5 @@
 1.0.0:
-    - 'First version of investigadores'
-1.0.3:
-    - 'Create Investigadors Table'
+    - "First version of investigadores"
+1.0.7:
+    - "Create Investigadors Table"
     - v1.0.1/create_investigadors_table.php

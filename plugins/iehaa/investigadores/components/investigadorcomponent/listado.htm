@@ -16,24 +16,14 @@
             <td>{{ investigador.nombre }} {{ investigador.apellido }}</td>
             <td>{{ investigador.carnet }}</td>
             <td>{{ investigador.email }}</td>
-            <td>{{ investigador.facultad }}</td>
+            <td>{{ investigador.facultad.nombre }}</td>
             <td>
-                <button
-                    type="button"
-                    class="btn btn-primary"
-                    data-bs-toggle="modal"
-                    data-bs-target="#modal"
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal"
                     data-request="investigadorComponent::onGetInvestigador"
-                    data-request-data="id: {{ investigador.id }}"
-                    data-request-success="cargarFormulario(data)"
-                >
+                    data-request-data="id: {{ investigador.id }}" data-request-success="cargarFormulario(data)">
                     <i class="bi bi-pencil-square"></i>
                 </button>
-                <button
-                    type="button"
-                    class="btn btn-danger btn-eliminar"
-                    data-id="{{ investigador.id }}"
-                >
+                <button type="button" class="btn btn-danger btn-eliminar" data-id="{{ investigador.id }}">
                     <i class="bi bi-trash"></i>
                 </button>
             </td>

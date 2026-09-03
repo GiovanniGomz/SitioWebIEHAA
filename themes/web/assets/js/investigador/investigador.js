@@ -2,6 +2,8 @@ $(document).ready(function () {
     iniciarApp();
 });
 
+let publicaciones = [];
+
 function iniciarApp() {
     iniciarTabla();
     eventos();
@@ -117,20 +119,20 @@ function modoRegistrar() {
 }
 
 function limpiar() {
-    const contenedorPDF = document.querySelector('#contenedor-pdf');
-
-    if (contenedorPDF) {
-        contenedorPDF.classList.add('ocultar');
-    }
-
     document.querySelector('#nombre').value = '';
     document.querySelector('#apellido').value = '';
     document.querySelector('#carnet').value = '';
     document.querySelector('#telefono').value = '';
     document.querySelector('#facultad').value = '';
-    document.querySelector('#grado').value = '';
+    document.querySelector('#categoria_investigador').value = '';
     document.querySelector('#email').value = '';
+    document.querySelector('#tipo_investigador').value = '';
+    document.querySelector('#sexo').value = '';
+    document.querySelector('#publicaciones').value = '';
+    document.querySelector('#descripcion').value = '';
     document.querySelector('#id').value = '';
+
+    limpiarPublicaciones();
 
     limpiarErrores();
 }
@@ -141,4 +143,123 @@ function limpiarErrores() {
     errores.forEach(error => {
         error.textContent = '';
     });
+}
+
+function agregarPublicacion() {
+
+    const nombre = document.getElementById('publicacion_nombre').value.trim();
+    const url = document.getElementById('publicacion_url').value.trim();
+
+    // Validar que ambos campos tengan información
+    if (!nombre || !url) {
+        Swal.fire(
+            'Error',
+            'Debe ingresar el nombre y la URL de la publicación',
+            'error'
+        );
+        return;
+    }
+
+    // Crear publicación
+    const publicacion = {
+        id: Date.now(),
+        nombre: nombre,
+        url: url
+    };
+
+    // Agregar al arreglo
+    publicaciones.push(publicacion);
+
+    // Actualizar la interfaz
+    mostrarPublicaciones();
+
+    // Actualizar hidden
+    actualizarPublicacionesJSON();
+
+    // Limpiar campos
+    document.getElementById('publicacion_nombre').value = '';
+    document.getElementById('publicacion_url').value = '';
+
+    document.getElementById('publicacion_nombre').focus();
+}
+
+
+function eliminarPublicacion(id) {
+
+    publicaciones = publicaciones.filter(
+        publicacion => publicacion.id !== id
+    );
+
+    mostrarPublicaciones();
+
+    actualizarPublicacionesJSON();
+}
+
+function limpiarPublicaciones() {
+    const lista = document.getElementById('lista-publicaciones');
+
+    lista.innerHTML = '';
+
+    publicaciones = [];
+
+}
+
+
+function mostrarPublicaciones() {
+
+    const lista = document.getElementById('lista-publicaciones');
+
+    lista.innerHTML = '';
+
+    if (publicaciones.length === 0) {
+        lista.innerHTML = `
+                <div class="alert alert-light border">
+                    No hay publicaciones agregadas.
+                </div>
+            `;
+
+        return;
+    }
+
+    publicaciones.forEach(publicacion => {
+
+        lista.innerHTML += `
+                <div class="d-flex justify-content-between align-items-center
+                            border rounded p-2 mb-2">
+
+                    <div>
+                        <strong style="color: gray;">${escapeHTML(publicacion.nombre)}</strong>
+                        <br>
+                        <a style="color:gray;" href="${escapeHTML(publicacion.url)}"
+                           target="_blank">
+                            ${escapeHTML(publicacion.url)}
+                        </a>
+                    </div>
+
+                    <button type="button"
+                            class="btn btn-danger btn-sm"
+                            onclick="eliminarPublicacion(${publicacion.id})">
+                        Eliminar
+                    </button>
+
+                </div>
+            `;
+    });
+}
+
+
+function actualizarPublicacionesJSON() {
+
+    document.querySelector('#publicaciones').value =
+        JSON.stringify(publicaciones);
+}
+
+
+function escapeHTML(text) {
+
+    const div = document.createElement('div');
+
+    div.textContent = text;
+
+    return div.innerHTML;
 }
