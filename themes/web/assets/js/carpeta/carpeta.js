@@ -4,6 +4,7 @@ $(document).ready(function () {
 
 function iniciarApp() {
     eventos();
+    subMenuDinamico();
 }
 
 function eventos() {
@@ -22,7 +23,10 @@ function eventos() {
 }
 
 function redireccionar(url) {
-    window.location.href = '/documentoFabio?id=' + url;
+    let nombre = 'mostrarFolder';
+    guardarCookie(nombre, url);
+
+    window.location.href = '/folders?id=' + url;
 }
 
 function onRegistrar(data) {
@@ -44,7 +48,7 @@ function cargarFormulario(data) {
 
     modoModificar();
 
-    document.querySelector('#codigo').value = carpeta.codigo;
+    document.querySelector('#nombre').value = carpeta.nombre;
     document.querySelector('#id').value = carpeta.id;
 }
 
@@ -70,7 +74,7 @@ function modoRegistrar() {
 }
 
 function limpiar() {
-    document.querySelector('#codigo').value = '';
+    document.querySelector('#nombre').value = '';
     document.querySelector('#id').value = '';
 
     limpiarErrores();

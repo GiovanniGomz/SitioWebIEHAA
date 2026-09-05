@@ -5,6 +5,7 @@ $(document).ready(function () {
 function iniciarApp() {
     iniciarTabla();
     eventos();
+    subMenuDinamico();
 }
 
 function eventos() {

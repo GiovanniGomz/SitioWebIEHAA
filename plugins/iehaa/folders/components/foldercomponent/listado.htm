@@ -1,0 +1,27 @@
+<div class="contenedor-archiveros {% if folders|length == 0 %} d-block text-center {% endif %}">
+    {% for folder in folders %}
+
+    <div class="archivero">
+        <i class="bi bi-folder btnRedireccionar" data-id="{{ folder.url }}"></i>
+
+        <span class="text-center">{{ folder.nombre }}</span>
+
+        <div class="archivero-botonera">
+            <button class="boton boton-modificar" data-bs-toggle="modal" data-bs-target="#modal"
+                data-request="folderComponent::onGetFolder" data-request-data="id: {{ folder.id }}"
+                data-request-success="cargarFormulario(data)">
+                <i class="bi bi-pencil-square"></i>
+            </button>
+
+            <button type="button" class="boton boton-eliminar" data-id="{{ folder.id }}">
+                <i class="bi bi-trash"></i>
+            </button>
+        </div>
+    </div>
+
+    {% else %}
+
+    <p class="mensaje">No hay registros disponibles</p>
+
+    {% endfor %}
+</div>
