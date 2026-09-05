@@ -26,7 +26,7 @@ class Fabio extends Model
     /**
      * @var array Fillable fields
      */
-    protected $fillable = ['id', 'nombre', 'archivo', 'carpeta_id'];
+    protected $fillable = ['id', 'nombre', 'archivo', 'folder_id'];
 
     /**
      * @var array Validation rules for attributes
@@ -69,9 +69,9 @@ class Fabio extends Model
     public $hasOneThrough = [];
     public $hasManyThrough = [];
     public $belongsTo = [
-        'Carpeta' => [
-            'IEHAA\Carpetas\Models\Carpeta',
-            'key' => 'carpeta_id'
+        'Folder' => [
+            'IEHAA\Folders\Models\Folder',
+            'key' => 'folder_id'
         ]
     ];
     public $belongsToMany = [];

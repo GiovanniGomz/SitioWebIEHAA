@@ -4,6 +4,7 @@ $(document).ready(function () {
 
 function iniciarApp() {
     eventos();
+    subMenuDinamico();
 }
 
 function eventos() {
@@ -22,6 +23,10 @@ function eventos() {
 }
 
 function redireccionar(url) {
+
+    let nombre = 'mostrarCarpeta';
+    guardarCookie(nombre, url);
+
     window.location.href = '/carpetas?id=' + url;
 }
 

@@ -20,11 +20,11 @@ return new class extends Migration
             $table->string('nombre');
             $table->string('archivo');
 
-            $table->unsignedInteger('carpeta_id');
+            $table->unsignedInteger('folder_id');
 
-            $table->foreign('carpeta_id')
+            $table->foreign('folder_id')
                 ->references('id')
-                ->on('data.carpetas');
+                ->on('data.folders');
         });
     }
 
