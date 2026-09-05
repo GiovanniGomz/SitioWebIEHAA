@@ -1,22 +1,38 @@
 <div class="container archiveros">
+    <nav class="submenu-desplazamiento mb-4">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item">
+                <a href="{{ 'cpanel'|page }}">
+                    <i class="bi bi-house-door-fill me-1"></i> IEHAA
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="/archiveros">Archiveros</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="" id="mostrarGaveta">Gavetas</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="" id="mostrarCarpeta">Carpetas</a>
+            </li>
+        </ol>
+    </nav>
 
     <h1 class="text-center">Modulo de Carpetas</h1>
 
     <section class="botonera">
-
         <section class="reportes">
             <!--PDF-->
             <section class="reporte-pdf">
-                <a href="/reportePDFDescarga">
+                <a href="/reportePDFCarpeta" id="reportePDF">
                     <i class="bi bi-file-earmark-pdf"></i>
                     Generar PDF
                 </a>
             </section>
 
-
             <!--Excel-->
             <section class="reporte-excel">
-                <a href="/reporteExcelDescarga">
+                <a href="/reporteCarpeta" id="reporteExcel">
                     <i class="bi bi-file-earmark-spreadsheet"></i>
                     Generar Excel
                 </a>
@@ -24,19 +40,22 @@
         </section>
 
         <div class="">
-            <button type="button" class="btn btn-primary btn-nuevo float-right" id="btnModalUp" data-bs-toggle="modal"
-                data-bs-target="#modal">Nuevo</button>
+            <button
+                type="button"
+                class="btn btn-primary btn-nuevo float-right"
+                id="btnModalUp"
+                data-bs-toggle="modal"
+                data-bs-target="#modal"
+            >
+                Nuevo
+            </button>
         </div>
-
     </section>
 
-    <div id="listado">
-        {% partial '@listado' %}
-    </div>
+    <div id="listado">{% partial '@listado' %}</div>
 </div>
 
 <!-- Formulario -->
 {% partial '@formulario' %}
-
 
 <script src="{{ '/assets/js/carpeta/carpeta.js'|theme}}"></script>

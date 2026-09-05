@@ -206,10 +206,14 @@ class InvestigadorComponent extends ComponentBase
 
     public function generarExcel()
     {
-        $spreadsheet = new Spreadsheet();
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
 
-        $sheet->setTitle('Investigadores IEHAA');
+        $sheet->setTitle('Archiveros IEHAA');
+
+        // =========================
+        // ESTILO DEL ENCABEZADO
+        // =========================
 
         $headerStyle = [
             'font' => [
@@ -217,14 +221,17 @@ class InvestigadorComponent extends ComponentBase
                 'color' => ['rgb' => 'FFFFFF'],
                 'size' => 12
             ],
+
             'fill' => [
                 'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
                 'startColor' => ['rgb' => '1F4E79']
             ],
+
             'alignment' => [
                 'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
                 'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
             ],
+
             'borders' => [
                 'allBorders' => [
                     'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN
@@ -232,17 +239,27 @@ class InvestigadorComponent extends ComponentBase
             ],
         ];
 
+        // =========================
+        // ESTILO DEL TÍTULO
+        // =========================
+
         $titleStyle = [
             'font' => [
                 'bold' => true,
                 'size' => 16
             ],
+
             'alignment' => [
-                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
             ],
         ];
 
-        $sheet->mergeCells('A1:H1');
+        // =========================
+        // TÍTULO PRINCIPAL
+        // =========================
+
+        $sheet->mergeCells('A1:B1');
 
         $sheet->setCellValue(
             'A1',
@@ -251,12 +268,15 @@ class InvestigadorComponent extends ComponentBase
 
         $sheet->getStyle('A1')->applyFromArray($titleStyle);
 
+        // =========================
+        // SUBTÍTULO
+        // =========================
 
-        $sheet->mergeCells('A2:H2');
+        $sheet->mergeCells('A2:B2');
 
         $sheet->setCellValue(
             'A2',
-            'Reporte de Investigadores'
+            'Reporte de Archiveros'
         );
 
         $sheet->getStyle('A2')->getFont()
@@ -271,37 +291,42 @@ class InvestigadorComponent extends ComponentBase
                 \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
             );
 
+        // =========================
+        // FECHA
+        // =========================
+
         $sheet->setCellValue(
             'A3',
             'Fecha de generación: ' . now()->format('d/m/Y H:i:s')
         );
 
+        // =========================
+        // ENCABEZADOS DE TABLA
+        // =========================
+
         $sheet->setCellValue('A5', '#');
-        $sheet->setCellValue('B5', 'Nombre completo');
-        $sheet->setCellValue('C5', 'Carnet');
-        $sheet->setCellValue('D5', 'Facultad');
-        $sheet->setCellValue('E5', 'Tipo de investigador');
-        $sheet->setCellValue('F5', 'Categoría de investigador');
-        $sheet->setCellValue('G5', 'Teléfono');
-        $sheet->setCellValue('H5', 'Correo electrónico');
+        $sheet->setCellValue('B5', 'Nombre del archivero');
 
-        $sheet->getStyle('A5:H5')->applyFromArray($headerStyle);
+        $sheet->getStyle('A5:B5')
+            ->applyFromArray($headerStyle);
 
-        $sheet->getColumnDimension('A')->setWidth(8);
-        $sheet->getColumnDimension('B')->setWidth(35);
-        $sheet->getColumnDimension('C')->setWidth(20);
-        $sheet->getColumnDimension('D')->setWidth(35);
-        $sheet->getColumnDimension('E')->setWidth(25);
-        $sheet->getColumnDimension('F')->setWidth(30);
-        $sheet->getColumnDimension('G')->setWidth(20);
-        $sheet->getColumnDimension('H')->setWidth(35);
+        // =========================
+        // ANCHO DE COLUMNAS
+        // =========================
 
-        $investigadores = $this->obtenerTodos();
+        $sheet->getColumnDimension('A')->setWidth(10);
+        $sheet->getColumnDimension('B')->setWidth(50);
+
+        // =========================
+        // OBTENER ARCHIVEROS
+        // =========================
+
+        $archiveros = $this->obtenerTodos();
 
         $fila = 6;
         $contador = 1;
 
-        foreach ($investigadores as $doc) {
+        foreach ($archiveros as $archivero) {
 
             // Correlativo
             $sheet->setCellValue(
@@ -309,56 +334,15 @@ class InvestigadorComponent extends ComponentBase
                 $contador
             );
 
-            // Nombre completo
+            // Nombre
             $sheet->setCellValue(
                 'B' . $fila,
-                trim(
-                    ($doc['nombre'] ?? '') .
-                        ' ' .
-                        ($doc['apellido'] ?? '')
-                )
-            );
-
-            // Carnet
-            $sheet->setCellValue(
-                'C' . $fila,
-                $doc['carnet'] ?? 'No disponible'
-            );
-
-            // Facultad
-            $sheet->setCellValue(
-                'D' . $fila,
-                $doc['facultad']['nombre'] ?? 'No disponible'
-            );
-
-            // Tipo de investigador
-            $sheet->setCellValue(
-                'E' . $fila,
-                $doc['tipo_investigador']['nombre'] ?? 'No disponible'
-            );
-
-            // Categoría de investigador
-            $sheet->setCellValue(
-                'F' . $fila,
-                $doc['categoria_investigador']['nombre'] ?? 'No disponible'
-            );
-
-            // Correo electrónico
-            $sheet->setCellValue(
-                'G' . $fila,
-                $doc['telefono'] ?? 'No disponible'
-            );
-
-            // Teléfono
-            $sheet->setCellValue(
-                'H' . $fila,
-                $doc['email'] ?? 'No disponible'
+                $archivero['nombre'] ?? 'No disponible'
             );
 
             $fila++;
             $contador++;
         }
-
 
         // =========================
         // TOTAL
@@ -367,30 +351,29 @@ class InvestigadorComponent extends ComponentBase
         $ultimaFila = $fila - 1;
 
         $sheet->mergeCells(
-            'A' . $fila . ':H' . $fila
+            'A' . $fila . ':A' . $fila
         );
 
         $sheet->setCellValue(
             'A' . $fila,
-            'TOTAL INVESTIGADORES:'
+            'TOTAL'
         );
 
         $sheet->setCellValue(
-            'H' . $fila,
-            ($fila - 6) . ' investigadores'
+            'B' . $fila,
+            ($fila - 6) . ' archiveros'
         );
 
         $sheet->getStyle(
-            'A' . $fila . ':I' . $fila
+            'A' . $fila . ':B' . $fila
         )->getFont()->setBold(true);
 
-
         // =========================
-        // BORDES
+        // BORDES DE LA TABLA
         // =========================
 
         $sheet->getStyle(
-            'A5:H' . $ultimaFila
+            'A5:B' . $ultimaFila
         )->getBorders()->applyFromArray([
             'allBorders' => [
                 'borderStyle' =>
@@ -398,29 +381,29 @@ class InvestigadorComponent extends ComponentBase
             ]
         ]);
 
-
-        // Bordes de la fila TOTAL
+        // Bordes de TOTAL
 
         $sheet->getStyle(
-            'A' . $fila . ':I' . $fila
+            'A' . $fila . ':B' . $fila
         )->getBorders()->applyFromArray([
             'allBorders' => [
                 'borderStyle' =>
                 \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN
             ]
         ]);
-
 
         // =========================
         // ALINEACIÓN
         // =========================
 
         $sheet->getStyle(
-            'A5:I' . $fila
+            'A5:B' . $fila
         )->getAlignment()
             ->setVertical(
                 \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
             );
+
+        // Correlativo centrado
 
         $sheet->getStyle(
             'A5:A' . $ultimaFila
@@ -429,51 +412,26 @@ class InvestigadorComponent extends ComponentBase
                 \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER
             );
 
-        $sheet->getStyle(
-            'C5:C' . $ultimaFila
-        )->getAlignment()
-            ->setHorizontal(
-                \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER
-            );
-
-        $sheet->getStyle(
-            'G5:G' . $ultimaFila
-        )->getAlignment()
-            ->setHorizontal(
-                \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER
-            );
-
-        $sheet->getStyle(
-            'I5:I' . $ultimaFila
-        )->getAlignment()
-            ->setHorizontal(
-                \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER
-            );
-
-
         // =========================
         // AJUSTAR TEXTO
         // =========================
 
         $sheet->getStyle(
-            'A5:I' . $ultimaFila
+            'A5:B' . $ultimaFila
         )->getAlignment()
             ->setWrapText(true);
 
-
         // =========================
-        // ALTURA DE ENCABEZADO
+        // ALTURA DEL ENCABEZADO
         // =========================
 
-        $sheet->getRowDimension(5)->setRowHeight(35);
-
+        $sheet->getRowDimension(5)->setRowHeight(30);
 
         // =========================
         // CONGELAR ENCABEZADO
         // =========================
 
         $sheet->freezePane('A6');
-
 
         // =========================
         // GENERAR ARCHIVO
@@ -484,7 +442,7 @@ class InvestigadorComponent extends ComponentBase
         );
 
         $filename =
-            'Reporte_investigadores_' .
+            'Reporte_archiveros_' .
             now()->format('Ymd_His') .
             '.xlsx';
 
@@ -499,6 +457,7 @@ class InvestigadorComponent extends ComponentBase
             ]
         );
     }
+
 
 
     function sendEmail(Investigador $investigador)

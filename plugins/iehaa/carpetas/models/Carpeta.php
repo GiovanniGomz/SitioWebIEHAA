@@ -26,7 +26,7 @@ class Carpeta extends Model
     /**
      * @var array Fillable fields
      */
-    protected $fillable = ['id', 'codigo', 'url', 'gaveta_id'];
+    protected $fillable = ['id', 'nombre', 'url', 'gaveta_id'];
 
     /**
      * @var array Validation rules for attributes

@@ -19,7 +19,7 @@ return new class extends Migration
 
         Schema::create('data.carpetas', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('codigo');
+            $table->string('nombre');
             $table->string('url');
 
             $table->unsignedInteger('gaveta_id');

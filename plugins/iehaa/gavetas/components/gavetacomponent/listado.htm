@@ -3,9 +3,9 @@
     {% for gaveta in gavetas %}
 
     <div class="archivero">
-        <i class="bi bi-collection btnRedireccionar" data-id="{{ gaveta.url }}"></i>
+        <i class="bi bi-archive btnRedireccionar" data-id="{{ gaveta.url }}"></i>
 
-        <span>{{ gaveta.codigo }}</span>
+        <span>Gaveta No. {{ gaveta.codigo }}</span>
 
         <div class="archivero-botonera">
             <button class="boton boton-modificar" data-bs-toggle="modal" data-bs-target="#modal"

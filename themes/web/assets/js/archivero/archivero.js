@@ -22,6 +22,10 @@ function eventos() {
 }
 
 function redireccionar(url) {
+    //Almacenar cookie
+    let nombre = 'mostrarGaveta';
+    guardarCookie(nombre, url);
+
     window.location.href = '/gavetas?id=' + url;
 }
 

@@ -83,4 +83,65 @@ function toggleScrolled() {
 
 })();
 
+function getCookie(nombre) {
+    const cookies = document.cookie.split("; ");
 
+    for (const cookie of cookies) {
+        const [key, value] = cookie.split("=");
+
+        if (key === nombre) {
+            return decodeURIComponent(value);
+        }
+    }
+
+    return null;
+}
+
+function guardarCookie(nombre, url) {
+    document.cookie = `${nombre}=${url}; path=/`;
+}
+
+function subMenuDinamico() {
+    //Cookies
+    const mostrarGaveta = getCookie('mostrarGaveta');
+    const mostrarCarpeta = getCookie('mostrarCarpeta');
+    const mostrarFolder = getCookie('mostrarFolder');
+    const mostrarFabio = getCookie('mostrarFabio');
+
+    //Elementos
+    const elementoMostrarGaveta = document.querySelector('#mostrarGaveta');
+    const elementoMostrarCarpeta = document.querySelector('#mostrarCarpeta');
+    const elementoMostrarFolder = document.querySelector('#mostrarFolder');
+    const elementoMostrarFabio = document.querySelector('#mostrarFabio');
+
+    const enlacePDF = document.querySelector('#reportePDF');
+    const enlaceExcel = document.querySelector('#reporteExcel');
+
+    if (mostrarGaveta && elementoMostrarGaveta) {
+        elementoMostrarGaveta.href = "/gavetas?id=" + mostrarGaveta;
+
+        enlacePDF.href = "/reportePDFGaveta?id=" + mostrarGaveta;
+        enlaceExcel.href = "/reporteExcelGaveta?id=" + mostrarGaveta;
+    }
+
+    if (mostrarCarpeta && elementoMostrarCarpeta) {
+        elementoMostrarCarpeta.href = "/carpetas?id=" + mostrarCarpeta;
+
+        enlacePDF.href = "/reportePDFCarpeta?id=" + mostrarCarpeta;
+        enlaceExcel.href = "/reporteExcelCarpeta?id=" + mostrarCarpeta;
+    }
+
+    if (mostrarFolder && elementoMostrarFolder) {
+        elementoMostrarFolder.href = "/folders?id=" + mostrarFolder;
+
+        enlacePDF.href = "/reportePDFFolder?id=" + mostrarFolder;
+        enlaceExcel.href = "/reporteExcelFolder?id=" + mostrarFolder;
+    }
+
+    if (mostrarFabio && elementoMostrarFabio) {
+        elementoMostrarFabio.href = "/documentoFabio?id=" + mostrarFabio;
+
+        enlacePDF.href = "/reportePDFFabio?id=" + mostrarFabio;
+        enlaceExcel.href = "/reporteExcelFabio?id=" + mostrarFabio;
+    }
+}
