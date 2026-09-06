@@ -1,0 +1,5 @@
+1.0.0:
+    - 'First version of anaquel'
+1.0.3:
+    - 'Create Anaquels Table'
+    - v1.0.1/create_anaquels_table.php

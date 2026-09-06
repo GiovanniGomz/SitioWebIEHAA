@@ -1,0 +1,5 @@
+1.0.0:
+    - 'First version of coleccion'
+1.0.2:
+    - 'Create Coleccions Table'
+    - v1.0.1/create_coleccions_table.php
