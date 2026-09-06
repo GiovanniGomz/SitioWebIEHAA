@@ -1,0 +1,28 @@
+<div class="contenedor-archiveros {% if anaqueles|length == 0 %} d-block text-center {% endif %}">
+
+    {% for anaquel in anaqueles %}
+
+    <div class="archivero">
+        <i class="bi bi-archive btnRedireccionar" data-id="{{ anaquel.url }}"></i>
+
+        <span>Anaquel No. {{ anaquel.codigo }}</span>
+
+        <div class="archivero-botonera">
+            <button class="boton boton-modificar" data-bs-toggle="modal" data-bs-target="#modal"
+                data-request="anaquelComponent::onGetAnaquel" data-request-data="id: {{ anaquel.id }}"
+                data-request-success="cargarFormulario(data)">
+                <i class="bi bi-pencil-square"></i>
+            </button>
+
+            <button type="button" class="boton boton-eliminar" data-id="{{ anaquel.id }}">
+                <i class="bi bi-trash"></i>
+            </button>
+        </div>
+    </div>
+
+    {% else %}
+
+    <p class="mensaje">No hay registros disponibles</p>
+
+    {% endfor %}
+</div>

@@ -108,11 +108,19 @@ function subMenuDinamico() {
     const mostrarFolder = getCookie('mostrarFolder');
     const mostrarFabio = getCookie('mostrarFabio');
 
+    const mostrarAnaquel = getCookie('mostrarAnaquel');
+    const mostrarColeccion = getCookie('mostrarColeccion');
+    const mostrarFondo = getCookie('mostrarFondo');
+
     //Elementos
     const elementoMostrarGaveta = document.querySelector('#mostrarGaveta');
     const elementoMostrarCarpeta = document.querySelector('#mostrarCarpeta');
     const elementoMostrarFolder = document.querySelector('#mostrarFolder');
     const elementoMostrarFabio = document.querySelector('#mostrarFabio');
+
+    const elementoMostrarAnaquel = document.querySelector('#mostrarAnaquel');
+    const elementoMostrarColeccion = document.querySelector('#mostrarColeccion');
+    const elementoMostrarFondo = document.querySelector('#mostrarFondo');
 
     const enlacePDF = document.querySelector('#reportePDF');
     const enlaceExcel = document.querySelector('#reporteExcel');
@@ -143,5 +151,27 @@ function subMenuDinamico() {
 
         enlacePDF.href = "/reportePDFFabio?id=" + mostrarFabio;
         enlaceExcel.href = "/reporteExcelFabio?id=" + mostrarFabio;
+    }
+
+    /* Fondo Bibliográfico */
+    if (mostrarAnaquel && elementoMostrarAnaquel) {
+        elementoMostrarAnaquel.href = "/anaqueles?id=" + mostrarAnaquel;
+
+        enlacePDF.href = "/reportePDFAnaquel?id=" + mostrarAnaquel;
+        enlaceExcel.href = "/reporteExcelAnaquel?id=" + mostrarAnaquel;
+    }
+
+    if (mostrarColeccion && elementoMostrarColeccion) {
+        elementoMostrarColeccion.href = "/colecciones?id=" + mostrarColeccion;
+
+        enlacePDF.href = "/reportePDFColeccion?id=" + mostrarColeccion;
+        enlaceExcel.href = "/reporteExcelColeccion?id=" + mostrarColeccion;
+    }
+
+    if (mostrarFondo && elementoMostrarFondo) {
+        elementoMostrarFondo.href = "/documentoFondo?id=" + mostrarFondo;
+
+        enlacePDF.href = "/reportePDFFondo?id=" + mostrarFondo;
+        enlaceExcel.href = "/reporteExcelFondo?id=" + mostrarFondo;
     }
 }
