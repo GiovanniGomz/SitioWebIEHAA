@@ -1,0 +1,5 @@
+1.0.0:
+    - 'First version of fondo'
+1.0.2:
+    - 'Create Fondos Table'
+    - v1.0.1/create_fondos_table.php
