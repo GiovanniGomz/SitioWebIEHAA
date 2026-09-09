@@ -17,7 +17,7 @@
 
 .explorador-breadcrumb .breadcrumb-item a {
     text-decoration: none;
-    color: #2563eb;
+    color: #b31b28;
     cursor: pointer;
 }
 
@@ -92,13 +92,13 @@
 }
 
 .explorador-stepper-item.explorador-stepper-activo {
-    color: #2563eb;
+    color: #b31b28;
 }
 
 .explorador-stepper-item.explorador-stepper-activo .explorador-stepper-bolita {
-    background: #2563eb;
+    background: #b31b28;
     color: #fff;
-    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
+    box-shadow: 0 0 0 4px rgba(179, 27, 40, 0.15);
 }
 
 .explorador-stepper-flecha {
@@ -129,19 +129,20 @@
 }
 
 .explorador-dropzone {
-    border: 2px dashed #93c5fd;
-    background: #eff6ff;
+    border: 2px dashed #cdd2da;
+    background: #f7f7f8;
     border-radius: 12px;
     padding: 2rem;
     text-align: center;
-    color: #2563eb;
+    color: #4b5563;
     margin-bottom: 1.25rem;
     transition: background 0.15s ease, border-color 0.15s ease;
 }
 
 .explorador-dropzone.explorador-dropzone-activa {
-    background: #dbeafe;
-    border-color: #2563eb;
+    background: #f8e9eb;
+    border-color: #b31b28;
+    color: #b31b28;
 }
 
 .explorador-dropzone i {
@@ -196,14 +197,14 @@
 }
 
 .explorador-card:hover {
-    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
-    border-color: #c7d2fe;
+    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
+    border-color: #d3d6db;
     transform: translateY(-2px);
 }
 
 .explorador-card .explorador-card-icono {
     font-size: 2.6rem;
-    color: #2563eb;
+    color: #b31b28;
     margin-bottom: 0.5rem;
 }
 
