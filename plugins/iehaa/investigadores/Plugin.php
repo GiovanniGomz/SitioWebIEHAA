@@ -12,6 +12,11 @@ use System\Classes\PluginBase;
 class Plugin extends PluginBase
 {
     /**
+     * @var array Plugin dependencies
+     */
+    public $require = ['Iehaa.Facultades', 'Iehaa.Tipoinvestigadores', 'Iehaa.Categoriainvestigadores'];
+
+    /**
      * Returns information about this plugin.
      */
     public function pluginDetails(): array

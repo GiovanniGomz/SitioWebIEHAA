@@ -1,12 +1,13 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Tu\Plugin\Components\TuComponente;
 
-Route::get('/reportePDFAnaquel', function () {
-    return (new \IEHAA\Anaquel\Components\AnaquelComponent())->generarPdf();
-});
+Route::middleware(['web', 'cpanel.auth'])->group(function () {
+    Route::get('/reportePDFAnaquel', function () {
+        return (new \IEHAA\Anaquel\Components\AnaquelComponent())->generarPdf();
+    });
 
-Route::get('/reporteExcelAnaquel', function () {
-    return (new \IEHAA\Anaquel\Components\AnaquelComponent())->generarExcel();
+    Route::get('/reporteExcelAnaquel', function () {
+        return (new \IEHAA\Anaquel\Components\AnaquelComponent())->generarExcel();
+    });
 });

@@ -1,0 +1,87 @@
+<div class="container" style="max-width: 720px;">
+    <nav class="submenu-desplazamiento mb-4">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item">
+                <a href="{{ 'cpanel'|page }}">
+                    <i class="bi bi-house-door-fill me-1"></i> IEHAA
+                </a>
+            </li>
+            <li class="breadcrumb-item active">Configuración</li>
+        </ol>
+    </nav>
+
+    <h1 class="text-center mb-4">Configuración del sitio</h1>
+
+    <div class="alert alert-danger d-none" id="config-error"></div>
+    <div class="alert alert-success d-none" id="config-exito"></div>
+
+    <form id="config-form">
+        <div class="mb-3">
+            <label class="form-label">Nombre del sitio</label>
+            <input type="text" class="form-control" id="nombre_sitio" name="nombre_sitio" value="{{ configuracion.nombre_sitio }}" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Descripción</label>
+            <textarea class="form-control" id="descripcion_sitio" name="descripcion_sitio" rows="3">{{ configuracion.descripcion_sitio }}</textarea>
+        </div>
+
+        <div class="row">
+            <div class="mb-3 col">
+                <label class="form-label">Correo de contacto</label>
+                <input type="email" class="form-control" id="email_contacto" name="email_contacto" value="{{ configuracion.email_contacto }}" />
+            </div>
+            <div class="mb-3 col">
+                <label class="form-label">Teléfono de contacto</label>
+                <input type="text" class="form-control" id="telefono_contacto" name="telefono_contacto" value="{{ configuracion.telefono_contacto }}" />
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <label class="form-label">Dirección</label>
+            <input type="text" class="form-control" id="direccion" name="direccion" value="{{ configuracion.direccion }}" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            <span class="spinner-border spinner-border-sm d-none" id="config-spinner"></span>
+            Guardar cambios
+        </button>
+    </form>
+</div>
+
+<script>
+    document.getElementById('config-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        var error = document.getElementById('config-error');
+        var exito = document.getElementById('config-exito');
+        error.classList.add('d-none');
+        exito.classList.add('d-none');
+        document.getElementById('config-spinner').classList.remove('d-none');
+
+        $.request('configuracionComponent::onGuardar', {
+            data: {
+                nombre_sitio: document.getElementById('nombre_sitio').value,
+                descripcion_sitio: document.getElementById('descripcion_sitio').value,
+                email_contacto: document.getElementById('email_contacto').value,
+                telefono_contacto: document.getElementById('telefono_contacto').value,
+                direccion: document.getElementById('direccion').value
+            },
+            success: function (data) {
+                document.getElementById('config-spinner').classList.add('d-none');
+                exito.textContent = data.mensaje;
+                exito.classList.remove('d-none');
+            },
+            error: function (jqXHR) {
+                document.getElementById('config-spinner').classList.add('d-none');
+                try {
+                    var json = JSON.parse(jqXHR.responseText);
+                    error.textContent = json.message || 'Ocurrió un error.';
+                } catch (e) {
+                    error.textContent = 'Ocurrió un error.';
+                }
+                error.classList.remove('d-none');
+            }
+        });
+    });
+</script>

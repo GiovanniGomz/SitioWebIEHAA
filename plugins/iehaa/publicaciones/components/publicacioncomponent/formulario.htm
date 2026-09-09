@@ -1,0 +1,83 @@
+<div class="container formulario-contenedor">
+    <div class="modal fade" id="modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="formulario-titulo">Registrar Publicación</h1>
+                    <button type="button" class="btn-close" id="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                        onclick="resetear()"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div data-validate-error class="alert alert-danger" style="display: none">
+                        <p data-message></p>
+                    </div>
+
+                    <form id="formulario" data-request="publicacionComponent::onRegistrar" data-request-validate
+                        data-request-flash data-request-success="onRegistrar(data)" data-request-files
+                        data-request-update="'@listado': '#listado'" enctype="multipart/form-data">
+
+                        <input type="hidden" id="id" name="id" value="" />
+
+                        <div class="mb-3">
+                            <div class="validacion">
+                                <label for="titulo" class="form-label">Título</label>
+                                <span data-validate-for="titulo" class="text-danger small validacion-descripcion"></span>
+                            </div>
+                            <input type="text" class="form-control" id="titulo" name="titulo" placeholder="Título de la publicación" />
+                        </div>
+
+                        <div class="row">
+                            <div class="mb-3 col">
+                                <div class="validacion">
+                                    <label for="tipo_publicacion_id" class="form-label">Tipo de publicación</label>
+                                    <span data-validate-for="tipo_publicacion_id" class="text-danger small validacion-descripcion"></span>
+                                </div>
+                                <select class="form-select" id="tipo_publicacion_id" name="tipo_publicacion_id">
+                                    <option value="">Seleccione...</option>
+                                    {% for tipo in tiposPublicacion %}
+                                    <option value="{{ tipo.id }}">{{ tipo.nombre }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="mb-3 col">
+                                <div class="validacion">
+                                    <label for="investigador_id" class="form-label">Investigador</label>
+                                    <span data-validate-for="investigador_id" class="text-danger small validacion-descripcion"></span>
+                                </div>
+                                <select class="form-select" id="investigador_id" name="investigador_id">
+                                    <option value="">Seleccione...</option>
+                                    {% for investigador in investigadores %}
+                                    <option value="{{ investigador.id }}">{{ investigador.nombre }} {{ investigador.apellido }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="fecha" class="form-label">Fecha</label>
+                            <input type="date" class="form-control" id="fecha" name="fecha" />
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="validacion">
+                                <label for="descripcion" class="form-label">Descripción</label>
+                                <span data-validate-for="descripcion" class="text-danger small validacion-descripcion"></span>
+                            </div>
+                            <textarea class="form-control" id="descripcion" name="descripcion" rows="3"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="archivo" class="form-label">Archivo (opcional)</label>
+                            <input type="file" class="form-control" id="archivo" name="archivo" />
+                        </div>
+
+                        <button type="submit" id="btnRegistrar" class="btn btn-primary w-100">Registrar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
