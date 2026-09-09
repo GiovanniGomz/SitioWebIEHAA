@@ -1,0 +1,24 @@
+<table class="table table-sm">
+    <thead>
+        <tr>
+            <th>Título</th>
+            <th>Tipo</th>
+            <th>Investigador</th>
+            <th>Fecha</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for publicacion in publicaciones %}
+        <tr>
+            <td>{{ publicacion.titulo }}</td>
+            <td>{{ publicacion.tipo_publicacion ? publicacion.tipo_publicacion.nombre : '—' }}</td>
+            <td>{{ publicacion.investigador ? publicacion.investigador.nombre ~ ' ' ~ publicacion.investigador.apellido : '—' }}</td>
+            <td>{{ publicacion.fecha ? publicacion.fecha|date('d/m/Y') : '—' }}</td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="4" class="text-center text-muted">Sin resultados</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

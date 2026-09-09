@@ -1,0 +1,54 @@
+<div class="table-responsive">
+    <table id="tabla-usuarios" class="table table-striped align-middle">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Nombre</th>
+                <th>Correo</th>
+                <th>Rol</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for usuario in usuarios %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>
+                    {{ usuario.nombre }}
+                    {% if usuarioActual and usuarioActual.id == usuario.id %}
+                    <span class="badge bg-primary ms-1">Tú</span>
+                    {% endif %}
+                </td>
+                <td>{{ usuario.email }}</td>
+                <td>
+                    <span class="badge {{ usuario.rol == 'admin' ? 'bg-dark' : 'bg-secondary' }}">
+                        {{ usuario.rol == 'admin' ? 'Administrador' : 'Editor' }}
+                    </span>
+                </td>
+                <td>
+                    {% if usuario.activo %}
+                    <span class="badge bg-success">Activo</span>
+                    {% else %}
+                    <span class="badge bg-danger">Inactivo</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modal"
+                        data-request="usuarioComponent::onGetUsuario" data-request-data="id: {{ usuario.id }}"
+                        data-request-success="cargarFormulario(data)">
+                        <i class="bi bi-pencil-square"></i>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-danger btn-eliminar" data-id="{{ usuario.id }}">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6" class="text-center">No hay usuarios registrados</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

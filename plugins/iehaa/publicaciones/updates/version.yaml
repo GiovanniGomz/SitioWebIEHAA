@@ -1,0 +1,5 @@
+1.0.0:
+    - "First version of publicaciones"
+1.0.1:
+    - "Create Publicaciones Table"
+    - v1.0.1/create_publicaciones_table.php

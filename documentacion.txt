@@ -1,0 +1,518 @@
+================================================================================
+ DOCUMENTACION TECNICA - SITIO WEB IEHAA
+ Instituto de Estudios Historicos, Antropologicos y Arqueologicos (UES)
+================================================================================
+
+Este documento explica la arquitectura del proyecto, los modulos que se
+agregaron/modificaron, y como mantenerlos. Esta escrito para que cualquier
+desarrollador que no conoce el proyecto pueda entenderlo y darle
+mantenimiento.
+
+
+--------------------------------------------------------------------------------
+1. STACK TECNICO
+--------------------------------------------------------------------------------
+
+- Framework: Winter CMS (fork de October CMS, basado en Laravel 9).
+- Backend: PHP 8.1+
+- Base de datos: PostgreSQL 15
+- Servidor web: Apache 2.4 (con mod_fcgid para PHP)
+- Frontend: Bootstrap 5, jQuery, SweetAlert2, DataTables, Chart.js (solo en
+  Reportes), Bootstrap Icons.
+- El tema (theme) del sitio esta en: themes/web/
+
+Todo el codigo de dominio (modulos del instituto) vive en plugins con
+namespace "Iehaa" (algunos archivos viejos usan "IEHAA" en mayusculas; PHP
+no distingue mayusculas/minusculas en nombres de clase, asi que ambos
+funcionan, pero para código nuevo usar "Iehaa").
+
+
+--------------------------------------------------------------------------------
+2. ARQUITECTURA GENERAL: EL "CPANEL" NO ES EL BACKEND DE WINTER
+--------------------------------------------------------------------------------
+
+Punto importante para no confundirse: este proyecto NO usa el panel de
+administracion nativo de Winter CMS (el que normalmente vive en /backend).
+En su lugar, hay un panel de administracion "casero" construido con paginas
+CMS + componentes, bajo el layout "cpanel":
+
+  themes/web/layouts/cpanel.htm   -> layout del panel admin (sidebar + topbar)
+  themes/web/layouts/default.htm  -> layout del sitio publico
+  themes/web/layouts/auth.htm     -> layout minimo, solo para /login
+
+Cada "modulo" del admin (Investigadores, Facultades, Documentos, etc.) sigue
+este patron:
+
+  1. Un plugin en plugins/iehaa/<nombre>/
+  2. Un modelo Eloquent en plugins/iehaa/<nombre>/models/
+  3. Un componente CMS en plugins/iehaa/<nombre>/components/<Nombre>Component.php
+     con metodos publicos que son "handlers" AJAX:
+       onRun()          -> se ejecuta al cargar la pagina, prepara datos
+       onRegistrar()    -> crea o edita (segun si viene "id" en los datos)
+       onEliminar()     -> elimina
+       onGetX()         -> devuelve un registro para precargar el formulario
+                           de edicion
+  4. Vistas del componente en plugins/iehaa/<nombre>/components/<nombre>component/:
+       default.htm    -> estructura de la pagina (breadcrumb, boton "Nuevo",
+                          contenedor del listado, modal de formulario)
+       listado.htm    -> partial con la tabla/grid de registros
+       formulario.htm -> partial con el formulario (modal)
+  5. Una pagina CMS en themes/web/pages/<algo>.htm que declara
+     layout = "cpanel" y renderiza el componente con {% component 'x' %}
+  6. Un archivo JS en themes/web/assets/js/<nombre>/<nombre>.js que maneja
+     los clicks (usa $.request(), el framework AJAX de Winter, y
+     SweetAlert2 para confirmaciones/mensajes)
+  7. Un link en el sidebar: themes/web/partials/site/cpanel/header.htm
+
+Para agregar un modulo nuevo de este tipo, el camino mas rapido es copiar
+la estructura de un modulo existente (ej. plugins/iehaa/proyectos/) y
+adaptar campos.
+
+
+--------------------------------------------------------------------------------
+3. AUTENTICACION (plugin Iehaa.Usuarios)
+--------------------------------------------------------------------------------
+
+Antes NO existia ningun login: cualquiera con la URL entraba al panel.
+Se agrego un sistema de sesion propio (NO es el sistema de autenticacion
+de Backend de Winter, son cosas separadas):
+
+  plugins/iehaa/usuarios/
+    models/Usuario.php              -> tabla data.usuarios (nombre, email,
+                                        password hasheado con el trait
+                                        Hashable de Winter, rol: admin|editor,
+                                        activo)
+    classes/CpanelAuth.php          -> helper estatico: attempt(), usuario(),
+                                        check(), esAdmin(), logout(). Guarda
+                                        el id del usuario en la sesion bajo
+                                        la key 'cpanel_usuario_id'.
+    classes/CpanelAuthMiddleware.php -> middleware de Laravel que protege
+                                        rutas planas (ver seccion 3.2)
+    components/LoginComponent.php   -> pagina /login, handler onLogin()
+    components/UsuarioComponent.php -> CRUD de usuarios (solo admin)
+
+  themes/web/pages/login.htm        -> pagina de login (layout "auth")
+  themes/web/pages/usuarios.htm     -> CRUD de usuarios (layout "cpanel")
+
+Credenciales del usuario admin inicial (creadas por la migracion
+plugins/iehaa/usuarios/updates/v1.0.2/seed_admin_usuario.php):
+
+    email:    admin@iehaa.com
+    password: admin123
+
+  *** CAMBIAR ESTA CONTRASENA ANTES DE PRODUCCION ***
+
+3.1. Como protege el panel
+---------------------------
+themes/web/layouts/cpanel.htm tiene una seccion PHP (bloque "==" al inicio
+del archivo) con una funcion onStart() que revisa CpanelAuth::check() y
+redirige a /login si no hay sesion. Como TODAS las paginas del panel usan
+este layout, quedan protegidas automaticamente (incluidos los handlers
+AJAX, porque Winter ejecuta el layout completo tambien en peticiones AJAX).
+
+3.2. Caso especial: rutas de reportes PDF/Excel
+-------------------------------------------------
+Cada plugin viejo (archiveros, gavetas, investigadores, etc.) tiene un
+archivo routes.php que registra 2 rutas Laravel planas para descargar
+PDF/Excel (ej. /reportePDFInvestigador). Estas rutas NO pasan por el
+layout de la pagina, asi que el onStart() de arriba no las protege. Por
+eso estan envueltas asi:
+
+    Route::middleware(['web', 'cpanel.auth'])->group(function () {
+        Route::get('/reportePDFX', function () { ... });
+        Route::get('/reporteExcelX', function () { ... });
+    });
+
+El middleware 'cpanel.auth' se registra en plugins/iehaa/usuarios/Plugin.php
+(metodo boot()) apuntando a CpanelAuthMiddleware. El middleware 'web' es
+necesario para que la sesion de Laravel este disponible en esa ruta (sin
+el, la sesion no se inicia y CpanelAuth::check() siempre da falso).
+
+IMPORTANTE: si se agrega un routes.php nuevo con rutas que deban estar
+protegidas, hay que envolverlas con ese mismo patron.
+
+3.3. Roles
+-----------
+Usuario tiene un campo "rol": 'admin' o 'editor'. Las paginas /usuarios y
+/configuracion verifican CpanelAuth::esAdmin() en su componente y
+redirigen a /dashboard si el usuario no es admin. El sidebar tambien
+oculta esos links para usuarios no-admin (ver header.htm, bloques
+{% if usuario and usuario.rol == 'admin' %}).
+
+
+--------------------------------------------------------------------------------
+4. EXPLORADOR DE ARCHIVOS UNIFICADO (Fabio Castillo / Fondo Bibliografico)
+--------------------------------------------------------------------------------
+
+Estos son los dos fondos documentales del instituto. Cada uno es una
+jerarquia de niveles que termina en documentos:
+
+  Fabio Castillo:      Archivero > Gaveta > Carpeta > Folder > Documento
+  Fondo Bibliografico:  Estante > Anaquel > Coleccion > Documento
+
+Los MODELOS y TABLAS de cada nivel ya existian de antes (un plugin por
+nivel: iehaa/archiveros, iehaa/gavetas, iehaa/carpetas, iehaa/folders,
+iehaa/fabio, iehaa/estante, iehaa/anaquel, iehaa/coleccion, iehaa/fondo).
+NO se tocaron esos modelos ni sus tablas.
+
+Lo que se agrego es una capa de navegacion nueva y unificada:
+
+  plugins/iehaa/exploradorarchivos/
+    Plugin.php                    -> declara $require sobre los 9 plugins
+                                      de arriba (asi Winter los migra en
+                                      el orden correcto)
+    components/ExploradorComponent.php
+
+El componente tiene un mapa de configuracion estatico (metodo cadenas())
+que describe cada cadena: que modelo usa cada nivel, el nombre del campo
+visible (codigo o nombre), el icono, y la llave foranea hacia el padre.
+Para agregar un nivel o una cadena nueva, se edita SOLO ese array; el
+resto del componente es generico y funciona para cualquier profundidad.
+
+Handlers AJAX del componente (todos reciben "modo": 'fabio' o 'fondo'):
+
+  onNavegar        -> devuelve los hijos del nivel actual (o los
+                       documentos si es el nivel hoja)
+  onCrearNodo      -> crea O edita un nodo intermedio (si viene "id" en
+                       los datos, actualiza; si no, crea)
+  onSubirArchivo   -> sube un documento nuevo (nivel hoja)
+  onEditarDocumento -> renombra un documento y, opcionalmente, reemplaza
+                        su archivo fisico
+  onEliminarNodo   -> elimina un nodo intermedio. Si todavia tiene hijos
+                       (por la llave foranea), NO lo deja borrar y devuelve
+                       un mensaje de error en vez de dejar que la base de
+                       datos tire un error de llave foranea.
+  onEliminarDocumento -> elimina un documento y su archivo fisico
+
+Los archivos subidos se guardan en:
+  storage/app/uploads/public/fabio/
+  storage/app/uploads/public/fondo/
+
+4.1. Frontend del explorador
+------------------------------
+  themes/web/pages/gestion-fabio.htm   -> pagina, propiedad modo="fabio"
+  themes/web/pages/gestion-fondo.htm   -> pagina, propiedad modo="fondo"
+  themes/web/assets/js/explorador/explorador.js
+  themes/web/assets/css/explorador.css
+
+Es una sola pagina por cadena (no una pagina por nivel como antes). La
+navegacion es 100% AJAX, sin recargar la pagina:
+
+  - Breadcrumb dinamico con etiquetas ("Archivero 45 > Gaveta 7896 > ...")
+  - Un "stepper" siempre visible que muestra los niveles de la cadena y
+    resalta en cual estas parado
+  - Boton "Subir un nivel" para retroceder un paso
+  - Tarjetas (cards) para cada nodo/documento, con boton de editar,
+    eliminar y (en documentos) descargar
+  - Zona de drag-and-drop para subir archivos en el nivel hoja
+  - Buscador que filtra las tarjetas visibles del nivel actual (en el
+    navegador, sin pedir nada al servidor)
+  - Iconos distintos por tipo de archivo (PDF, Word, Excel, imagen, etc.)
+    calculados en el backend segun la extension (ver metodo
+    iconoParaArchivo() del componente)
+
+Las 9 paginas viejas (archiveros.htm, gavetas.htm, carpetas.htm,
+folders.htm, fabio.htm, estante.htm, anaquel.htm, coleccion.htm,
+fondo.htm) y sus componentes siguen existiendo en el repo pero ya NO
+estan enlazadas desde el sidebar. Se pueden borrar con confianza si se
+quiere limpiar el repo (nadie las usa), pero no se borraron para no
+arriesgar nada.
+
+4.2. Bug importante que ya se resolvio (leer si el explorador se queda
+     "cargando" sin mostrar nada)
+--------------------------------------------------------------------------
+En los layouts (cpanel.htm y default.htm), el contenido de la pagina se
+inyecta con {% page %} ANTES de que se carguen Bootstrap JS, SweetAlert2
+y el framework AJAX de Winter (esos scripts estan al final del <body>).
+
+Si un script propio (inline o cargado desde la pagina) usa
+`new bootstrap.Modal(...)`, `Swal.fire(...)` o `$.request(...)` de forma
+INMEDIATA al cargar (no dentro de un event listener), se rompe en
+silencio porque esas librerias todavia no existen en ese momento.
+
+La solucion usada en explorador.js y cedjag.js es envolver TODO el script
+en:
+
+    window.addEventListener('load', function () {
+        ... todo el codigo ...
+    });
+
+Cualquier script nuevo que use bootstrap.Modal, Swal o $.request de forma
+inmediata (no dentro de un handler de clic/submit que se dispara despues)
+debe seguir el mismo patron. Los scripts viejos del proyecto (investigador.js,
+facultad.js, etc.) no tenian este problema porque solo usan esas librerias
+DENTRO de handlers de eventos (clic, etc.), que se ejecutan mucho despues
+de que la pagina ya cargo por completo.
+
+
+--------------------------------------------------------------------------------
+5. MODULOS DE CONTENIDO NUEVOS
+--------------------------------------------------------------------------------
+
+5.1. Proyectos (plugin Iehaa.Proyectos)
+------------------------------------------
+Antes no existia como modulo real (la pagina publica /investigaciones
+tenia contenido de relleno tipo Lorem ipsum).
+
+  Tabla: data.proyectos (titulo, descripcion, detalle, investigador_id,
+         timestamps)
+  Admin: /proyectos (cpanel)
+  Publico: /investigaciones (usa el componente proyectoComponent con la
+           propiedad limite="24" para no listar todo)
+
+5.2. Publicaciones (plugin Iehaa.Publicaciones)
+---------------------------------------------------
+Mismo caso: la pagina publica /publicaciones tenia relleno.
+
+  Tabla: data.publicaciones (titulo, descripcion, archivo nullable, fecha,
+         tipo_publicacion_id, investigador_id, timestamps)
+  Admin: /gestion-publicaciones (cpanel). Se llamo distinto a
+         "/publicaciones" porque esa URL ya la usa la pagina publica.
+  Publico: /publicaciones
+
+5.3. Configuracion (plugin Iehaa.Configuracion)
+----------------------------------------------------
+Tabla de una sola fila con datos generales del sitio (nombre, descripcion,
+correo y telefono de contacto, direccion). El modelo tiene un metodo
+estatico Configuracion::actual() que trae esa fila (o la crea con valores
+por defecto si no existe todavia).
+
+  Admin: /configuracion (SOLO admin, ver seccion 3.3)
+
+5.4. Reportes y Dashboard (plugin Iehaa.Reportes)
+-------------------------------------------------------
+Este plugin tiene DOS componentes:
+
+  ReporteComponent   -> pagina /reportes: tarjetas resumen, 4 graficas
+                         (Chart.js, cargado por CDN solo en esta pagina),
+                         2 tablas filtrables (investigadores por facultad,
+                         publicaciones por tipo) y un directorio con
+                         enlaces a TODOS los reportes PDF/Excel que ya
+                         existian por modulo (no se reimplemento esa
+                         parte, solo se centralizo el acceso)
+  DashboardComponent -> pagina /dashboard: tarjetas con conteos reales
+                         (antes eran numeros inventados fijos en el HTML)
+                         y listas de los ultimos proyectos/publicaciones
+
+Nota de alcance: las tablas viejas (fabio, fondo, documentos, archiveros,
+etc.) no tienen columna de fecha real (created_at/updated_at) porque sus
+migraciones nunca la agregaron y sus modelos tienen $timestamps = false.
+Por eso las graficas de Reportes son todas de conteo/agrupacion, ninguna
+es "por fecha". Si se necesita eso a futuro, hay que agregar una migracion
+que le sume $table->timestamps() a esas tablas y cambiar $timestamps a
+true en los modelos correspondientes.
+
+
+--------------------------------------------------------------------------------
+6. CEDJAG Y SOLICITUDES DE PRESTAMO (plugin Iehaa.Solicitudes)
+--------------------------------------------------------------------------------
+
+CEDJAG es el catalogo publico donde cualquier visitante (sin necesidad de
+cuenta) puede ver los documentos de Fabio Castillo y Fondo Bibliografico
+junto con su UBICACION FISICA exacta, y pedir un prestamo.
+
+  Tabla: data.solicitudes (tipo: 'fabio'|'fondo', documento_id,
+         nombre_solicitante, email_solicitante, telefono_solicitante,
+         mensaje, estado: 'pendiente'|'aprobado'|'rechazado', admin_notas,
+         timestamps)
+
+NOTA: documento_id NO tiene llave foranea real en la base de datos porque
+apunta a dos tablas distintas segun el valor de "tipo" (data.fabio o
+data.fondo). La validez se revisa en el codigo (ver
+CedjagComponent::onEnviarSolicitud), no en la base de datos.
+
+  models/Solicitud.php:
+    - documento()  -> trae el Fabio o el Fondo segun el campo "tipo"
+    - ubicacion()  -> arma el texto de ubicacion fisica subiendo la
+                      cadena de relaciones (ej. "Archivero 45 > Gaveta
+                      7896 > Carpeta X > Folder Y"). OJO: usa los nombres
+                      de relacion tal cual estan definidos en los modelos
+                      viejos, que son con mayuscula inicial: $documento->Folder,
+                      ->Carpeta, ->Gaveta, ->Archivero (para fabio) y
+                      ->Coleccion, ->Anaquel, ->Estante (para fondo). Si
+                      esos modelos cambian de nombre de relacion, hay que
+                      actualizar este metodo tambien.
+
+  components/CedjagComponent.php  -> PUBLICO, sin login.
+    onRun()              -> arma el catalogo combinado (fabio + fondo)
+    onEnviarSolicitud()  -> crea la solicitud (valida que el documento
+                             todavia exista)
+
+  components/SolicitudesComponent.php -> ADMIN, requiere sesion.
+    onRun()      -> lista solicitudes (pendientes primero)
+    onAprobar()  -> cambia estado a 'aprobado'
+    onRechazar() -> cambia estado a 'rechazado'
+    pendientes() / ultimasPendientes()  -> metodos ESTATICOS usados desde
+                    fuera del componente (los usa el sidebar y la
+                    campanita de notificaciones, ver seccion 7)
+
+  Paginas:
+    themes/web/pages/cedjag.htm        -> publica, layout "default"
+    themes/web/pages/solicitudes.htm   -> admin, layout "cpanel"
+                                           (ya NO tiene link directo en el
+                                           sidebar por pedido explicito;
+                                           se llega por la campanita de
+                                           notificaciones o entrando
+                                           directo a /solicitudes)
+
+
+--------------------------------------------------------------------------------
+7. SIDEBAR DEL PANEL (themes/web/partials/site/cpanel/header.htm)
+--------------------------------------------------------------------------------
+
+Este partial tiene su propia seccion PHP (bloque "==" al inicio) con un
+onStart() que prepara varias variables usadas en el HTML:
+
+  usuario                      -> el usuario logueado (o null)
+  solicitudesPendientesCount   -> cantidad de solicitudes CEDJAG pendientes
+  solicitudesPendientesUltimas -> las ultimas 5, para el dropdown de la
+                                   campanita
+  rutaActual                   -> el path actual (ej. "/proyectos"), se
+                                   usa para resaltar el link activo del
+                                   menu:
+                                     class="nav-link {{ rutaActual == '/x' ? 'active' : '' }}"
+                                   IMPORTANTE: si se agrega una pagina
+                                   nueva al sidebar, el link tiene que
+                                   usar este mismo patron. Antes el
+                                   "active" estaba escrito a mano solo en
+                                   Dashboard y se quedaba pegado ahi sin
+                                   importar la pagina real; eso ya se
+                                   corrigio para todos los links.
+
+La campanita de notificaciones en el topbar muestra un contador con las
+solicitudes CEDJAG pendientes y un dropdown con las ultimas.
+
+
+--------------------------------------------------------------------------------
+8. ESTILOS DEL SIDEBAR (themes/web/assets/css/style.css)
+--------------------------------------------------------------------------------
+
+Las variables de color del panel estan al inicio del archivo, dentro de
+:root. Las relevantes para el sidebar:
+
+  --sidebar-bg   -> fondo del sidebar. Actualmente un degradado neutro
+                    oscuro: linear-gradient(180deg, #201613 0%, #17110f 100%)
+  --active       -> color del item de menu seleccionado (rojo institucional
+                    de la UES, extraido del logo en
+                    themes/web/assets/img/universidad.png): #e0301e
+
+Estas variables se ajustaron varias veces durante el desarrollo segun
+feedback visual (se probo rojo solido, degradado rojo, y finalmente fondo
+neutro con rojo solo como acento). Si se quiere volver a cambiar el color
+del panel, es el unico lugar que hay que tocar.
+
+OJO: la clase ".reportes" ya existia en este archivo ANTES de este
+proyecto (se usa en las paginas viejas del explorador de archivos para
+la fila de botones "Generar PDF / Generar Excel", con display:flex). Por
+eso el contenedor principal de la pagina /reportes se llama
+"panel-reportes" y NO "reportes" a secas -- si alguna vez se le pone la
+clase "reportes" a un contenedor grande, toda la pagina se va a ver
+horizontal en vez de vertical porque hereda ese display:flex sin querer.
+
+
+--------------------------------------------------------------------------------
+9. HOME PUBLICO (themes/web/pages/home.htm)
+--------------------------------------------------------------------------------
+
+Antes era 100% contenido estatico de plantilla (Lorem ipsum, numeros de
+ejemplo). Ahora tiene su propia seccion PHP (onStart) que calcula
+conteos reales de Investigador, Proyecto, Publicacion y documentos
+totales (Documento + Fabio + Fondo), y usa los componentes
+proyectoComponent/publicacionComponent (con limite="3") para mostrar las
+3 investigaciones y 3 publicaciones mas recientes.
+
+
+--------------------------------------------------------------------------------
+10. TABLAS NUEVAS EN LA BASE DE DATOS (esquema "data")
+--------------------------------------------------------------------------------
+
+  data.usuarios        (Iehaa.Usuarios)
+  data.proyectos        (Iehaa.Proyectos)
+  data.publicaciones    (Iehaa.Publicaciones)
+  data.configuracion    (Iehaa.Configuracion)
+  data.solicitudes       (Iehaa.Solicitudes)
+
+Ninguna tabla vieja se modifico ni se le borraron datos.
+
+Todas las tablas del proyecto viven en el esquema PostgreSQL "data" (no
+en "public"). Si se levanta el proyecto en un servidor nuevo, ese
+esquema hay que crearlo a mano antes de correr las migraciones:
+
+    CREATE SCHEMA IF NOT EXISTS data;
+
+
+--------------------------------------------------------------------------------
+11. DEPENDENCIAS ENTRE PLUGINS ($require)
+--------------------------------------------------------------------------------
+
+Winter CMS corre las migraciones de los plugins en el orden en que los
+encuentra (aproximadamente alfabetico), NO en el orden logico de
+dependencias. Varios plugins de este proyecto dependen de que otro
+plugin ya haya creado su tabla (por las llaves foraneas). Por eso, cada
+Plugin.php nuevo (y varios viejos que no lo tenian y fallaban en una
+instalacion nueva) declaran:
+
+    public $require = ['Iehaa.OtroPlugin', ...];
+
+Si se agrega un modulo nuevo con una llave foranea hacia otra tabla, hay
+que declarar esa dependencia en su Plugin.php o las migraciones van a
+fallar en una base de datos nueva (aunque en una base de datos que ya
+tiene las tablas creadas no se nota el problema).
+
+
+--------------------------------------------------------------------------------
+12. PATRON DE LOS HANDLERS AJAX (para agregar campos o modulos nuevos)
+--------------------------------------------------------------------------------
+
+Los formularios usan el framework AJAX nativo de Winter CMS (framework.js),
+NO llamadas fetch/axios manuales para los CRUDs clasicos. El patron en el
+HTML es:
+
+    <form data-request="miComponente::onRegistrar" data-request-validate
+        data-request-flash data-request-success="onRegistrar(data)"
+        data-request-update="'@listado': '#listado'">
+
+  - data-request           -> que metodo del componente se llama
+  - data-request-validate  -> muestra errores de validacion en los
+                               elementos con [data-validate-for="campo"]
+  - data-request-update    -> que partial del servidor reemplaza que
+                               elemento del DOM (sin que el JS tenga que
+                               hacerlo a mano)
+  - data-request-files     -> necesario si el form tiene un <input type="file">
+
+Del lado del servidor, cuando algo sale mal se lanza una
+ValidationException (Winter\Storm\Exception\ValidationException), nunca
+se devuelve un error "a mano" con un array; eso es lo que hace que el
+framework pinte los mensajes de error automaticamente en el formulario.
+
+El explorador de archivos (seccion 4) es la excepcion: ahi el JS SI llama
+$.request() manualmente porque la interaccion es mas compleja (navegacion
+sin recargar, breadcrumb dinamico, etc.), pero sigue usando el mismo
+framework AJAX de Winter por debajo.
+
+
+--------------------------------------------------------------------------------
+13. PENDIENTES / MEJORAS FUTURAS CONOCIDAS
+--------------------------------------------------------------------------------
+
+- Las 9 paginas y componentes viejos del explorador de archivos (ver
+  seccion 4.1) se pueden borrar del repo con seguridad si se quiere
+  limpiar; no se borraron por precaucion durante el desarrollo.
+- Las tablas viejas no tienen timestamps reales (ver seccion 5.4); si se
+  quieren reportes "por fecha" hay que agregarlos con una migracion.
+- El campo "Configuracion" (nombre del sitio, contacto, etc.) todavia no
+  se usa en ningun otro lado del sitio (por ejemplo, el pie de pagina y
+  el formulario de contacto del home siguen con datos escritos a mano en
+  el HTML en vez de leer de Configuracion::actual()). Quedaria bien
+  conectarlos.
+- No hay pruebas automatizadas para ninguno de los plugins nuevos ni
+  viejos.
+- El formulario de contacto del home (seccion #contact de home.htm)
+  sigue apuntando a "forms/contact.php", que es un archivo que no existe
+  en el proyecto (era parte de la plantilla HTML original y nunca se
+  conecto a nada real).
+
+
+================================================================================
+ FIN DEL DOCUMENTO
+================================================================================

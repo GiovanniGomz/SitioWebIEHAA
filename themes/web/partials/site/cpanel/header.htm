@@ -1,99 +1,129 @@
+==
+<?php
+
+use Iehaa\Solicitudes\Components\SolicitudesComponent;
+use Iehaa\Usuarios\Classes\CpanelAuth;
+
+function onStart()
+{
+    $this['usuario'] = CpanelAuth::usuario();
+    $this['solicitudesPendientesCount'] = SolicitudesComponent::pendientes();
+    $this['solicitudesPendientesUltimas'] = SolicitudesComponent::ultimasPendientes();
+    $this['rutaActual'] = '/' . trim(request()->path(), '/');
+}
+?>
+==
 <!-- Sidebar -->
 <aside id="sidebar" class="sidebar">
-    <div class="sidebar-brand d-flex align-items-center justify-content-center px-3 py-3">
-        <img src="{{ 'assets/img/ues.png'|theme}}" alt="" data-aos="fade-in" class="img-ues" />
+    <div class="sidebar-brand">
+        <img src="{{ 'assets/img/universidad.png'|theme }}" alt="Universidad de El Salvador" />
+        <div class="sidebar-brand-text">
+            <div class="sidebar-brand-title">IEHAA</div>
+            <div class="sidebar-brand-sub">Panel administrativo</div>
+        </div>
     </div>
 
-    <div class="sidebar-user px-3 py-3 border-bottom border-secondary">
+    <div class="sidebar-user">
         <div class="d-flex align-items-center">
             <div class="avatar-circle me-2">
                 <i class="bi bi-person-fill"></i>
             </div>
-            <div>
-                <div class="text-white fw-semibold small">Administrador</div>
-                <div class="text-white-50" style="font-size: 0.75rem">
-                    admin@iehaa.com
+            <div class="overflow-hidden">
+                <div class="text-white fw-semibold small text-truncate">{{ usuario ? usuario.nombre : 'Invitado' }}</div>
+                <div class="text-white-50 text-truncate" style="font-size: 0.72rem">
+                    {{ usuario ? usuario.email : '' }}
                 </div>
             </div>
         </div>
     </div>
 
-    <nav class="sidebar-nav mt-3">
+    <nav class="sidebar-nav">
         <ul class="nav flex-column">
+            <li class="nav-item"><span class="sidebar-section">Principal</span></li>
             <li class="nav-item">
-                <a class="nav-link active" href="/dashboard">
-                    <i class="bi bi-speedometer2 me-2"></i> Dashboard
+                <a class="nav-link {{ rutaActual == '/dashboard' ? 'active' : '' }}" href="/dashboard">
+                    <i class="bi bi-grid-1x2"></i> Dashboard
+                </a>
+            </li>
+
+            <li class="nav-item"><span class="sidebar-section">Fondos documentales</span></li>
+            <li class="nav-item">
+                <a class="nav-link {{ rutaActual == '/gestion-fabio' ? 'active' : '' }}" href="/gestion-fabio">
+                    <i class="bi bi-archive"></i> Fabio Castillo
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/archiveros">
-                    <i class="bi bi-journal-bookmark"></i> Fabio Castillo
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/estantes">
+                <a class="nav-link {{ rutaActual == '/gestion-fondo' ? 'active' : '' }}" href="/gestion-fondo">
                     <i class="bi bi-journal-bookmark"></i> Fondo Bibliográfico
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">
-                    <i class="bi bi-award"></i> Proyectos
+                <a class="nav-link {{ rutaActual == '/descargas' ? 'active' : '' }}" href="/descargas">
+                    <i class="bi bi-download"></i> Descargas
+                </a>
+            </li>
+
+            <li class="nav-item"><span class="sidebar-section">Producción académica</span></li>
+            <li class="nav-item">
+                <a class="nav-link {{ rutaActual == '/proyectos' ? 'active' : '' }}" href="/proyectos">
+                    <i class="bi bi-lightbulb"></i> Proyectos
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link {{ rutaActual == '/gestion-publicaciones' ? 'active' : '' }}" href="/gestion-publicaciones">
                     <i class="bi bi-journal-text"></i> Publicaciones
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/tipo_publicaciones">
-                    <i class="bi bi-book"></i> Tipo de Publicación
+                <a class="nav-link {{ rutaActual == '/tipo_publicaciones' ? 'active' : '' }}" href="/tipo_publicaciones">
+                    <i class="bi bi-tags"></i> Tipo de Publicación
+                </a>
+            </li>
+
+            <li class="nav-item"><span class="sidebar-section">Investigadores</span></li>
+            <li class="nav-item">
+                <a class="nav-link {{ rutaActual == '/investigadores' ? 'active' : '' }}" href="/investigadores">
+                    <i class="bi bi-person-badge"></i> Investigadores
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/investigadores">
-                    <i class="bi bi-person"></i> Investigadores
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/tipo_investigadores">
+                <a class="nav-link {{ rutaActual == '/tipo_investigadores' ? 'active' : '' }}" href="/tipo_investigadores">
                     <i class="bi bi-person-lines-fill"></i> Tipo de Investigador
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/categoria_investigadores">
-                    <i class="bi bi-file-text"></i> Categorias
+                <a class="nav-link {{ rutaActual == '/categoria_investigadores' ? 'active' : '' }}" href="/categoria_investigadores">
+                    <i class="bi bi-diagram-3"></i> Categorías
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/facultades">
+                <a class="nav-link {{ rutaActual == '/facultades' ? 'active' : '' }}" href="/facultades">
                     <i class="bi bi-buildings"></i> Facultades
                 </a>
             </li>
+
+            <li class="nav-item"><span class="sidebar-section">Administración</span></li>
             <li class="nav-item">
-                <a class="nav-link" href="/descargas">
-                    <i class="bi bi-book"></i> Descargas
+                <a class="nav-link {{ rutaActual == '/reportes' ? 'active' : '' }}" href="/reportes">
+                    <i class="bi bi-bar-chart-line"></i> Reportes
+                </a>
+            </li>
+            {% if usuario and usuario.rol == 'admin' %}
+            <li class="nav-item">
+                <a class="nav-link {{ rutaActual == '/usuarios' ? 'active' : '' }}" href="/usuarios">
+                    <i class="bi bi-people"></i> Usuarios
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">
-                    <i class="bi bi-people me-2"></i> Usuarios
+                <a class="nav-link {{ rutaActual == '/configuracion' ? 'active' : '' }}" href="/configuracion">
+                    <i class="bi bi-gear"></i> Configuración
                 </a>
             </li>
+            {% endif %}
 
             <li class="nav-item">
-                <a class="nav-link" href="#">
-                    <i class="bi bi-bar-chart-line me-2"></i> Reportes
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">
-                    <i class="bi bi-gear me-2"></i> Configuración
-                </a>
-            </li>
-            <li class="nav-item mt-3">
-                <a class="nav-link text-danger" href="#">
-                    <i class="bi bi-box-arrow-right me-2"></i> Cerrar sesión
+                <a class="nav-link sidebar-logout" href="/logout">
+                    <i class="bi bi-box-arrow-right"></i> Cerrar sesión
                 </a>
             </li>
         </ul>
@@ -117,25 +147,28 @@
             <div class="dropdown">
                 <button class="btn btn-link text-dark position-relative p-0" data-bs-toggle="dropdown">
                     <i class="bi bi-bell fs-5"></i>
+                    {% if solicitudesPendientesCount > 0 %}
                     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
                         style="font-size: 0.6rem">
-                        3
+                        {{ solicitudesPendientesCount }}
                     </span>
+                    {% endif %}
                 </button>
-                <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="min-width: 280px">
-                    <li class="dropdown-header fw-semibold">Notificaciones</li>
+                <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="min-width: 300px">
+                    <li class="dropdown-header fw-semibold">Solicitudes de préstamo pendientes</li>
                     <li>
                         <hr class="dropdown-divider" />
                     </li>
+                    {% for s in solicitudesPendientesUltimas %}
                     <li>
-                        <a class="dropdown-item small" href="#">Nuevo usuario registrado</a>
+                        <a class="dropdown-item small" href="/solicitudes">
+                            <i class="bi bi-inbox-fill me-1 text-warning"></i>
+                            {{ s.nombre_solicitante }} solicitó un préstamo
+                        </a>
                     </li>
-                    <li>
-                        <a class="dropdown-item small" href="#">Reporte generado</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item small" href="#">Actualización disponible</a>
-                    </li>
+                    {% else %}
+                    <li><span class="dropdown-item small text-muted">Sin solicitudes pendientes</span></li>
+                    {% endfor %}
                 </ul>
             </div>
 
@@ -145,7 +178,7 @@
                     <div class="avatar-circle-sm me-2">
                         <i class="bi bi-person-fill"></i>
                     </div>
-                    <span class="d-none d-md-inline small fw-medium">Admin</span>
+                    <span class="d-none d-md-inline small fw-medium">{{ usuario ? usuario.nombre : 'Invitado' }}</span>
                     <i class="bi bi-chevron-down ms-1 small"></i>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end shadow-sm">
@@ -159,7 +192,7 @@
                         <hr class="dropdown-divider" />
                     </li>
                     <li>
-                        <a class="dropdown-item text-danger" href="#"><i class="bi bi-box-arrow-right me-2"></i>
+                        <a class="dropdown-item text-danger" href="/logout"><i class="bi bi-box-arrow-right me-2"></i>
                             Salir</a>
                     </li>
                 </ul>

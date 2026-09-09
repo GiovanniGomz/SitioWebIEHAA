@@ -1,12 +1,13 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Tu\Plugin\Components\TuComponente;
 
-Route::get('/reportePDFFacultades', function () {
-    return (new \IEHAA\Facultades\Components\FacultadComponent())->generarPdf();
-});
+Route::middleware(['web', 'cpanel.auth'])->group(function () {
+    Route::get('/reportePDFFacultades', function () {
+        return (new \IEHAA\Facultades\Components\FacultadComponent())->generarPdf();
+    });
 
-Route::get('/reporteExcelFacultades', function () {
-    return (new \IEHAA\Facultades\Components\FacultadComponent())->generarExcel();
+    Route::get('/reporteExcelFacultades', function () {
+        return (new \IEHAA\Facultades\Components\FacultadComponent())->generarExcel();
+    });
 });

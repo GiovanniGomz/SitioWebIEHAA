@@ -1,0 +1,41 @@
+<table class="table" id="tabla-publicacion">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Título</th>
+            <th scope="col">Tipo</th>
+            <th scope="col">Investigador</th>
+            <th scope="col">Fecha</th>
+            <th scope="col">Archivo</th>
+            <th scope="col">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% set contador = 1 %} {% for publicacion in publicaciones %}
+        <tr>
+            <th scope="row">{{ contador }}</th>
+            <td>{{ publicacion.titulo }}</td>
+            <td>{{ publicacion.tipo_publicacion ? publicacion.tipo_publicacion.nombre : '—' }}</td>
+            <td>{{ publicacion.investigador ? publicacion.investigador.nombre ~ ' ' ~ publicacion.investigador.apellido : '—' }}</td>
+            <td>{{ publicacion.fecha ? publicacion.fecha|date('d/m/Y') : '—' }}</td>
+            <td>
+                {% if publicacion.archivo %}
+                <a href="storage/app/uploads/public/publicaciones/{{ publicacion.archivo }}" download target="_blank">
+                    <i class="bi bi-file-earmark-arrow-down"></i>
+                </a>
+                {% else %}—{% endif %}
+            </td>
+            <td>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal"
+                    data-request="publicacionComponent::onGetPublicacion" data-request-data="id: {{ publicacion.id }}"
+                    data-request-success="cargarFormulario(data)">
+                    <i class="bi bi-pencil-square"></i>
+                </button>
+                <button type="button" class="btn btn-danger btn-eliminar" data-id="{{ publicacion.id }}">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </td>
+        </tr>
+        {% set contador = contador + 1 %} {% endfor %}
+    </tbody>
+</table>

@@ -1,0 +1,100 @@
+<link rel="stylesheet" href="{{ 'assets/css/cedjag.css'|theme }}?v={{ assetVersion }}" />
+
+<section id="cedjag" class="services section light-background mt-1">
+    <div class="container section-title" data-aos="fade-up">
+        <h2>CEDJAG</h2>
+        <p>Centro de Documentación — explorá los fondos documentales de Fabio Castillo y del Fondo Bibliográfico, y
+            solicitá el préstamo del documento que necesités.</p>
+    </div>
+
+    <div class="container" id="cedjag-app">
+        <div class="row mb-4 gy-2">
+            <div class="col-md-6">
+                <input type="text" class="form-control" id="cedjag-buscar" placeholder="Buscar por nombre..." />
+            </div>
+            <div class="col-md-6 d-flex gap-2">
+                <select class="form-select" id="cedjag-filtro">
+                    <option value="">Todas las colecciones</option>
+                    <option value="fabio">Fabio Castillo</option>
+                    <option value="fondo">Fondo Bibliográfico</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row gy-4" id="cedjag-grid">
+            {% for item in catalogo %}
+            <div class="col-lg-4 col-md-6 cedjag-item" data-tipo="{{ item.tipo }}" data-nombre="{{ item.nombre|lower }}">
+                <div class="cedjag-card">
+                    <span class="badge {{ item.tipo == 'fabio' ? 'bg-primary' : 'bg-info' }} mb-2">{{ item.coleccion }}</span>
+                    <h3 class="cedjag-card-titulo">{{ item.nombre }}</h3>
+                    <p class="cedjag-card-ubicacion"><i class="bi bi-geo-alt-fill"></i> {{ item.ubicacion }}</p>
+
+                    <div class="cedjag-card-acciones">
+                        {% if item.tieneDigital %}
+                        <a href="{{ item.urlDigital }}" target="_blank" class="btn btn-sm btn-outline-secondary">
+                            <i class="bi bi-file-earmark-text"></i> Ver digital
+                        </a>
+                        {% endif %}
+                        <button type="button" class="btn btn-sm btn-primary btn-solicitar"
+                            data-tipo="{{ item.tipo }}" data-id="{{ item.id }}" data-nombre="{{ item.nombre }}"
+                            data-coleccion="{{ item.coleccion }}" data-ubicacion="{{ item.ubicacion }}">
+                            <i class="bi bi-send"></i> Solicitar préstamo
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="col-12 text-center text-muted py-5">
+                <i class="bi bi-inbox" style="font-size: 2.5rem;"></i>
+                <p class="mt-2 mb-0">Todavía no hay documentos catalogados.</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <p class="text-center text-muted small mt-4 d-none" id="cedjag-sin-resultados">
+            No se encontraron documentos con ese criterio.
+        </p>
+    </div>
+</section>
+
+<!-- Modal de solicitud -->
+<div class="modal fade" id="cedjag-modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Solicitar préstamo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-info small" id="cedjag-modal-info"></div>
+                <div class="alert alert-danger d-none" id="cedjag-modal-error"></div>
+
+                <div class="mb-3">
+                    <label class="form-label">Tu nombre</label>
+                    <input type="text" class="form-control" id="cedjag-nombre" required />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Correo</label>
+                    <input type="email" class="form-control" id="cedjag-email" required />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Teléfono (opcional)</label>
+                    <input type="text" class="form-control" id="cedjag-telefono" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Mensaje (opcional)</label>
+                    <textarea class="form-control" id="cedjag-mensaje" rows="3" placeholder="Motivo de la consulta, fecha en la que lo necesitás, etc."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="cedjag-btn-enviar">
+                    <span class="spinner-border spinner-border-sm d-none" id="cedjag-spinner"></span>
+                    Enviar solicitud
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{{ 'assets/js/cedjag/cedjag.js'|theme }}?v={{ assetVersion }}"></script>

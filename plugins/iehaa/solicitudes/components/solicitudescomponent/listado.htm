@@ -1,0 +1,55 @@
+<div class="table-responsive">
+    <table class="table align-middle" id="tabla-solicitudes">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Colección</th>
+                <th>Documento</th>
+                <th>Ubicación física</th>
+                <th>Solicitante</th>
+                <th>Contacto</th>
+                <th>Mensaje</th>
+                <th>Fecha</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in solicitudes %}
+            <tr>
+                <td>{{ s.id }}</td>
+                <td>{{ s.coleccion }}</td>
+                <td>{{ s.documento }}</td>
+                <td class="small">{{ s.ubicacion }}</td>
+                <td>{{ s.nombre_solicitante }}</td>
+                <td class="small">{{ s.email_solicitante }}<br>{{ s.telefono_solicitante }}</td>
+                <td class="small">{{ s.mensaje|slice(0, 60) }}</td>
+                <td class="small">{{ s.fecha }}</td>
+                <td>
+                    {% if s.estado == 'pendiente' %}
+                    <span class="badge bg-warning text-dark">Pendiente</span>
+                    {% elseif s.estado == 'aprobado' %}
+                    <span class="badge bg-success">Aprobado</span>
+                    {% else %}
+                    <span class="badge bg-danger">Rechazado</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if s.estado == 'pendiente' %}
+                    <button type="button" class="btn btn-sm btn-success btn-aprobar" data-id="{{ s.id }}" title="Aprobar">
+                        <i class="bi bi-check-lg"></i>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-danger btn-rechazar" data-id="{{ s.id }}" title="Rechazar">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                    {% else %}—{% endif %}
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="10" class="text-center text-muted py-4">No hay solicitudes todavía</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
