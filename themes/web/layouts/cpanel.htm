@@ -1,3 +1,18 @@
+==
+<?php
+
+use Iehaa\Usuarios\Classes\CpanelAuth;
+
+function onStart()
+{
+    if (!CpanelAuth::check()) {
+        return redirect('/login');
+    }
+
+    $this['styleVersion'] = @filemtime(base_path('themes/web/assets/css/style.css')) ?: time();
+}
+?>
+==
 <!doctype html>
 <html lang="en">
 
@@ -30,7 +45,7 @@
     <link href="{{ 'assets/css/main.css" rel="stylesheet'|theme}}" />
 
     <!-- css Personalizado -->
-    <link rel="stylesheet" href="{{ 'assets/css/style.css" rel="stylesheet'|theme}}" />
+    <link rel="stylesheet" href="{{ 'assets/css/style.css'|theme }}?v={{ styleVersion }}" />
 
     <!-- DataTable -->
     <link rel="stylesheet" href="https://cdn.datatables.net/2.3.7/css/dataTables.dataTables.min.css" />

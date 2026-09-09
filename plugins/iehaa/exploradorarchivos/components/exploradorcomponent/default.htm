@@ -1,0 +1,91 @@
+<link rel="stylesheet" href="{{ 'assets/css/explorador.css'|theme }}?v={{ assetVersion }}" />
+
+<div class="explorador" id="explorador" data-modo="{{ modo }}" data-total-niveles="{{ totalNiveles }}"
+    data-handler-navegar="exploradorComponent::onNavegar" data-handler-crear="exploradorComponent::onCrearNodo"
+    data-handler-subir="exploradorComponent::onSubirArchivo" data-handler-editar-doc="exploradorComponent::onEditarDocumento"
+    data-handler-eliminar-nodo="exploradorComponent::onEliminarNodo" data-handler-eliminar-doc="exploradorComponent::onEliminarDocumento">
+
+    <div class="explorador-header">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb explorador-breadcrumb mb-1" id="explorador-breadcrumb"></ol>
+            </nav>
+            <h1 class="explorador-titulo">{{ titulo }}</h1>
+            <p class="explorador-subtitulo" id="explorador-subtitulo"></p>
+        </div>
+
+        <div class="explorador-acciones">
+            <button type="button" class="btn btn-outline-secondary" id="explorador-btn-subir" title="Subir un nivel" disabled>
+                <i class="bi bi-arrow-up-short"></i> <span class="d-none d-md-inline">Subir un nivel</span>
+            </button>
+            <div class="explorador-buscador">
+                <i class="bi bi-search"></i>
+                <input type="text" id="explorador-buscar" placeholder="Buscar en esta carpeta..." />
+            </div>
+            <button type="button" class="btn btn-primary" id="explorador-btn-nuevo">
+                <i class="bi bi-plus-lg"></i> <span id="explorador-btn-nuevo-texto">Nuevo</span>
+            </button>
+        </div>
+    </div>
+
+    <ol class="explorador-stepper" id="explorador-stepper"></ol>
+
+    <div class="explorador-dropzone" id="explorador-dropzone" hidden>
+        <i class="bi bi-cloud-arrow-up-fill"></i>
+        <p>Soltá el archivo aquí para subirlo</p>
+    </div>
+
+    <div class="explorador-grid" id="explorador-grid">
+        <div class="explorador-cargando" id="explorador-cargando">
+            <div class="spinner-border text-primary" role="status"></div>
+        </div>
+    </div>
+
+    <div class="explorador-vacio d-none" id="explorador-vacio">
+        <i class="bi bi-inbox"></i>
+        <p>No hay nada aquí todavía</p>
+    </div>
+</div>
+
+<!-- Modal Nuevo -->
+<div class="modal fade" id="explorador-modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="explorador-modal-titulo">Nuevo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-danger d-none" id="explorador-form-error"></div>
+
+                <form id="explorador-form-nodo">
+                    <div class="mb-3">
+                        <label class="form-label" id="explorador-campo-label">Nombre</label>
+                        <input type="text" class="form-control" id="explorador-campo-valor" required />
+                    </div>
+                </form>
+
+                <form id="explorador-form-archivo">
+                    <div class="mb-3">
+                        <label class="form-label">Nombre del documento</label>
+                        <input type="text" class="form-control" id="explorador-doc-nombre" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" id="explorador-doc-archivo-label">Archivo</label>
+                        <input type="file" class="form-control" id="explorador-doc-archivo" />
+                        <div class="form-text" id="explorador-doc-archivo-ayuda"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="explorador-btn-guardar">
+                    <span class="spinner-border spinner-border-sm d-none" id="explorador-btn-guardar-spinner"></span>
+                    Guardar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{{ 'assets/js/explorador/explorador.js'|theme }}?v={{ assetVersion }}"></script>

@@ -1,0 +1,8 @@
+1.0.0:
+    - "First version of usuarios"
+1.0.1:
+    - "Create Usuarios Table"
+    - v1.0.1/create_usuarios_table.php
+1.0.2:
+    - "Seed default admin user"
+    - v1.0.2/seed_admin_usuario.php

@@ -28,7 +28,7 @@ layout = "default"
                 {% set contador = 1 %} {% for investigador in investigadores %}
 
                 <div class="col-lg-4 col-md-6 publication-item" data-aos="fade-up" data-aos-delay="100">
-                    <div class="service-item item-red position-relative">
+                    <div class="service-item item-red position-relative d-flex flex-column h-100">
                         <div class="icon">
                             <svg width="100" height="100" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
                                 <path stroke="none" stroke-width="0" fill="#f5f5f5"
@@ -38,11 +38,18 @@ layout = "default"
 
                             <i class="bi bi-person"></i>
                         </div>
-                        <a href="service-details.html" class="stretched-link">
-                            <h3 class="titulo">{{ investigador.nombre }} {{ investigador.apellido }}</h3>
-                        </a>
-                        <p class="descripcion">{{ investigador.facultad }}</p>
-                        <p class="descripcion">{{ investigador.carnet }}</p>
+                        <h3 class="titulo">{{ investigador.nombre }} {{ investigador.apellido }}</h3>
+                        <p class="descripcion mb-1">{{ investigador.facultad ? investigador.facultad.nombre : '' }}</p>
+                        <p class="descripcion small text-muted mb-2">{{ investigador.carnet }}</p>
+                        <button type="button" class="btn btn-sm btn-outline-primary mt-auto align-self-start"
+                            data-bs-toggle="modal" data-bs-target="#investigador-modal"
+                            data-nombre="{{ investigador.nombre }} {{ investigador.apellido }}"
+                            data-facultad="{{ investigador.facultad ? investigador.facultad.nombre : '' }}"
+                            data-tipo="{{ investigador.tipo_investigador ? investigador.tipo_investigador.nombre : '' }}"
+                            data-categoria="{{ investigador.categoria_investigador ? investigador.categoria_investigador.nombre : '' }}"
+                            data-descripcion="{{ investigador.descripcion }}">
+                            <i class="bi bi-eye"></i> Ver perfil
+                        </button>
                     </div>
                 </div><!-- End Service Item -->
 
@@ -56,4 +63,38 @@ layout = "default"
         </div>
 
     </section><!-- /Services Section -->
+
+    <!-- Modal de detalle -->
+    <div class="modal fade" id="investigador-modal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="investigador-modal-nombre"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted small mb-3" id="investigador-modal-meta"></p>
+                    <p id="investigador-modal-descripcion"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('investigador-modal').addEventListener('show.bs.modal', function (event) {
+            var btn = event.relatedTarget;
+            document.getElementById('investigador-modal-nombre').textContent = btn.getAttribute('data-nombre') || '';
+
+            var descripcion = btn.getAttribute('data-descripcion');
+            document.getElementById('investigador-modal-descripcion').textContent =
+                descripcion ? descripcion : 'Sin descripción disponible.';
+
+            var partes = [];
+            ['facultad', 'tipo', 'categoria'].forEach(function (campo) {
+                var valor = btn.getAttribute('data-' + campo);
+                if (valor) partes.push(valor);
+            });
+            document.getElementById('investigador-modal-meta').textContent = partes.join(' — ');
+        });
+    </script>
 </main>

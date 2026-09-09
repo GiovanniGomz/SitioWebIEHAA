@@ -1,3 +1,12 @@
+==
+<?php
+
+function onStart()
+{
+    $this['styleVersion'] = @filemtime(base_path('themes/web/assets/css/style.css')) ?: time();
+}
+?>
+==
 <!doctype html>
 <html lang="en">
     <head>
@@ -47,8 +56,7 @@
         <!-- css Personalizado -->
         <link
             rel="stylesheet"
-            href="{{ 'assets/css/style.css"
-            rel="stylesheet'|theme}}"
+            href="{{ 'assets/css/style.css'|theme }}?v={{ styleVersion }}"
         />
 
         <!-- DataTable -->

@@ -1,0 +1,22 @@
+<table class="table table-sm">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Facultad</th>
+            <th>Correo</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for investigador in investigadores %}
+        <tr>
+            <td>{{ investigador.nombre }} {{ investigador.apellido }}</td>
+            <td>{{ investigador.facultad ? investigador.facultad.nombre : '—' }}</td>
+            <td>{{ investigador.email }}</td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="3" class="text-center text-muted">Sin resultados</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

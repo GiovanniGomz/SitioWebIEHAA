@@ -1,0 +1,5 @@
+1.0.0:
+    - "First version of solicitudes"
+1.0.1:
+    - "Create Solicitudes Table"
+    - v1.0.1/create_solicitudes_table.php

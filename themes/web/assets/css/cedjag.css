@@ -1,0 +1,35 @@
+.cedjag-card {
+    background: #fff;
+    border: 1px solid #e7ecf3;
+    border-radius: 14px;
+    padding: 1.4rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow 0.15s ease, transform 0.1s ease;
+}
+
+.cedjag-card:hover {
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+    transform: translateY(-2px);
+}
+
+.cedjag-card-titulo {
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+    color: #1e293b;
+}
+
+.cedjag-card-ubicacion {
+    font-size: 0.82rem;
+    color: #64748b;
+    margin-bottom: 1rem;
+    flex-grow: 1;
+}
+
+.cedjag-card-acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}

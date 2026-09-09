@@ -1,0 +1,70 @@
+<div class="container formulario-contenedor">
+    <div class="modal fade" id="modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="formulario-titulo">Registrar Usuario</h1>
+                    <button type="button" class="btn-close" id="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                        onclick="resetear()"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div data-validate-error class="alert alert-danger" style="display: none">
+                        <p data-message></p>
+                    </div>
+
+                    <form id="formulario" data-request="usuarioComponent::onRegistrar" data-request-validate
+                        data-request-flash data-request-success="onRegistrar(data)"
+                        data-request-update="'@listado': '#listado'">
+
+                        <input type="hidden" id="id" name="id" value="" />
+
+                        <div class="mb-3">
+                            <div class="validacion">
+                                <label for="nombre" class="form-label">Nombre</label>
+                                <span data-validate-for="nombre" class="text-danger small validacion-descripcion"></span>
+                            </div>
+                            <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Nombre completo" />
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="validacion">
+                                <label for="email" class="form-label">Correo</label>
+                                <span data-validate-for="email" class="text-danger small validacion-descripcion"></span>
+                            </div>
+                            <input type="email" class="form-control" id="email" name="email" placeholder="correo@iehaa.com" />
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="validacion">
+                                <label for="password" class="form-label">Contraseña</label>
+                                <span data-validate-for="password" class="text-danger small validacion-descripcion"></span>
+                            </div>
+                            <input type="password" class="form-control" id="password" name="password"
+                                placeholder="Dejar en blanco para no cambiarla" autocomplete="new-password" />
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="validacion">
+                                <label for="rol" class="form-label">Rol</label>
+                                <span data-validate-for="rol" class="text-danger small validacion-descripcion"></span>
+                            </div>
+                            <select class="form-select" id="rol" name="rol">
+                                <option value="editor">Editor</option>
+                                <option value="admin">Administrador</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="activo" name="activo" checked />
+                            <label class="form-check-label" for="activo">Usuario activo</label>
+                        </div>
+
+                        <button type="submit" id="btnRegistrar" class="btn btn-primary w-100">Registrar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
