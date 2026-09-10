@@ -4,24 +4,15 @@ namespace Iehaa\Archiveros\Components;
 
 use Cms\Classes\ComponentBase;
 use Iehaa\Archiveros\Models\Archivero;
-use Illuminate\Support\Facades\DB;
-use Winter\Storm\Support\Facades\Input;
+use Iehaa\Reportes\Classes\ReporteModulo;
 use Winter\Storm\Exception\ValidationException;
+use Winter\Storm\Support\Facades\Input;
 use Winter\Storm\Support\Facades\Validator;
-
-use Barryvdh\DomPDF\Facade\Pdf;
-
-require 'vendor/autoload.php';
-
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use PhpOffice\PhpSpreadsheet\Style\Alignment;
 
 class ArchiveroComponent extends ComponentBase
 {
-    /**
-     * Gets the details for the component
-     */
+    use ReporteModulo;
+
     public function componentDetails()
     {
         return [
@@ -30,9 +21,6 @@ class ArchiveroComponent extends ComponentBase
         ];
     }
 
-    /**
-     * Returns the properties provided by the component
-     */
     public function defineProperties()
     {
         return [];
@@ -46,21 +34,18 @@ class ArchiveroComponent extends ComponentBase
     public function onRegistrar()
     {
         $data = Input::all();
+        $id = $data['id'] ?? null;
 
-        //Llave primaria
-        $id = $data['id'];
-
-
-        if ($id) { //Actualizando
+        if ($id) {
             $this->validaciones($data);
 
             $archivero = Archivero::find($id);
+            if (!$archivero) {
+                throw new ValidationException(['codigo' => 'El registro ya no existe.']);
+            }
             $archivero->codigo = $data['codigo'];
-
             $mensaje = '¡Modificado correctamente!';
         } else {
-            //Creando nuevo registro
-
             $archivero = new Archivero();
             $archivero->codigo = $data['codigo'];
             $archivero->url = $this->generarURL();
@@ -81,22 +66,22 @@ class ArchiveroComponent extends ComponentBase
         ];
     }
 
-    function onGetArchivero()
+    public function onGetArchivero()
     {
-        $id = post('id');
-        $archivero = Archivero::find($id);
-
-        return ['archivero' => $archivero];
+        return ['archivero' => Archivero::find(post('id'))];
     }
 
-    function onEliminar()
+    public function onEliminar()
     {
-        \Log::info("Acceso a onEliminar");
+        $archivero = Archivero::find(intval(post('id')));
 
-        $id = post('id');
-        $id = intval($id);
-
-        $archivero = Archivero::find($id);
+        if (!$archivero) {
+            return [
+                '#listado' => $this->renderPartial('@listado', ['archiveros' => Archivero::all()]),
+                'estado' => 'error',
+                'mensaje' => 'El archivero ya no existe.'
+            ];
+        }
 
         $archivero->delete();
 
@@ -111,304 +96,29 @@ class ArchiveroComponent extends ComponentBase
 
     public function generarURL()
     {
-        $url = md5(uniqid());
-        $urlHash = $this->hash($url);
-
-        return $urlHash;
-    }
-
-    public function hash($valor)
-    {
-        $hash = password_hash($valor, PASSWORD_BCRYPT);
-        return $hash;
+        return password_hash(md5(uniqid()), PASSWORD_BCRYPT);
     }
 
     public function validaciones($data)
     {
-        $rules = [
+        $validator = Validator::make($data, [
             'codigo' => 'required',
-        ];
-
-        $customMessages = [
+        ], [
             'codigo.required' => '* Campo obligatorio.',
-        ];
-
-        $validator = Validator::make($data, $rules, $customMessages);
+        ]);
 
         if ($validator->fails()) {
             throw new ValidationException($validator);
         }
     }
 
-    public function generarPDF()
+    protected function datosReporte(): array
     {
-        $archiveros = Archivero::all();
-
-        \Log::info(json_encode($archiveros));
-
-        $data = [
-            'fecha' => now(),
-            'archiveros' => $archiveros,
-            'titulo' => 'Listado de archiveros Fabio Castillo'
-        ];
-
-        $pdf = Pdf::loadView('iehaa.archiveros::reporte', $data);
-
-        return $pdf->download('reporte_archivero_fabio.pdf');
-    }
-
-
-    public function generarExcel()
-    {
-        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
-
-        $sheet->setTitle('Archiveros IEHAA');
-
-        // =========================
-        // ESTILO DEL ENCABEZADO
-        // =========================
-
-        $headerStyle = [
-            'font' => [
-                'bold' => true,
-                'color' => ['rgb' => 'FFFFFF'],
-                'size' => 12
-            ],
-
-            'fill' => [
-                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                'startColor' => ['rgb' => '1F4E79']
-            ],
-
-            'alignment' => [
-                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
-            ],
-
-            'borders' => [
-                'allBorders' => [
-                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN
-                ]
-            ],
-        ];
-
-        // =========================
-        // ESTILO DEL TÍTULO
-        // =========================
-
-        $titleStyle = [
-            'font' => [
-                'bold' => true,
-                'size' => 16
-            ],
-
-            'alignment' => [
-                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
-            ],
-        ];
-
-        // =========================
-        // TÍTULO PRINCIPAL
-        // =========================
-
-        $sheet->mergeCells('A1:B1');
-
-        $sheet->setCellValue(
-            'A1',
-            'INSTITUTO DE ESTUDIOS HISTÓRICOS, ANTROPOLÓGICOS Y ARQUEOLÓGICOS'
-        );
-
-        $sheet->getStyle('A1')->applyFromArray($titleStyle);
-
-        // =========================
-        // SUBTÍTULO
-        // =========================
-
-        $sheet->mergeCells('A2:B2');
-
-        $sheet->setCellValue(
-            'A2',
-            'Reporte de Archiveros'
-        );
-
-        $sheet->getStyle('A2')->getFont()
-            ->setBold(true)
-            ->setSize(14);
-
-        $sheet->getStyle('A2')->getAlignment()
-            ->setHorizontal(
-                \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER
-            )
-            ->setVertical(
-                \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
-            );
-
-        // =========================
-        // FECHA
-        // =========================
-
-        $sheet->setCellValue(
-            'A3',
-            'Fecha de generación: ' . now()->format('d/m/Y H:i:s')
-        );
-
-        // =========================
-        // ENCABEZADOS DE TABLA
-        // =========================
-
-        $sheet->setCellValue('A5', '#');
-        $sheet->setCellValue('B5', 'Nombre del archivero');
-
-        $sheet->getStyle('A5:B5')
-            ->applyFromArray($headerStyle);
-
-        // =========================
-        // ANCHO DE COLUMNAS
-        // =========================
-
-        $sheet->getColumnDimension('A')->setWidth(10);
-        $sheet->getColumnDimension('B')->setWidth(50);
-
-        // =========================
-        // OBTENER ARCHIVEROS
-        // =========================
-
-        $archiveros = Archivero::all();
-
-        $fila = 6;
-        $contador = 1;
-
-        foreach ($archiveros as $archivero) {
-
-            // Correlativo
-            $sheet->setCellValue(
-                'A' . $fila,
-                $contador
-            );
-
-            // Nombre
-            $sheet->setCellValue(
-                'B' . $fila,
-                'Archivero ' . $archivero['codigo'] ?? 'No disponible'
-            );
-
-            $fila++;
-            $contador++;
+        $filas = [];
+        foreach (Archivero::orderBy('codigo')->get() as $i => $a) {
+            $filas[] = [$i + 1, 'Archivero ' . $a->codigo];
         }
 
-        // =========================
-        // TOTAL
-        // =========================
-
-        $ultimaFila = $fila - 1;
-
-        $sheet->mergeCells(
-            'A' . $fila . ':A' . $fila
-        );
-
-        $sheet->setCellValue(
-            'A' . $fila,
-            'TOTAL'
-        );
-
-        $sheet->setCellValue(
-            'B' . $fila,
-            ($fila - 6) . ' archiveros'
-        );
-
-        $sheet->getStyle(
-            'A' . $fila . ':B' . $fila
-        )->getFont()->setBold(true);
-
-        // =========================
-        // BORDES DE LA TABLA
-        // =========================
-
-        $sheet->getStyle(
-            'A5:B' . $ultimaFila
-        )->getBorders()->applyFromArray([
-            'allBorders' => [
-                'borderStyle' =>
-                \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN
-            ]
-        ]);
-
-        // Bordes de TOTAL
-
-        $sheet->getStyle(
-            'A' . $fila . ':B' . $fila
-        )->getBorders()->applyFromArray([
-            'allBorders' => [
-                'borderStyle' =>
-                \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN
-            ]
-        ]);
-
-        // =========================
-        // ALINEACIÓN
-        // =========================
-
-        $sheet->getStyle(
-            'A5:B' . $fila
-        )->getAlignment()
-            ->setVertical(
-                \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
-            );
-
-        // Correlativo centrado
-
-        $sheet->getStyle(
-            'A5:A' . $ultimaFila
-        )->getAlignment()
-            ->setHorizontal(
-                \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER
-            );
-
-        // =========================
-        // AJUSTAR TEXTO
-        // =========================
-
-        $sheet->getStyle(
-            'A5:B' . $ultimaFila
-        )->getAlignment()
-            ->setWrapText(true);
-
-        // =========================
-        // ALTURA DEL ENCABEZADO
-        // =========================
-
-        $sheet->getRowDimension(5)->setRowHeight(30);
-
-        // =========================
-        // CONGELAR ENCABEZADO
-        // =========================
-
-        $sheet->freezePane('A6');
-
-        // =========================
-        // GENERAR ARCHIVO
-        // =========================
-
-        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx(
-            $spreadsheet
-        );
-
-        $filename =
-            'Reporte_archiveros_' .
-            now()->format('Ymd_His') .
-            '.xlsx';
-
-        return response()->streamDownload(
-            function () use ($writer) {
-                $writer->save('php://output');
-            },
-            $filename,
-            [
-                'Content-Type' =>
-                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            ]
-        );
+        return ['Listado de archiveros — Fabio Castillo', ['#', 'Archivero'], $filas, 'archiveros'];
     }
 }

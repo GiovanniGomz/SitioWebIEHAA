@@ -12,6 +12,12 @@ window.addEventListener('load', function () {
     var handlerEditarDoc = el.dataset.handlerEditarDoc;
     var handlerEliminarNodo = el.dataset.handlerEliminarNodo;
     var handlerEliminarDoc = el.dataset.handlerEliminarDoc;
+    var handlerBuscar = el.dataset.handlerBuscar;
+
+    // Niveles que se crean solos con un número correlativo (sin pedir datos).
+    function esAuto(nivel) {
+        return nivel <= 1;
+    }
 
     var tituloRaiz = document.querySelector('.explorador-titulo').textContent;
 
@@ -32,7 +38,8 @@ window.addEventListener('load', function () {
         esHoja: false,
         etiquetaNivel: '',
         ultimosItems: [],
-        editandoId: null
+        editandoId: null,
+        buscando: false
     };
 
     var grid = document.getElementById('explorador-grid');
@@ -214,16 +221,18 @@ window.addEventListener('load', function () {
         var etiquetaHijo = etiquetaDe(estado.nivel + 1).toLowerCase();
         var textoHijos = item.hijos + ' ' + (item.hijos === 1 ? etiquetaHijo : (PLURALES[etiquetaHijo] || etiquetaHijo));
 
+        var botonEditar = esAuto(estado.nivel)
+            ? ''
+            : '  <button type="button" class="explorador-btn-editar" title="Editar"><i class="bi bi-pencil-fill"></i></button>';
+
         card.innerHTML =
             '<div class="explorador-card-acciones">' +
-            '  <button type="button" class="explorador-btn-editar" title="Editar"><i class="bi bi-pencil-fill"></i></button>' +
+            botonEditar +
             '  <button type="button" class="explorador-btn-eliminar" title="Eliminar"><i class="bi bi-trash"></i></button>' +
             '</div>' +
             '<i class="bi ' + iconoNivelActual() + ' explorador-card-icono"></i>' +
             '<div class="explorador-card-nombre"></div>' +
             '<div class="explorador-card-meta">' + textoHijos + ' adentro</div>';
-
-        card.querySelector('.explorador-card-nombre').textContent = item.nombre;
 
         card.addEventListener('click', function (e) {
             if (e.target.closest('.explorador-btn-eliminar') || e.target.closest('.explorador-btn-editar')) return;
@@ -236,9 +245,12 @@ window.addEventListener('load', function () {
             confirmarEliminarNodo(item);
         });
 
-        card.querySelector('.explorador-btn-editar').addEventListener('click', function () {
-            abrirEdicionNodo(item);
-        });
+        var btnEditarEl = card.querySelector('.explorador-btn-editar');
+        if (btnEditarEl) {
+            btnEditarEl.addEventListener('click', function () {
+                abrirEdicionNodo(item);
+            });
+        }
 
         return card;
     }
@@ -338,17 +350,115 @@ window.addEventListener('load', function () {
         }
     });
 
-    // Buscador (filtra el nivel actual en el DOM, sin recargar)
-    buscarInput.addEventListener('input', function () {
-        var termino = buscarInput.value.trim().toLowerCase();
+    // Buscador GLOBAL: busca un documento en cualquier parte de la cadena.
+    var buscarTimer = null;
 
-        grid.querySelectorAll('.explorador-card').forEach(function (card) {
-            card.style.display = card.dataset.nombre.indexOf(termino) === -1 ? 'none' : '';
-        });
+    buscarInput.addEventListener('input', function () {
+        var termino = buscarInput.value.trim();
+        clearTimeout(buscarTimer);
+
+        if (termino.length < 2) {
+            if (estado.buscando) {
+                estado.buscando = false;
+                cargarNivel();
+            }
+            return;
+        }
+
+        buscarTimer = setTimeout(function () { buscarGlobal(termino); }, 300);
     });
+
+    function buscarGlobal(termino) {
+        estado.buscando = true;
+        cargando.style.display = 'flex';
+        grid.innerHTML = '';
+        grid.appendChild(cargando);
+        vacio.classList.add('d-none');
+        dropzone.hidden = true;
+
+        $.request(handlerBuscar, {
+            data: { modo: modo, q: termino },
+            success: function (data) {
+                cargando.style.display = 'none';
+                renderResultadosGlobales(data.items || [], termino);
+            },
+            error: function () {
+                cargando.style.display = 'none';
+                vacio.classList.remove('d-none');
+            }
+        });
+    }
+
+    function renderResultadosGlobales(items, termino) {
+        grid.innerHTML = '';
+        subtitulo.textContent = items.length + ' resultado(s) para "' + termino + '" en todo ' + tituloRaiz;
+
+        if (!items.length) {
+            vacio.classList.remove('d-none');
+            return;
+        }
+        vacio.classList.add('d-none');
+
+        items.forEach(function (item) {
+            var card = document.createElement('div');
+            card.className = 'explorador-card explorador-card-doc explorador-card-resultado';
+
+            card.innerHTML =
+                '<i class="bi ' + item.icono + ' explorador-card-icono"></i>' +
+                '<div class="explorador-card-nombre"></div>' +
+                '<div class="explorador-card-meta explorador-card-ruta"></div>' +
+                '<button type="button" class="btn btn-sm btn-primary explorador-ir">Abrir ubicación</button>';
+
+            card.querySelector('.explorador-card-nombre').textContent = item.nombre;
+            card.querySelector('.explorador-card-ruta').textContent = item.ruta || '—';
+
+            card.querySelector('.explorador-ir').addEventListener('click', function () {
+                irADocumento(item);
+            });
+
+            grid.appendChild(card);
+        });
+    }
+
+    function irADocumento(item) {
+        buscarInput.value = '';
+        estado.buscando = false;
+
+        var breadcrumb = [{ nivel: 0, id: null, nombre: tituloRaiz }];
+
+        item.navegacion.forEach(function (paso) {
+            if (paso.id) {
+                breadcrumb.push({ nivel: paso.nivel, id: paso.id, nombre: String(paso.nombre) });
+            }
+        });
+
+        navegar(item.nivelHoja, item.parentId, breadcrumb);
+    }
 
     function esCampoCodigo(etiqueta) {
         return etiqueta === 'Archivero' || etiqueta === 'Gaveta' || etiqueta === 'Estante' || etiqueta === 'Anaquel';
+    }
+
+    // Crea un nivel automático (archivero / gaveta / estante / anaquel) sin
+    // pedir datos: el servidor le asigna el siguiente número.
+    function crearNodoAutomatico() {
+        btnNuevo.disabled = true;
+
+        $.request(handlerCrear, {
+            data: { modo: modo, nivel: estado.nivel, parent_id: estado.parentId },
+            success: function (data) {
+                btnNuevo.disabled = false;
+                Swal.fire({
+                    toast: true, position: 'top-end', icon: 'success',
+                    title: data.mensaje || 'Creado', showConfirmButton: false, timer: 1800
+                });
+                cargarNivel();
+            },
+            error: function (jqXHR) {
+                btnNuevo.disabled = false;
+                Swal.fire('No se pudo crear', extraerError(jqXHR), 'error');
+            }
+        });
     }
 
     // Botón "Nuevo"
@@ -360,6 +470,11 @@ window.addEventListener('load', function () {
         docArchivo.value = '';
         docArchivo.required = true;
         docArchivoAyuda.textContent = '';
+
+        if (!estado.esHoja && esAuto(estado.nivel)) {
+            crearNodoAutomatico();
+            return;
+        }
 
         if (estado.esHoja) {
             modalTitulo.textContent = 'Subir documento';

@@ -6,3 +6,6 @@
 1.0.2:
     - "Seed default configuracion row"
     - v1.0.2/seed_configuracion.php
+1.0.3:
+    - "Campos de la página pública (nosotros, sección patrimonio, mapa, redes)"
+    - v1.0.3/add_campos_web.php

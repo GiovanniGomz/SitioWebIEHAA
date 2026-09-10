@@ -50,10 +50,10 @@
     align-items: center;
     list-style: none;
     margin: 0 0 1.5rem;
-    padding: 0.6rem 0.9rem;
-    background: #f8fafc;
-    border: 1px solid #eef1f6;
-    border-radius: 10px;
+    padding: 0.4rem 0;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
     overflow-x: auto;
     gap: 0.25rem;
 }
@@ -210,6 +210,32 @@
 
 .explorador-card.explorador-card-doc .explorador-card-icono {
     color: inherit;
+}
+
+/* Resultados de búsqueda global */
+.explorador-card-resultado {
+    cursor: default;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.explorador-card-resultado .explorador-card-icono {
+    font-size: 2rem;
+    margin-bottom: 0;
+}
+
+.explorador-card-ruta {
+    font-size: 0.72rem;
+    color: #6b7075;
+    line-height: 1.35;
+    word-break: break-word;
+}
+
+.explorador-card-resultado .explorador-ir {
+    margin-top: auto;
+    align-self: flex-start;
 }
 
 .explorador-card-nombre {

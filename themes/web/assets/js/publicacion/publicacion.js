@@ -66,8 +66,10 @@ function cargarFormulario(data) {
     document.querySelector('#tipo_publicacion_id').value = publicacion.tipo_publicacion_id;
     document.querySelector('#investigador_id').value = publicacion.investigador_id;
     document.querySelector('#fecha').value = publicacion.fecha ? publicacion.fecha.substring(0, 10) : '';
+    document.querySelector('#url').value = publicacion.url || '';
     document.querySelector('#descripcion').value = publicacion.descripcion;
     document.querySelector('#archivo').value = '';
+    document.querySelector('#archivo').dispatchEvent(new Event('change', { bubbles: true }));
     document.querySelector('#id').value = publicacion.id;
 }
 
@@ -91,8 +93,10 @@ function limpiar() {
     document.querySelector('#tipo_publicacion_id').value = '';
     document.querySelector('#investigador_id').value = '';
     document.querySelector('#fecha').value = '';
+    document.querySelector('#url').value = '';
     document.querySelector('#descripcion').value = '';
     document.querySelector('#archivo').value = '';
+    document.querySelector('#archivo').dispatchEvent(new Event('change', { bubbles: true }));
     document.querySelector('#id').value = '';
     limpiarErrores();
 }

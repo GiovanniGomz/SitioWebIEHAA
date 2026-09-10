@@ -83,18 +83,25 @@ function avisoEliminar(id) {
 function cargarFormulario(data) {
     const { documento } = data;
     const contenedorPDF = document.querySelector('#contenedor-pdf');
+    const archivoTmp = document.querySelector('#archivo_tmp');
 
     modoModificar();
 
     document.querySelector('#nombre').value = documento.nombre;
     document.querySelector('#id').value = documento.id;
-    document.querySelector('#archivo_tmp').value = documento.archivo;
+    if (archivoTmp) archivoTmp.value = documento.archivo || '';
 
-    if (contenedorPDF) {
+    const archivo = document.querySelector('#archivo');
+    archivo.value = '';
+    archivo.dispatchEvent(new Event('change', { bubbles: true }));
+
+    if (contenedorPDF && documento.archivo) {
         contenedorPDF.classList.remove('ocultar');
+        const desc = document.querySelector('#pdf-descripcion');
+        if (desc) desc.textContent = 'Archivo actual: ' + documento.archivo;
+    } else if (contenedorPDF) {
+        contenedorPDF.classList.add('ocultar');
     }
-
-    document.querySelector('#pdf-descripcion').textContent = documento.archivo;
 }
 
 function resetear() {
@@ -126,8 +133,11 @@ function limpiar() {
     }
 
     document.querySelector('#nombre').value = '';
-    document.querySelector('#archivo').value = '';
-    document.querySelector('#archivo_tmp').value = '';
+    const archivo = document.querySelector('#archivo');
+    archivo.value = '';
+    archivo.dispatchEvent(new Event('change', { bubbles: true }));
+    const archivoTmp = document.querySelector('#archivo_tmp');
+    if (archivoTmp) archivoTmp.value = '';
     document.querySelector('#id').value = '';
 
     limpiarErrores();

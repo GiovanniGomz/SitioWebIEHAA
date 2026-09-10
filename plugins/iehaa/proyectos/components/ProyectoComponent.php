@@ -5,12 +5,15 @@ namespace Iehaa\Proyectos\Components;
 use Cms\Classes\ComponentBase;
 use Iehaa\Investigadores\Models\Investigador;
 use Iehaa\Proyectos\Models\Proyecto;
+use Iehaa\Reportes\Classes\ReporteModulo;
 use Winter\Storm\Exception\ValidationException;
 use Winter\Storm\Support\Facades\Input;
 use Winter\Storm\Support\Facades\Validator;
 
 class ProyectoComponent extends ComponentBase
 {
+    use ReporteModulo;
+
     public function componentDetails()
     {
         return [
@@ -114,5 +117,22 @@ class ProyectoComponent extends ComponentBase
         if ($validator->fails()) {
             throw new ValidationException($validator);
         }
+    }
+
+    protected function datosReporte(): array
+    {
+        $filas = [];
+        $proyectos = Proyecto::with('investigador')->orderByDesc('id')->get();
+
+        foreach ($proyectos as $i => $p) {
+            $filas[] = [
+                $i + 1,
+                $p->titulo,
+                $p->investigador ? trim($p->investigador->nombre . ' ' . $p->investigador->apellido) : '—',
+                \Str::limit((string) $p->descripcion, 120),
+            ];
+        }
+
+        return ['Listado de proyectos de investigación', ['#', 'Título', 'Investigador', 'Descripción'], $filas, 'proyectos'];
     }
 }

@@ -16,12 +16,11 @@
             <td>{{ documento.peso }}</td>
             <td>
                 <a
-                    type="button"
-                    class="btn btn-secondary"
-                    href="{{ ('storage/app/uploads/public/documentos/' ~ documento.archivo ) }}"
-                    download="{{ documento.nombre }}"
+                    class="btn btn-secondary btn-sm"
+                    href="/descarga-documento/{{ documento.id }}"
+                    data-loader
                 >
-                    Descargar
+                    <i class="bi bi-download me-1"></i> Descargar
                 </a>
             </td>
             <td>

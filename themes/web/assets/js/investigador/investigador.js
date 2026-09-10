@@ -2,8 +2,6 @@ $(document).ready(function () {
     iniciarApp();
 });
 
-let publicaciones = [];
-
 function iniciarApp() {
     iniciarTabla();
     eventos();
@@ -30,37 +28,25 @@ function iniciarTabla() {
 }
 
 function onRegistrar(data) {
-
     if (data.estado === 'exito') {
-        Swal.fire(
-            data.mensaje,
-            data.mensaje,
-            'success'
-        );
-
+        Swal.fire(data.mensaje, data.mensaje, 'success');
         document.querySelector('#btnModalUp').click();
         resetear();
-
         iniciarTabla();
     }
 }
 
 function onEliminar(data) {
-
     if (data.estado === 'exito') {
-        Swal.fire(
-            data.mensaje,
-            data.mensaje,
-            'success'
-        );
+        Swal.fire(data.mensaje, data.mensaje, 'success');
 
         if (data['#listado']) {
             document.querySelector('#listado').innerHTML = data['#listado'];
         }
 
-        setTimeout(() => {
-            iniciarTabla();
-        }, 0);
+        setTimeout(() => iniciarTabla(), 0);
+    } else if (data.mensaje) {
+        Swal.fire('Aviso', data.mensaje, 'info');
     }
 }
 
@@ -85,13 +71,11 @@ function avisoEliminar(id) {
 function cargarFormulario(data) {
     const { investigador } = data;
 
-    console.log(investigador);
-
     modoModificar();
 
     document.querySelector('#nombre').value = investigador.nombre;
     document.querySelector('#apellido').value = investigador.apellido;
-    document.querySelector('#carnet').value = investigador.carnet;
+    document.querySelector('#carnet').value = (investigador.carnet || '').toUpperCase();
     document.querySelector('#telefono').value = investigador.telefono;
     document.querySelector('#facultad').value = investigador.facultad_id;
     document.querySelector('#categoria_investigador').value = investigador.categoria_investigador_id;
@@ -100,23 +84,6 @@ function cargarFormulario(data) {
     document.querySelector('#sexo').value = investigador.sexo;
     document.querySelector('#descripcion').value = investigador.descripcion;
     document.querySelector('#id').value = investigador.id;
-
-    llenarPublicaciones(investigador.publicaciones);
-
-
-    //Este método se activa cuando queremos obtener los datos del registro a modificar
-    function llenarPublicaciones(listaPublicaciones) {
-
-        console.log(`Valor de lista Publicacion: ${listaPublicaciones}`);
-
-        if (listaPublicaciones !== '') {
-            publicaciones = JSON.parse(listaPublicaciones);
-        }
-        console.log(publicaciones);
-
-        actualizarPublicacionesJSON();
-        mostrarPublicaciones();
-    }
 }
 
 function resetear() {
@@ -125,163 +92,25 @@ function resetear() {
 }
 
 function modoModificar() {
-    const titulo = document.querySelector('#formulario-titulo');
-    const btnRegistrar = document.querySelector('#btnRegistrar');
-
-    titulo.textContent = 'Modificar Investigador';
-    btnRegistrar.textContent = 'Guardar Cambios';
+    document.querySelector('#formulario-titulo').textContent = 'Modificar Investigador';
+    document.querySelector('#btnRegistrar').textContent = 'Guardar Cambios';
 }
 
 function modoRegistrar() {
-    const titulo = document.querySelector('#formulario-titulo');
-    const btnRegistrar = document.querySelector('#btnRegistrar');
-
-    titulo.textContent = 'Registrar Investigador';
-    btnRegistrar.textContent = 'Registrar';
+    document.querySelector('#formulario-titulo').textContent = 'Registrar Investigador';
+    document.querySelector('#btnRegistrar').textContent = 'Registrar';
 }
 
 function limpiar() {
-    document.querySelector('#nombre').value = '';
-    document.querySelector('#apellido').value = '';
-    document.querySelector('#carnet').value = '';
-    document.querySelector('#telefono').value = '';
-    document.querySelector('#facultad').value = '';
-    document.querySelector('#categoria_investigador').value = '';
-    document.querySelector('#email').value = '';
-    document.querySelector('#tipo_investigador').value = '';
-    document.querySelector('#sexo').value = '';
-    document.querySelector('#publicaciones').value = '';
-    document.querySelector('#descripcion').value = '';
-    document.querySelector('#id').value = '';
-
-    limpiarPublicaciones();
+    ['#nombre', '#apellido', '#carnet', '#telefono', '#facultad', '#categoria_investigador',
+        '#email', '#tipo_investigador', '#sexo', '#descripcion', '#id'].forEach(sel => {
+            const el = document.querySelector(sel);
+            if (el) el.value = '';
+        });
 
     limpiarErrores();
 }
 
 function limpiarErrores() {
-    const errores = document.querySelectorAll('.validacion-descripcion');
-
-    errores.forEach(error => {
-        error.textContent = '';
-    });
-}
-
-function agregarPublicacion() {
-
-    const nombre = document.getElementById('publicacion_nombre').value.trim();
-    const url = document.getElementById('publicacion_url').value.trim();
-
-    // Validar que ambos campos tengan información
-    if (!nombre || !url) {
-        Swal.fire(
-            'Error',
-            'Debe ingresar el nombre y la URL de la publicación',
-            'error'
-        );
-        return;
-    }
-
-    // Crear publicación
-    const publicacion = {
-        id: Date.now(),
-        nombre: nombre,
-        url: url
-    };
-
-    // Agregar al arreglo
-    publicaciones.push(publicacion);
-
-    // Actualizar la interfaz
-    mostrarPublicaciones();
-
-    // Actualizar hidden
-    actualizarPublicacionesJSON();
-
-    // Limpiar campos
-    document.getElementById('publicacion_nombre').value = '';
-    document.getElementById('publicacion_url').value = '';
-
-    document.getElementById('publicacion_nombre').focus();
-}
-
-
-function eliminarPublicacion(id) {
-
-    publicaciones = publicaciones.filter(
-        publicacion => publicacion.id !== id
-    );
-
-    mostrarPublicaciones();
-
-    actualizarPublicacionesJSON();
-}
-
-function limpiarPublicaciones() {
-    const lista = document.getElementById('lista-publicaciones');
-
-    lista.innerHTML = '';
-
-    publicaciones = [];
-
-}
-
-
-function mostrarPublicaciones() {
-
-    const lista = document.getElementById('lista-publicaciones');
-
-    lista.innerHTML = '';
-
-    if (publicaciones.length === 0) {
-        lista.innerHTML = `
-                <div class="alert alert-light border">
-                    No hay publicaciones agregadas.
-                </div>
-            `;
-
-        return;
-    }
-
-    publicaciones.forEach(publicacion => {
-
-        lista.innerHTML += `
-                <div class="d-flex justify-content-between align-items-center
-                            border rounded p-2 mb-2">
-
-                    <div>
-                        <strong style="color: gray;">${escapeHTML(publicacion.nombre)}</strong>
-                        <br>
-                        <a style="color:gray;" href="${escapeHTML(publicacion.url)}"
-                           target="_blank">
-                            ${escapeHTML(publicacion.url)}
-                        </a>
-                    </div>
-
-                    <button type="button"
-                            class="btn btn-danger btn-sm"
-                            onclick="eliminarPublicacion(${publicacion.id})">
-                        Eliminar
-                    </button>
-
-                </div>
-            `;
-    });
-}
-
-
-function actualizarPublicacionesJSON() {
-
-    document.querySelector('#publicaciones').value =
-        JSON.stringify(publicaciones);
-}
-
-
-function escapeHTML(text) {
-
-    const div = document.createElement('div');
-
-    div.textContent = text;
-
-    return div.innerHTML;
+    document.querySelectorAll('.validacion-descripcion').forEach(e => e.textContent = '');
 }

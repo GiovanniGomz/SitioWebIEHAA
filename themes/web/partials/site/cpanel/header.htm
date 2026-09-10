@@ -21,6 +21,9 @@ function onStart()
             <div class="sidebar-brand-title">IEHAA</div>
             <div class="sidebar-brand-sub">Panel administrativo</div>
         </div>
+        <button type="button" class="sidebar-close d-lg-none" id="sidebarClose" aria-label="Cerrar menú">
+            <i class="bi bi-x-lg"></i>
+        </button>
     </div>
 
     <div class="sidebar-user">
@@ -55,6 +58,11 @@ function onStart()
             <li class="nav-item">
                 <a class="nav-link {{ rutaActual == '/gestion-fondo' ? 'active' : '' }}" href="/gestion-fondo">
                     <i class="bi bi-journal-bookmark"></i> Fondo Bibliográfico
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ rutaActual == '/gestion-documental' ? 'active' : '' }}" href="/gestion-documental">
+                    <i class="bi bi-folder2-open"></i> Gestión documental
                 </a>
             </li>
             <li class="nav-item">

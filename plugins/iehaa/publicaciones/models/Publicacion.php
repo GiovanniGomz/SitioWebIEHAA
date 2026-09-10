@@ -26,7 +26,7 @@ class Publicacion extends Model
     /**
      * @var array Fillable fields
      */
-    protected $fillable = ['id', 'titulo', 'descripcion', 'archivo', 'fecha', 'tipo_publicacion_id', 'investigador_id'];
+    protected $fillable = ['id', 'titulo', 'descripcion', 'archivo', 'url', 'fecha', 'tipo_publicacion_id', 'investigador_id'];
 
     /**
      * @var array Validation rules for attributes
