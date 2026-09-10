@@ -1,0 +1,190 @@
+<div class="container formulario-contenedor">
+    <div class="modal fade" id="modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="formulario-titulo">Registrar expediente</h1>
+                    <button type="button" class="btn-close" id="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                        onclick="resetear()"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div data-validate-error class="alert alert-danger" style="display: none">
+                        <p data-message class="mb-0"></p>
+                    </div>
+
+                    <form id="formulario" data-request="expedienteComponent::onRegistrar" data-request-validate
+                        data-request-flash data-request-success="onRegistrar(data)" data-request-files
+                        data-request-update="'@listado': '#listado'" enctype="multipart/form-data">
+
+                        <input type="hidden" id="id" name="id" value="" />
+
+                        <h6 class="fw-semibold text-uppercase text-muted small mb-3">Identificación</h6>
+
+                        <div class="row">
+                            <div class="mb-3 col-md-4">
+                                <div class="validacion">
+                                    <label for="serie" class="form-label">Serie</label>
+                                    <span data-validate-for="serie" class="text-danger small validacion-descripcion"></span>
+                                </div>
+                                <input type="text" class="form-control" id="serie" name="serie" placeholder="Serie documental" />
+                            </div>
+                            <div class="mb-3 col-md-4">
+                                <div class="validacion">
+                                    <label for="subserie" class="form-label">Subserie</label>
+                                    <span data-validate-for="subserie" class="text-danger small validacion-descripcion"></span>
+                                </div>
+                                <input type="text" class="form-control" id="subserie" name="subserie" placeholder="Subserie (opcional)" />
+                            </div>
+                            <div class="mb-3 col-md-4">
+                                <div class="validacion">
+                                    <label for="cantidad_folios" class="form-label">Cantidad de folios</label>
+                                    <span data-validate-for="cantidad_folios" class="text-danger small validacion-descripcion"></span>
+                                </div>
+                                <input type="number" min="0" class="form-control" id="cantidad_folios" name="cantidad_folios" placeholder="0" />
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="validacion">
+                                <label for="asunto" class="form-label">Asunto o título del expediente</label>
+                                <span data-validate-for="asunto" class="text-danger small validacion-descripcion"></span>
+                            </div>
+                            <textarea class="form-control" id="asunto" name="asunto" rows="2"
+                                placeholder="Descripción del contenido del expediente"></textarea>
+                        </div>
+
+                        <hr />
+                        <h6 class="fw-semibold text-uppercase text-muted small mb-3">Fechas extremas</h6>
+
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <label for="fecha_inicial" class="form-label">Fecha inicial</label>
+                                <input type="date" class="form-control" id="fecha_inicial" name="fecha_inicial" />
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <div class="validacion">
+                                    <label for="fecha_final" class="form-label">Fecha final</label>
+                                    <span data-validate-for="fecha_final" class="text-danger small validacion-descripcion"></span>
+                                </div>
+                                <input type="date" class="form-control" id="fecha_final" name="fecha_final" />
+                            </div>
+                        </div>
+
+                        <hr />
+                        <h6 class="fw-semibold text-uppercase text-muted small mb-3">Unidad de instalación</h6>
+
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <div class="validacion">
+                                    <label for="unidad_instalacion" class="form-label">Unidad de instalación</label>
+                                    <span data-validate-for="unidad_instalacion" class="text-danger small validacion-descripcion"></span>
+                                </div>
+                                <select class="form-select" id="unidad_instalacion" name="unidad_instalacion">
+                                    <option value="">Seleccione...</option>
+                                    {% for unidad in unidades %}
+                                    <option value="{{ unidad }}">{{ unidad }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="mb-3 col-md-6 d-none" id="grupo-unidad-otro">
+                                <div class="validacion">
+                                    <label for="unidad_instalacion_otro" class="form-label">Especifique cuál</label>
+                                    <span data-validate-for="unidad_instalacion_otro" class="text-danger small validacion-descripcion"></span>
+                                </div>
+                                <input type="text" class="form-control" id="unidad_instalacion_otro" name="unidad_instalacion_otro"
+                                    placeholder="Otro lugar de instalación" />
+                            </div>
+                        </div>
+
+                        <hr />
+                        <h6 class="fw-semibold text-uppercase text-muted small mb-3">Descripción física</h6>
+
+                        <div class="row">
+                            <div class="mb-3 col-md-4">
+                                <div class="validacion">
+                                    <label for="volumen" class="form-label">Volumen (metros lineales)</label>
+                                    <span data-validate-for="volumen" class="text-danger small validacion-descripcion"></span>
+                                </div>
+                                <input type="text" class="form-control" id="volumen" name="volumen" placeholder="Ej: 0.15 m.l." />
+                            </div>
+                            <div class="mb-3 col-md-4">
+                                <div class="validacion">
+                                    <label for="soporte" class="form-label">Soporte</label>
+                                    <span data-validate-for="soporte" class="text-danger small validacion-descripcion"></span>
+                                </div>
+                                <input type="text" class="form-control" id="soporte" name="soporte" placeholder="Ej: Papel, digital, mixto" />
+                            </div>
+                            <div class="mb-3 col-md-4">
+                                <div class="validacion">
+                                    <label for="estado_conservacion" class="form-label">Estado de conservación</label>
+                                    <span data-validate-for="estado_conservacion" class="text-danger small validacion-descripcion"></span>
+                                </div>
+                                <input type="text" class="form-control" id="estado_conservacion" name="estado_conservacion"
+                                    placeholder="Ej: Bueno, regular, deteriorado" />
+                            </div>
+                        </div>
+
+                        <hr />
+                        <h6 class="fw-semibold text-uppercase text-muted small mb-3">Formato y archivo del documento</h6>
+
+                        <div class="mb-3">
+                            <div class="validacion">
+                                <label class="form-label d-block">Formato</label>
+                                <span data-validate-for="formato" class="text-danger small validacion-descripcion"></span>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="formato" id="formato-impreso" value="impreso" checked />
+                                <label class="form-check-label" for="formato-impreso">Impreso</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="formato" id="formato-digital" value="digital" />
+                                <label class="form-check-label" for="formato-digital">Digital</label>
+                            </div>
+                        </div>
+
+                        <div class="mb-3" id="grupo-archivo">
+                            <div class="validacion">
+                                <label class="form-label" id="archivo-label">Archivo del documento (opcional)</label>
+                                <span data-validate-for="archivo" class="text-danger small validacion-descripcion"></span>
+                            </div>
+                            <label class="file-drop" for="archivo">
+                                <input type="file" id="archivo" name="archivo" hidden />
+                                <i class="bi bi-cloud-arrow-up"></i>
+                                <span class="file-drop-text">Arrastrá el documento aquí o hacé clic para seleccionar</span>
+                            </label>
+                            <div class="form-text" id="archivo-actual"></div>
+                        </div>
+
+                        <hr />
+                        <h6 class="fw-semibold text-uppercase text-muted small mb-3">Signatura topográfica</h6>
+
+                        <div class="row">
+                            <div class="mb-3 col-6 col-md-3">
+                                <label for="sig_fila" class="form-label">Fila</label>
+                                <input type="text" class="form-control" id="sig_fila" name="sig_fila" />
+                            </div>
+                            <div class="mb-3 col-6 col-md-3">
+                                <label for="sig_estante" class="form-label">Estante</label>
+                                <input type="text" class="form-control" id="sig_estante" name="sig_estante" />
+                            </div>
+                            <div class="mb-3 col-6 col-md-3">
+                                <label for="sig_anaquel" class="form-label">Anaquel</label>
+                                <input type="text" class="form-control" id="sig_anaquel" name="sig_anaquel" />
+                            </div>
+                            <div class="mb-3 col-6 col-md-3">
+                                <label for="sig_posicion" class="form-label">Posición</label>
+                                <input type="text" class="form-control" id="sig_posicion" name="sig_posicion" />
+                            </div>
+                        </div>
+
+                        <div class="modal-footer px-0 pb-0">
+                            <button type="button" class="btn btn-secondary" onclick="resetear()" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary" id="btnRegistrar">Registrar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

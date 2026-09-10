@@ -2,10 +2,11 @@
 
 namespace Iehaa\Usuarios;
 
-use Backend\Facades\Backend;
-use Backend\Models\UserRole;
 use Illuminate\Support\Facades\Route;
 use System\Classes\PluginBase;
+use Winter\Storm\Exception\AjaxException;
+use Winter\Storm\Exception\ApplicationException;
+use Winter\Storm\Exception\ValidationException;
 
 /**
  * usuarios Plugin Information File
@@ -36,6 +37,74 @@ class Plugin extends PluginBase
     public function boot(): void
     {
         Route::aliasMiddleware('cpanel.auth', \Iehaa\Usuarios\Classes\CpanelAuthMiddleware::class);
+
+        $this->registrarManejoDeErrores();
+    }
+
+    /**
+     * Convierte cualquier error no controlado de un handler AJAX del panel en
+     * un mensaje claro para el usuario, en lugar de una pantalla de error 500
+     * que "rompe" el sistema. Los errores de validación y los mensajes de
+     * aplicación se dejan pasar tal cual para que el formulario los muestre.
+     *
+     * Se registra como custom handler (no como listener de
+     * 'exception.beforeRender') para que se ejecute ANTES del manejador de
+     * errores del módulo System, que en modo debug devuelve el detalle técnico.
+     */
+    protected function registrarManejoDeErrores(): void
+    {
+        $handler = $this->app->make(\Illuminate\Contracts\Debug\ExceptionHandler::class);
+
+        if (!method_exists($handler, 'error')) {
+            return;
+        }
+
+        $handler->error(function (\Throwable $throwable, $code = 500, $fromConsole = false) {
+            if ($fromConsole) {
+                return null;
+            }
+
+            $request = request();
+
+            $esAjax = $request->ajax()
+                || $request->headers->has('X-WINTER-REQUEST-HANDLER')
+                || strtolower((string) $request->headers->get('X-Requested-With')) === 'xmlhttprequest';
+
+            if (!$esAjax) {
+                return null;
+            }
+
+            if (
+                $throwable instanceof ValidationException ||
+                $throwable instanceof ApplicationException ||
+                $throwable instanceof AjaxException ||
+                $throwable instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface
+            ) {
+                return null;
+            }
+
+            \Log::error('[IEHAA] Error no controlado en handler AJAX: ' . $throwable->getMessage(), [
+                'url'     => $request->fullUrl(),
+                'archivo' => $throwable->getFile() . ':' . $throwable->getLine(),
+            ]);
+
+            $msg = strtolower($throwable->getMessage());
+
+            if (str_contains($msg, 'duplicate') || str_contains($msg, 'unique') || str_contains($msg, 'llave duplicada')) {
+                return 'Ya existe un registro con esos datos. Revisá los campos que deben ser únicos.';
+            }
+
+            if (
+                str_contains($msg, 'foreign key') ||
+                str_contains($msg, 'still referenced') ||
+                str_contains($msg, 'llave foránea') ||
+                str_contains($msg, 'violates foreign key')
+            ) {
+                return 'No se puede completar la acción porque este registro está siendo utilizado por otra información del sistema.';
+            }
+
+            return 'No se pudo completar la acción. Revisá los datos e intentá nuevamente. Si el problema continúa, contactá al administrador.';
+        });
     }
 
     /**

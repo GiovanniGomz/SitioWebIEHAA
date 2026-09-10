@@ -3,3 +3,6 @@
 1.0.7:
     - "Create Investigadors Table"
     - v1.0.1/create_investigadors_table.php
+1.0.8:
+    - "Publicaciones deja de ser obligatorio en investigadores"
+    - v1.0.8/publicaciones_nullable.php

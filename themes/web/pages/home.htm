@@ -10,6 +10,7 @@ limite = "3"
 ==
 <?php
 
+use Iehaa\Configuracion\Models\Configuracion;
 use Iehaa\Documentos\Models\Documento;
 use Iehaa\Fabio\Models\Fabio;
 use Iehaa\Fondo\Models\Fondo;
@@ -23,6 +24,7 @@ function onStart()
     $this['totalProyectos'] = Proyecto::count();
     $this['totalPublicaciones'] = Publicacion::count();
     $this['totalDescargas'] = Documento::count() + Fabio::count() + Fondo::count();
+    $this['config'] = Configuracion::actual();
 }
 ?>
 ==
@@ -96,24 +98,11 @@ function onStart()
     <div class="container">
 
       <div class="row gy-4">
-
-        <div class="col-lg-6 content" data-aos="fade-up" data-aos-delay="100">
-          <p>
-            El Instituto de Estudios Históricos, Antropológicos y Arqueológicos (IEHAA) de la Universidad de El
-            Salvador es un espacio dedicado a la investigación, documentación y preservación del patrimonio
-            histórico y cultural salvadoreño, impulsando el conocimiento científico en historia, antropología y
-            arqueología.
-          </p>
+        <div class="col-lg-12 content" data-aos="fade-up" data-aos-delay="100">
+          {% for parrafo in config.texto_nosotros|split('\n') %}
+            {% if parrafo|trim is not empty %}<p>{{ parrafo|trim }}</p>{% endif %}
+          {% endfor %}
         </div>
-
-        <div class="col-lg-6" data-aos="fade-up" data-aos-delay="200">
-          <p>
-            A través de sus investigadores y sus fondos documentales — Fabio Castillo y el Fondo Bibliográfico —
-            el instituto resguarda y pone a disposición del público materiales históricos, promoviendo la
-            divulgación científica y el acceso al patrimonio cultural de la nación.
-          </p>
-        </div>
-
       </div>
 
     </div>
@@ -173,13 +162,12 @@ function onStart()
       <div class="row gy-4">
         <div class="col-lg-6 position-relative align-self-start" data-aos="fade-up" data-aos-delay="100">
           <img src="{{ 'assets/img/fondo.jpg'|theme}}" class="img-fluid" alt="">
-          <a href="https://www.youtube.com/watch?v=Y7f98aduVJ8" class="glightbox pulsating-play-btn"></a>
+          <a href="{{ config.video_url ?: 'https://www.youtube.com/watch?v=Y7f98aduVJ8' }}" class="glightbox pulsating-play-btn"></a>
         </div>
         <div class="col-lg-6 content" data-aos="fade-up" data-aos-delay="200">
-          <h3>Conservamos y estudiamos el patrimonio histórico de El Salvador.</h3>
+          <h3>{{ config.titulo_patrimonio ?: 'Conservamos y estudiamos el patrimonio histórico de El Salvador.' }}</h3>
           <p class="fst-italic">
-            A través de la investigación científica documentamos, resguardamos y difundimos nuestra memoria
-            histórica.
+            {{ config.texto_patrimonio }}
           </p>
           <ul>
             <li><i class="bi bi-check2-all"></i> <span>Fondos documentales físicos y digitales: Fabio Castillo y Fondo Bibliográfico.</span>
@@ -299,7 +287,7 @@ function onStart()
 
       <div class="mb-4" data-aos="fade-up" data-aos-delay="200">
         <iframe style="border:0; width: 100%; height: 270px;"
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3876.0112790426883!2d-89.20560782625404!3d13.717766598083314!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8f6330843530ff0b%3A0xd2e3ab336929e47f!2sUniversity%20of%20El%20Salvador!5e0!3m2!1sen!2ssv!4v1785954266382!5m2!1sen!2ssv"
+          src="{{ config.mapa_embed ?: 'https://maps.google.com/maps?q=Universidad%20de%20El%20Salvador%2C%20San%20Salvador&t=&z=15&ie=UTF8&iwloc=&output=embed' }}"
           frameborder="0" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
       </div><!-- End Google Maps -->
 

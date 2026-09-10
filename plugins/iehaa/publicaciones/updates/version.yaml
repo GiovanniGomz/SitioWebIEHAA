@@ -3,3 +3,6 @@
 1.0.1:
     - "Create Publicaciones Table"
     - v1.0.1/create_publicaciones_table.php
+1.0.2:
+    - "Agregar campo URL de la publicación"
+    - v1.0.2/add_url_to_publicaciones.php

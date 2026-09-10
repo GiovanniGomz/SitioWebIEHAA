@@ -87,15 +87,17 @@
 
 .reportes {
     display: flex;
-    gap: 2rem;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
     padding: 0;
     border: none !important;
 }
 
 .reportes section {
     cursor: pointer;
-    padding: 20px;
+    padding: 0.75rem 0;
     border: none !important;
+    white-space: nowrap;
 }
 
 .reporte-excel a {
@@ -114,6 +116,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
     padding: 0;
     margin-top: 8px;
     border: none !important;
@@ -281,6 +285,22 @@ body {
     font-weight: 500;
     letter-spacing: 0.06em;
     text-transform: uppercase;
+}
+
+.sidebar-close {
+    margin-left: auto;
+    background: transparent;
+    border: 0;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 1.1rem;
+    line-height: 1;
+    padding: 0.35rem;
+    border-radius: 6px;
+}
+
+.sidebar-close:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
 }
 
 .sidebar-user {
@@ -577,9 +597,25 @@ body {
 }
 
 /* ---------- RESPONSIVE ---------- */
+
+/* Nada del panel puede empujar el ancho de la página */
+.topbar,
+.main-content,
+.dashboard-footer {
+    max-width: 100vw;
+}
+
+.main-content > .container-fluid,
+.main-content > .container,
+.main-content .container.documento {
+    max-width: 100%;
+}
+
+/* --- Tablet / móvil: sidebar fuera de pantalla --- */
 @media (max-width: 991.98px) {
     .sidebar {
         transform: translateX(-100%);
+        box-shadow: 0 0 40px rgba(0, 0, 0, 0.35);
     }
     .sidebar.show {
         transform: translateX(0);
@@ -589,6 +625,115 @@ body {
     .dashboard-footer {
         margin-left: 0;
         left: 0;
+    }
+    .topbar {
+        padding-left: 0;
+    }
+    .main-content {
+        padding-top: calc(var(--topbar-height) + 1.15rem);
+    }
+    .main-content > .container-fluid,
+    .main-content > .container {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+}
+
+/* --- Móvil grande --- */
+@media (max-width: 767.98px) {
+    :root {
+        --topbar-height: 56px;
+    }
+    .main-content h1,
+    .page-head .page-head-title {
+        font-size: 1.15rem;
+        margin-bottom: 1rem;
+    }
+    .main-content .card-body {
+        padding: 1rem;
+    }
+    .botonera {
+        margin-top: 0;
+    }
+    /* Reportes + botón "Nuevo" a lo ancho, uno debajo del otro */
+    .botonera > .reportes {
+        order: 2;
+        width: 100%;
+        justify-content: flex-start;
+    }
+    .botonera > div:last-child {
+        order: 1;
+        width: 100%;
+    }
+    .botonera .btn-nuevo,
+    .botonera > div:last-child .btn {
+        width: 100%;
+    }
+    /* Encabezado de módulo tipo dashboard: título y acción apilados */
+    .main-content .d-flex.justify-content-between.align-items-center.mb-4 {
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+    /* Directorio de reportes PDF/Excel: grupos que envuelven */
+    .panel-reportes .btn-group,
+    .main-content .btn-group {
+        flex-wrap: wrap;
+    }
+    /* Modales casi a pantalla completa */
+    .modal-dialog:not(.modal-sm) {
+        margin: 0.5rem;
+        max-width: none;
+    }
+    .modal-xl,
+    .modal-lg {
+        --bs-modal-width: none;
+    }
+    .modal-body {
+        padding: 1rem;
+    }
+    /* El scroll interno de 300px de algunos formularios estorba en móvil */
+    .modal-body .container > div[style*="overflow-y"] {
+        height: auto !important;
+        overflow: visible !important;
+    }
+    /* Formularios: columnas que se apilan solas cuando Bootstrap no lo hace */
+    .modal .row > .col:not([class*="col-"]),
+    .modal .row > .mb-3.col {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+    /* Breadcrumb que envuelve */
+    .submenu-desplazamiento .breadcrumb {
+        flex-wrap: wrap;
+    }
+    /* Topbar: nombre de usuario oculto, solo avatar */
+    .topbar .dropdown .d-none.d-md-inline {
+        display: none !important;
+    }
+    .dashboard-footer .d-flex {
+        flex-direction: column;
+        gap: 0.5rem;
+        text-align: center;
+    }
+}
+
+/* --- Móvil chico --- */
+@media (max-width: 479.98px) {
+    .sidebar {
+        width: 86vw;
+    }
+    .main-content > .container-fluid,
+    .main-content > .container {
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
+    }
+    .main-content .table > thead th,
+    .main-content .table > tbody > tr > td,
+    .main-content .table > tbody > tr > th {
+        padding: 0.55rem 0.6rem;
+    }
+    .card-dashboard .fs-4 {
+        font-size: 1.35rem !important;
     }
 }
 
@@ -603,16 +748,8 @@ body {
     margin-bottom: 0;
 }
 
-.main-content .tabla-wrap,
-.main-content #listado {
-    background: #fff;
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 0.85rem 1rem;
-}
-
 .main-content #listado .dt-container .dt-layout-row:first-child {
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
 }
 
 .main-content .table > thead th {
@@ -646,6 +783,61 @@ body {
 .main-content .table th[scope="row"] {
     color: var(--panel-muted);
     font-weight: 600;
+}
+
+/* ---------- TABLAS: SCROLL HORIZONTAL PROPIO ---------- */
+/* DataTables 2.x: solo la celda de la tabla scrollea; búsqueda/paginación quedan fijas */
+.main-content .dt-container .dt-layout-table .dt-layout-full,
+.main-content .table-responsive {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+}
+
+.main-content .dt-container .dt-layout-table .dt-layout-full > .table {
+    margin-bottom: 0;
+}
+
+.main-content .dt-layout-full::-webkit-scrollbar,
+.main-content .table-responsive::-webkit-scrollbar {
+    height: 8px;
+}
+
+.main-content .dt-layout-full::-webkit-scrollbar-thumb,
+.main-content .table-responsive::-webkit-scrollbar-thumb {
+    background: var(--border-strong);
+    border-radius: 4px;
+}
+
+.main-content .dt-layout-full::-webkit-scrollbar-thumb:hover,
+.main-content .table-responsive::-webkit-scrollbar-thumb:hover {
+    background: var(--panel-muted);
+}
+
+/* Pista visual de que hay más columnas a la derecha (la pone/quita el JS) */
+.main-content .dt-layout-table,
+.main-content .table-responsive-wrap {
+    position: relative;
+}
+
+.main-content .dt-layout-table::after,
+.main-content .table-responsive-wrap::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 8px;
+    width: 32px;
+    pointer-events: none;
+    background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.95));
+    opacity: 0;
+    transition: opacity 0.18s ease;
+}
+
+.main-content .dt-layout-table.hay-mas-derecha::after,
+.main-content .table-responsive-wrap.hay-mas-derecha::after {
+    opacity: 1;
 }
 
 /* Botones de acción dentro de tablas: estilo discreto */
@@ -837,6 +1029,50 @@ body {
 .modal .form-check-input:focus {
     border-color: var(--ues-red);
     box-shadow: 0 0 0 3px rgba(179, 38, 30, 0.13);
+}
+
+/* ---------- ZONA DE ARCHIVO (arrastrar o seleccionar) ---------- */
+.main-content .file-drop,
+.modal .file-drop {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    text-align: center;
+    padding: 1.25rem 1rem;
+    border: 1.5px dashed var(--border-strong);
+    border-radius: 10px;
+    background: #fafafa;
+    color: var(--panel-muted);
+    font-size: 0.86rem;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+
+.main-content .file-drop:hover,
+.modal .file-drop:hover {
+    border-color: var(--ues-red);
+    color: var(--panel-ink-2);
+}
+
+.main-content .file-drop.is-dragover,
+.modal .file-drop.is-dragover {
+    border-color: var(--ues-red);
+    background: var(--ues-red-tint);
+    color: var(--ues-red);
+}
+
+.main-content .file-drop.has-file,
+.modal .file-drop.has-file {
+    border-style: solid;
+    border-color: #1d6f42;
+    color: #1d6f42;
+    background: #f0f7f2;
+}
+
+.main-content .file-drop .bi,
+.modal .file-drop .bi {
+    font-size: 1.1rem;
 }
 
 /* ---------- MODALES ---------- */

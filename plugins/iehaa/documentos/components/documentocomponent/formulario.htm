@@ -41,8 +41,11 @@
                                 <p id="pdf-descripcion"></p>
                             </div>
 
-                            <input class="form-control" type="file" id="archivo" name="archivo"
-                                accept="application/pdf" />
+                            <label class="file-drop" for="archivo">
+                                <input type="file" id="archivo" name="archivo" accept="application/pdf" hidden />
+                                <i class="bi bi-cloud-arrow-up"></i>
+                                <span class="file-drop-text">Arrastrá el documento aquí o hacé clic para seleccionar</span>
+                            </label>
                         </div>
 
                         <input type="hidden" name="id" id="id">

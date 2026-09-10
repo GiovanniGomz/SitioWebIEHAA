@@ -14,7 +14,7 @@
         <tr>
             <th scope="row">{{ contador }}</th>
             <td>{{ investigador.nombre }} {{ investigador.apellido }}</td>
-            <td>{{ investigador.carnet }}</td>
+            <td>{{ investigador.carnet|upper }}</td>
             <td>{{ investigador.email }}</td>
             <td>{{ investigador.facultad.nombre }}</td>
             <td>
