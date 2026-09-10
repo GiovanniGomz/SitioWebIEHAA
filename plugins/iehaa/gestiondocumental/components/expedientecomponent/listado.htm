@@ -1,0 +1,54 @@
+<table class="table" id="tabla-expediente">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Serie</th>
+            <th scope="col">Subserie</th>
+            <th scope="col">Asunto / título</th>
+            <th scope="col">Fechas extremas</th>
+            <th scope="col">Unidad de instalación</th>
+            <th scope="col">Folios</th>
+            <th scope="col">Formato</th>
+            <th scope="col">Signatura</th>
+            <th scope="col">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% set contador = 1 %}
+        {% for expediente in expedientes %}
+        <tr>
+            <th scope="row">{{ contador }}</th>
+            <td>{{ expediente.serie }}</td>
+            <td>{{ expediente.subserie ?: '—' }}</td>
+            <td>{{ expediente.asunto }}</td>
+            <td>{{ expediente.fechas_extremas }}</td>
+            <td>{{ expediente.unidad_texto }}</td>
+            <td>{{ expediente.cantidad_folios ?? '—' }}</td>
+            <td>
+                {% if expediente.formato == 'digital' %}
+                <span class="badge bg-primary">Digital</span>
+                {% else %}
+                <span class="badge bg-secondary">Impreso</span>
+                {% endif %}
+            </td>
+            <td>{{ expediente.signatura }}</td>
+            <td>
+                {% if expediente.archivo %}
+                <a class="btn btn-secondary btn-sm" href="/descarga-expediente/{{ expediente.id }}" data-loader title="Descargar documento">
+                    <i class="bi bi-download"></i>
+                </a>
+                {% endif %}
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal"
+                    data-request="expedienteComponent::onGetExpediente" data-request-data="id: {{ expediente.id }}"
+                    data-request-success="cargarFormulario(data)">
+                    <i class="bi bi-pencil-square"></i>
+                </button>
+                <button type="button" class="btn btn-danger btn-eliminar" data-id="{{ expediente.id }}">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </td>
+        </tr>
+        {% set contador = contador + 1 %}
+        {% endfor %}
+    </tbody>
+</table>

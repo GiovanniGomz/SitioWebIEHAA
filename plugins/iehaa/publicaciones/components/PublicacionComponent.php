@@ -5,6 +5,7 @@ namespace Iehaa\Publicaciones\Components;
 use Cms\Classes\ComponentBase;
 use Iehaa\Investigadores\Models\Investigador;
 use Iehaa\Publicaciones\Models\Publicacion;
+use Iehaa\Reportes\Classes\ReporteModulo;
 use Iehaa\Tipopublicaciones\Models\TipoPublicaciones;
 use Illuminate\Support\Facades\Storage;
 use Winter\Storm\Exception\ValidationException;
@@ -13,6 +14,8 @@ use Winter\Storm\Support\Facades\Validator;
 
 class PublicacionComponent extends ComponentBase
 {
+    use ReporteModulo;
+
     public function componentDetails()
     {
         return [
@@ -59,16 +62,15 @@ class PublicacionComponent extends ComponentBase
 
         $this->validaciones($data);
 
-        if ($id) {
-            $publicacion = Publicacion::find($id);
-            $mensaje = '¡Modificado correctamente!';
-        } else {
-            $publicacion = new Publicacion();
-            $mensaje = '¡Almacenado correctamente!';
+        $publicacion = $id ? Publicacion::find($id) : new Publicacion();
+
+        if (!$publicacion) {
+            throw new ValidationException(['titulo' => 'La publicación ya no existe.']);
         }
 
-        $publicacion->titulo = $data['titulo'];
-        $publicacion->descripcion = $data['descripcion'];
+        $publicacion->titulo = trim($data['titulo']);
+        $publicacion->descripcion = trim($data['descripcion']);
+        $publicacion->url = trim($data['url'] ?? '') ?: null;
         $publicacion->fecha = $data['fecha'] ?? null;
         $publicacion->tipo_publicacion_id = $data['tipo_publicacion_id'];
         $publicacion->investigador_id = $data['investigador_id'];
@@ -84,15 +86,13 @@ class PublicacionComponent extends ComponentBase
                 'publicaciones' => $this->obtenerTodas()
             ]),
             'estado' => 'exito',
-            'mensaje' => $mensaje
+            'mensaje' => $id ? '¡Modificado correctamente!' : '¡Almacenado correctamente!'
         ];
     }
 
     public function onGetPublicacion()
     {
-        $publicacion = Publicacion::find(post('id'));
-
-        return ['publicacion' => $publicacion];
+        return ['publicacion' => Publicacion::find(post('id'))];
     }
 
     public function onEliminar()
@@ -111,21 +111,25 @@ class PublicacionComponent extends ComponentBase
                 'publicaciones' => $this->obtenerTodas()
             ]),
             'estado' => 'exito',
-            'mensaje' => '¡Eliminado con exito!'
+            'mensaje' => $publicacion ? '¡Eliminado con exito!' : 'La publicación ya no existe.'
         ];
     }
 
     public function validaciones($data)
     {
         $validator = Validator::make($data, [
-            'titulo' => 'required|min:3',
-            'descripcion' => 'required',
+            'titulo' => ['required', 'string', 'min:3', 'max:255', 'regex:/^(?=.*[\pL\pN]).+$/us'],
+            'descripcion' => ['required', 'string', 'min:3', 'regex:/^(?=.*[\pL\pN]).+$/us'],
+            'url' => ['nullable', 'url', 'max:500'],
             'tipo_publicacion_id' => 'required',
             'investigador_id' => 'required',
         ], [
             'titulo.required' => '* Campo obligatorio.',
             'titulo.min' => 'Mínimo 3 caracteres.',
+            'titulo.regex' => 'El título debe contener texto o números.',
             'descripcion.required' => '* Campo obligatorio.',
+            'descripcion.regex' => 'La descripción debe contener texto o números.',
+            'url.url' => 'Ingresá un enlace válido (debe empezar con http:// o https://).',
             'tipo_publicacion_id.required' => '* Seleccioná un tipo.',
             'investigador_id.required' => '* Seleccioná un investigador.',
         ]);
@@ -156,5 +160,24 @@ class PublicacionComponent extends ComponentBase
     public function eliminarArchivo($nombreArchivo)
     {
         Storage::delete('uploads/public/publicaciones/' . $nombreArchivo);
+    }
+
+    protected function datosReporte(): array
+    {
+        $filas = [];
+        $publicaciones = Publicacion::with(['investigador', 'tipo_publicacion'])->orderByDesc('id')->get();
+
+        foreach ($publicaciones as $i => $p) {
+            $filas[] = [
+                $i + 1,
+                $p->titulo,
+                optional($p->tipo_publicacion)->nombre ?: '—',
+                $p->investigador ? trim($p->investigador->nombre . ' ' . $p->investigador->apellido) : '—',
+                $p->fecha ? $p->fecha->format('d/m/Y') : '—',
+                $p->url ?: '—',
+            ];
+        }
+
+        return ['Listado de publicaciones', ['#', 'Título', 'Tipo', 'Investigador', 'Fecha', 'Enlace'], $filas, 'publicaciones'];
     }
 }

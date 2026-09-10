@@ -63,6 +63,15 @@
 
                         <div class="mb-3">
                             <div class="validacion">
+                                <label for="url" class="form-label">Enlace de la publicación (opcional)</label>
+                                <span data-validate-for="url" class="text-danger small validacion-descripcion"></span>
+                            </div>
+                            <input type="url" class="form-control" id="url" name="url"
+                                placeholder="https://... donde está subida la publicación" />
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="validacion">
                                 <label for="descripcion" class="form-label">Descripción</label>
                                 <span data-validate-for="descripcion" class="text-danger small validacion-descripcion"></span>
                             </div>
@@ -70,8 +79,12 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="archivo" class="form-label">Archivo (opcional)</label>
-                            <input type="file" class="form-control" id="archivo" name="archivo" />
+                            <label class="form-label">Archivo (opcional)</label>
+                            <label class="file-drop" for="archivo">
+                                <input type="file" id="archivo" name="archivo" hidden />
+                                <i class="bi bi-cloud-arrow-up"></i>
+                                <span class="file-drop-text">Arrastrá un archivo aquí o hacé clic para seleccionar</span>
+                            </label>
                         </div>
 
                         <button type="submit" id="btnRegistrar" class="btn btn-primary w-100">Registrar</button>

@@ -21,6 +21,8 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 
 class FabioComponent extends ComponentBase
 {
+    use \Iehaa\Reportes\Classes\ReporteModulo;
+
     /**
      * Gets the details for the component
      */
@@ -207,285 +209,21 @@ class FabioComponent extends ComponentBase
         Storage::delete('uploads/public/fabio/' . $nombreArchivo);
     }
 
-    public function generarPDF()
+    protected function datosReporte(): array
     {
-        $documentos = $this->obtenerDocumentos();
-
-        $url = get('id');
-        $folder = Folder::where('url', $url)->first();
-
-        \Log::info('Acceso a generar pdf');
-        \Log::info(json_encode($documentos));
-
-        $titulo = 'Listado de documentos de folder ' . $folder->nombre;
-
-        $data = [
-            'fecha' => now(),
-            'documentos' => $documentos,
-            'titulo' => $titulo
-        ];
-
-        $pdf = Pdf::loadView('iehaa.fabio::reporte', $data);
-
-        return $pdf->download('reporte_fabio.pdf');
-    }
-
-
-    public function generarExcel()
-    {
-        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
-
-        $url = get('id');
-        $folder = Folder::where('url', $url)->first();
-        $titulo = 'Documentos del folder ' . $folder->nombre . ' IEHAA';
-
-        $sheet->setTitle('Documentos fabio IEHAA');
-
-        // =========================
-        // ESTILO DEL ENCABEZADO
-        // =========================
-
-        $headerStyle = [
-            'font' => [
-                'bold' => true,
-                'color' => ['rgb' => 'FFFFFF'],
-                'size' => 12
-            ],
-
-            'fill' => [
-                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                'startColor' => ['rgb' => '1F4E79']
-            ],
-
-            'alignment' => [
-                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
-            ],
-
-            'borders' => [
-                'allBorders' => [
-                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN
-                ]
-            ],
-        ];
-
-        // =========================
-        // ESTILO DEL TÍTULO
-        // =========================
-
-        $titleStyle = [
-            'font' => [
-                'bold' => true,
-                'size' => 16
-            ],
-
-            'alignment' => [
-                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
-            ],
-        ];
-
-        // =========================
-        // TÍTULO PRINCIPAL
-        // =========================
-
-        $sheet->mergeCells('A1:B1');
-
-        $sheet->setCellValue(
-            'A1',
-            'INSTITUTO DE ESTUDIOS HISTÓRICOS, ANTROPOLÓGICOS Y ARQUEOLÓGICOS'
-        );
-
-        $sheet->getStyle('A1')->applyFromArray($titleStyle);
-
-        // =========================
-        // SUBTÍTULO
-        // =========================
-
-        $sheet->mergeCells('A2:B2');
-
-        $sheet->setCellValue(
-            'A2',
-            $titulo
-        );
-
-        $sheet->getStyle('A2')->getFont()
-            ->setBold(true)
-            ->setSize(14);
-
-        $sheet->getStyle('A2')->getAlignment()
-            ->setHorizontal(
-                \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER
-            )
-            ->setVertical(
-                \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
-            );
-
-        // =========================
-        // FECHA
-        // =========================
-
-        $sheet->setCellValue(
-            'A3',
-            'Fecha de generación: ' . now()->format('d/m/Y H:i:s')
-        );
-
-        // =========================
-        // ENCABEZADOS DE TABLA
-        // =========================
-
-        $sheet->setCellValue('A5', '#');
-        $sheet->setCellValue('B5', 'Folder');
-
-        $sheet->getStyle('A5:B5')
-            ->applyFromArray($headerStyle);
-
-        // =========================
-        // ANCHO DE COLUMNAS
-        // =========================
-
-        $sheet->getColumnDimension('A')->setWidth(10);
-        $sheet->getColumnDimension('B')->setWidth(50);
-
-        // =========================
-        // OBTENER ARCHIVEROS
-        // =========================
-
-        $documentos = $this->obtenerDocumentos();
-
-        $fila = 6;
-        $contador = 1;
-
-        foreach ($documentos as $documento) {
-
-            // Correlativo
-            $sheet->setCellValue(
-                'A' . $fila,
-                $contador
-            );
-
-            // Nombre
-            $sheet->setCellValue(
-                'B' . $fila,
-                $documento['nombre'] ?? 'No disponible'
-            );
-
-            $fila++;
-            $contador++;
+        $filas = [];
+        foreach (\Iehaa\Fabio\Models\Fabio::with('Folder.Carpeta.Gaveta.Archivero')->get() as $i => $r) {
+            $filas[] = [
+                $i + 1,
+                $r->nombre,
+                $r->archivo,
+                optional($r->Folder)->nombre ?: '—',
+                optional(optional($r->Folder)->Carpeta)->nombre ?: '—',
+                optional(optional(optional($r->Folder)->Carpeta)->Gaveta)->codigo ? 'Gaveta ' . $r->Folder->Carpeta->Gaveta->codigo : '—',
+                optional(optional(optional(optional($r->Folder)->Carpeta)->Gaveta)->Archivero)->codigo ? 'Archivero ' . $r->Folder->Carpeta->Gaveta->Archivero->codigo : '—',
+            ];
         }
 
-        // =========================
-        // TOTAL
-        // =========================
-
-        $ultimaFila = $fila - 1;
-
-        $sheet->mergeCells(
-            'A' . $fila . ':A' . $fila
-        );
-
-        $sheet->setCellValue(
-            'A' . $fila,
-            'TOTAL'
-        );
-
-        $sheet->setCellValue(
-            'B' . $fila,
-            ($fila - 6) . ' documentos fabio'
-        );
-
-        $sheet->getStyle(
-            'A' . $fila . ':B' . $fila
-        )->getFont()->setBold(true);
-
-        // =========================
-        // BORDES DE LA TABLA
-        // =========================
-
-        $sheet->getStyle(
-            'A5:B' . $ultimaFila
-        )->getBorders()->applyFromArray([
-            'allBorders' => [
-                'borderStyle' =>
-                \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN
-            ]
-        ]);
-
-        // Bordes de TOTAL
-
-        $sheet->getStyle(
-            'A' . $fila . ':B' . $fila
-        )->getBorders()->applyFromArray([
-            'allBorders' => [
-                'borderStyle' =>
-                \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN
-            ]
-        ]);
-
-        // =========================
-        // ALINEACIÓN
-        // =========================
-
-        $sheet->getStyle(
-            'A5:B' . $fila
-        )->getAlignment()
-            ->setVertical(
-                \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
-            );
-
-        // Correlativo centrado
-
-        $sheet->getStyle(
-            'A5:A' . $ultimaFila
-        )->getAlignment()
-            ->setHorizontal(
-                \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER
-            );
-
-        // =========================
-        // AJUSTAR TEXTO
-        // =========================
-
-        $sheet->getStyle(
-            'A5:B' . $ultimaFila
-        )->getAlignment()
-            ->setWrapText(true);
-
-        // =========================
-        // ALTURA DEL ENCABEZADO
-        // =========================
-
-        $sheet->getRowDimension(5)->setRowHeight(30);
-
-        // =========================
-        // CONGELAR ENCABEZADO
-        // =========================
-
-        $sheet->freezePane('A6');
-
-        // =========================
-        // GENERAR ARCHIVO
-        // =========================
-
-        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx(
-            $spreadsheet
-        );
-
-        $filename =
-            'Reporte_fabio_' .
-            now()->format('Ymd_His') .
-            '.xlsx';
-
-        return response()->streamDownload(
-            function () use ($writer) {
-                $writer->save('php://output');
-            },
-            $filename,
-            [
-                'Content-Type' =>
-                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            ]
-        );
+        return ['Listado de documentos — Fabio Castillo', ['#', 'Documento', 'Archivo', 'Folder', 'Carpeta', 'Gaveta', 'Archivero'], $filas, 'documentos_fabio_castillo'];
     }
 }

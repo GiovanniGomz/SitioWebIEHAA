@@ -130,11 +130,14 @@ class ReporteComponent extends ComponentBase
         return [
             'Investigación' => [
                 ['label' => 'Investigadores', 'pdf' => '/reportePDFInvestigador', 'excel' => '/reporteExcelInvestigador'],
+                ['label' => 'Proyectos', 'pdf' => '/reportePDFProyectos', 'excel' => '/reporteExcelProyectos'],
+                ['label' => 'Publicaciones', 'pdf' => '/reportePDFPublicaciones', 'excel' => '/reporteExcelPublicaciones'],
                 ['label' => 'Facultades', 'pdf' => '/reportePDFFacultades', 'excel' => '/reporteExcelFacultades'],
                 ['label' => 'Tipo de Investigador', 'pdf' => '/reportePDFTipoInvestigadores', 'excel' => '/reporteExcelTipoInvestigadores'],
                 ['label' => 'Categoría de Investigador', 'pdf' => '/reportePDFCategoriaInvestigadores', 'excel' => '/reporteExcelCategoriaInvestigadores'],
                 ['label' => 'Tipo de Publicación', 'pdf' => '/reportePDFTipoPublicaciones', 'excel' => '/reporteExcelTipoPublicaciones'],
                 ['label' => 'Descargas públicas', 'pdf' => '/reportePDFDescarga', 'excel' => '/reporteExcelDescarga'],
+                ['label' => 'Gestión documental', 'pdf' => '/reportePDFExpedientes', 'excel' => '/reporteExcelExpedientes'],
             ],
             'Fabio Castillo' => [
                 ['label' => 'Archiveros', 'pdf' => '/reportePDFArchivero', 'excel' => '/reporteExcelArchivero'],

@@ -3,7 +3,8 @@
 <div class="explorador" id="explorador" data-modo="{{ modo }}" data-total-niveles="{{ totalNiveles }}"
     data-handler-navegar="exploradorComponent::onNavegar" data-handler-crear="exploradorComponent::onCrearNodo"
     data-handler-subir="exploradorComponent::onSubirArchivo" data-handler-editar-doc="exploradorComponent::onEditarDocumento"
-    data-handler-eliminar-nodo="exploradorComponent::onEliminarNodo" data-handler-eliminar-doc="exploradorComponent::onEliminarDocumento">
+    data-handler-eliminar-nodo="exploradorComponent::onEliminarNodo" data-handler-eliminar-doc="exploradorComponent::onEliminarDocumento"
+    data-handler-buscar="exploradorComponent::onBuscarGlobal">
 
     <div class="explorador-header">
         <div>
@@ -20,7 +21,7 @@
             </button>
             <div class="explorador-buscador">
                 <i class="bi bi-search"></i>
-                <input type="text" id="explorador-buscar" placeholder="Buscar en esta carpeta..." />
+                <input type="text" id="explorador-buscar" placeholder="Buscar un documento en todo {{ titulo }}..." />
             </div>
             <button type="button" class="btn btn-primary" id="explorador-btn-nuevo">
                 <i class="bi bi-plus-lg"></i> <span id="explorador-btn-nuevo-texto">Nuevo</span>

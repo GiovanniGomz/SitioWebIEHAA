@@ -1,4 +1,4 @@
-<div class="container" style="max-width: 720px;">
+<div class="container" style="max-width: 780px;">
     <nav class="submenu-desplazamiento mb-4">
         <ol class="breadcrumb mb-0">
             <li class="breadcrumb-item">
@@ -10,36 +10,102 @@
         </ol>
     </nav>
 
-    <h1 class="text-center mb-4">Configuración del sitio</h1>
+    <h1>Configuración del sitio</h1>
 
     <div class="alert alert-danger d-none" id="config-error"></div>
     <div class="alert alert-success d-none" id="config-exito"></div>
 
     <form id="config-form">
-        <div class="mb-3">
-            <label class="form-label">Nombre del sitio</label>
-            <input type="text" class="form-control" id="nombre_sitio" name="nombre_sitio" value="{{ configuracion.nombre_sitio }}" />
-        </div>
+        <div class="card mb-3">
+            <div class="card-body">
+                <h6 class="fw-semibold mb-3">Datos generales</h6>
 
-        <div class="mb-3">
-            <label class="form-label">Descripción</label>
-            <textarea class="form-control" id="descripcion_sitio" name="descripcion_sitio" rows="3">{{ configuracion.descripcion_sitio }}</textarea>
-        </div>
+                <div class="mb-3">
+                    <label class="form-label">Nombre del sitio</label>
+                    <input type="text" class="form-control" id="nombre_sitio" name="nombre_sitio" value="{{ configuracion.nombre_sitio }}" />
+                </div>
 
-        <div class="row">
-            <div class="mb-3 col">
-                <label class="form-label">Correo de contacto</label>
-                <input type="email" class="form-control" id="email_contacto" name="email_contacto" value="{{ configuracion.email_contacto }}" />
+                <div class="mb-3">
+                    <label class="form-label">Descripción</label>
+                    <textarea class="form-control" id="descripcion_sitio" name="descripcion_sitio" rows="2">{{ configuracion.descripcion_sitio }}</textarea>
+                </div>
+
+                <div class="row">
+                    <div class="mb-3 col">
+                        <label class="form-label">Correo de contacto</label>
+                        <input type="email" class="form-control" id="email_contacto" name="email_contacto" value="{{ configuracion.email_contacto }}" />
+                    </div>
+                    <div class="mb-3 col">
+                        <label class="form-label">Teléfono de contacto</label>
+                        <input type="text" class="form-control" id="telefono_contacto" name="telefono_contacto" value="{{ configuracion.telefono_contacto }}" />
+                    </div>
+                </div>
+
+                <div class="mb-0">
+                    <label class="form-label">Dirección</label>
+                    <input type="text" class="form-control" id="direccion" name="direccion" value="{{ configuracion.direccion }}" />
+                </div>
             </div>
-            <div class="mb-3 col">
-                <label class="form-label">Teléfono de contacto</label>
-                <input type="text" class="form-control" id="telefono_contacto" name="telefono_contacto" value="{{ configuracion.telefono_contacto }}" />
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-body">
+                <h6 class="fw-semibold mb-3">Página pública — Sobre nosotros</h6>
+
+                <div class="mb-0">
+                    <label class="form-label">Texto de la sección «Sobre Nosotros»</label>
+                    <textarea class="form-control" id="texto_nosotros" name="texto_nosotros" rows="6">{{ configuracion.texto_nosotros }}</textarea>
+                    <div class="form-text">Podés dejar una línea en blanco para separar párrafos.</div>
+                </div>
             </div>
         </div>
 
-        <div class="mb-4">
-            <label class="form-label">Dirección</label>
-            <input type="text" class="form-control" id="direccion" name="direccion" value="{{ configuracion.direccion }}" />
+        <div class="card mb-3">
+            <div class="card-body">
+                <h6 class="fw-semibold mb-3">Página pública — Sección «Conservamos y estudiamos el patrimonio…»</h6>
+
+                <div class="mb-3">
+                    <label class="form-label">Título de la sección</label>
+                    <input type="text" class="form-control" id="titulo_patrimonio" name="titulo_patrimonio" value="{{ configuracion.titulo_patrimonio }}" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Texto de la sección</label>
+                    <textarea class="form-control" id="texto_patrimonio" name="texto_patrimonio" rows="3">{{ configuracion.texto_patrimonio }}</textarea>
+                </div>
+
+                <div class="mb-0">
+                    <label class="form-label">Enlace del video</label>
+                    <input type="url" class="form-control" id="video_url" name="video_url" value="{{ configuracion.video_url }}"
+                        placeholder="https://www.youtube.com/watch?v=..." />
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-body">
+                <h6 class="fw-semibold mb-3">Página pública — Contacto y redes</h6>
+
+                <div class="mb-3">
+                    <label class="form-label">Mapa de contacto</label>
+                    <textarea class="form-control" id="mapa_embed" name="mapa_embed" rows="2"
+                        placeholder="Pegá el enlace del mapa o el código &lt;iframe&gt; de Google Maps">{{ configuracion.mapa_embed }}</textarea>
+                    <div class="form-text">En Google Maps: Compartir → Insertar un mapa → copiá el HTML o solo el enlace.</div>
+                </div>
+
+                <div class="row">
+                    <div class="mb-0 col">
+                        <label class="form-label"><i class="bi bi-facebook me-1"></i> Facebook</label>
+                        <input type="url" class="form-control" id="facebook_url" name="facebook_url" value="{{ configuracion.facebook_url }}"
+                            placeholder="https://www.facebook.com/..." />
+                    </div>
+                    <div class="mb-0 col">
+                        <label class="form-label"><i class="bi bi-instagram me-1"></i> Instagram</label>
+                        <input type="url" class="form-control" id="instagram_url" name="instagram_url" value="{{ configuracion.instagram_url }}"
+                            placeholder="https://www.instagram.com/..." />
+                    </div>
+                </div>
+            </div>
         </div>
 
         <button type="submit" class="btn btn-primary">
@@ -59,26 +125,27 @@
         exito.classList.add('d-none');
         document.getElementById('config-spinner').classList.remove('d-none');
 
+        var campos = ['nombre_sitio', 'descripcion_sitio', 'email_contacto', 'telefono_contacto',
+            'direccion', 'texto_nosotros', 'titulo_patrimonio', 'texto_patrimonio', 'video_url',
+            'mapa_embed', 'facebook_url', 'instagram_url'];
+        var data = {};
+        campos.forEach(function (c) { data[c] = document.getElementById(c).value; });
+
         $.request('configuracionComponent::onGuardar', {
-            data: {
-                nombre_sitio: document.getElementById('nombre_sitio').value,
-                descripcion_sitio: document.getElementById('descripcion_sitio').value,
-                email_contacto: document.getElementById('email_contacto').value,
-                telefono_contacto: document.getElementById('telefono_contacto').value,
-                direccion: document.getElementById('direccion').value
-            },
-            success: function (data) {
+            data: data,
+            success: function (resp) {
                 document.getElementById('config-spinner').classList.add('d-none');
-                exito.textContent = data.mensaje;
+                exito.textContent = resp.mensaje;
                 exito.classList.remove('d-none');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             },
             error: function (jqXHR) {
                 document.getElementById('config-spinner').classList.add('d-none');
                 try {
                     var json = JSON.parse(jqXHR.responseText);
-                    error.textContent = json.message || 'Ocurrió un error.';
-                } catch (e) {
-                    error.textContent = 'Ocurrió un error.';
+                    error.textContent = json.X_WINTER_ERROR_MESSAGE || json.message || 'Ocurrió un error.';
+                } catch (err) {
+                    error.textContent = jqXHR.responseText || 'Ocurrió un error.';
                 }
                 error.classList.remove('d-none');
             }

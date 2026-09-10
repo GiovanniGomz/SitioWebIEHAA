@@ -12,6 +12,7 @@ use Iehaa\Fabio\Models\Fabio;
 use Iehaa\Folders\Models\Folder;
 use Iehaa\Fondo\Models\Fondo;
 use Iehaa\Gavetas\Models\Gaveta;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Winter\Storm\Exception\ValidationException;
 use Winter\Storm\Support\Facades\Input;
@@ -38,21 +39,21 @@ class ExploradorComponent extends ComponentBase
             'fabio' => [
                 'titulo' => 'Fabio Castillo',
                 'niveles' => [
-                    ['modelo' => Archivero::class, 'campo' => 'codigo', 'etiqueta' => 'Archivero', 'icono' => 'bi-archive-fill', 'fk' => null],
-                    ['modelo' => Gaveta::class, 'campo' => 'codigo', 'etiqueta' => 'Gaveta', 'icono' => 'bi-inboxes-fill', 'fk' => 'archivero_id'],
-                    ['modelo' => Carpeta::class, 'campo' => 'nombre', 'etiqueta' => 'Carpeta', 'icono' => 'bi-folder2', 'fk' => 'gaveta_id'],
-                    ['modelo' => Folder::class, 'campo' => 'nombre', 'etiqueta' => 'Folder', 'icono' => 'bi-folder-fill', 'fk' => 'carpeta_id'],
+                    ['modelo' => Archivero::class, 'campo' => 'codigo', 'etiqueta' => 'Archivero', 'icono' => 'bi-archive-fill', 'fk' => null, 'auto' => true],
+                    ['modelo' => Gaveta::class, 'campo' => 'codigo', 'etiqueta' => 'Gaveta', 'icono' => 'bi-inboxes-fill', 'fk' => 'archivero_id', 'auto' => true],
+                    ['modelo' => Carpeta::class, 'campo' => 'nombre', 'etiqueta' => 'Carpeta', 'icono' => 'bi-folder2', 'fk' => 'gaveta_id', 'unico_por_padre' => true, 'alfanumerico' => true],
+                    ['modelo' => Folder::class, 'campo' => 'nombre', 'etiqueta' => 'Folder', 'icono' => 'bi-folder-fill', 'fk' => 'carpeta_id', 'unico_por_padre' => true, 'alfanumerico' => true],
                 ],
-                'documentos' => ['modelo' => Fabio::class, 'campo' => 'nombre', 'fk' => 'folder_id', 'carpeta' => 'fabio'],
+                'documentos' => ['modelo' => Fabio::class, 'campo' => 'nombre', 'fk' => 'folder_id', 'carpeta' => 'fabio', 'unico_por_padre' => true],
             ],
             'fondo' => [
                 'titulo' => 'Fondo Bibliográfico',
                 'niveles' => [
-                    ['modelo' => Estante::class, 'campo' => 'codigo', 'etiqueta' => 'Estante', 'icono' => 'bi-bookshelf', 'fk' => null],
-                    ['modelo' => Anaquel::class, 'campo' => 'codigo', 'etiqueta' => 'Anaquel', 'icono' => 'bi-archive-fill', 'fk' => 'estante_id'],
-                    ['modelo' => Coleccion::class, 'campo' => 'nombre', 'etiqueta' => 'Colección', 'icono' => 'bi-folder2', 'fk' => 'anaquel_id'],
+                    ['modelo' => Estante::class, 'campo' => 'codigo', 'etiqueta' => 'Estante', 'icono' => 'bi-bookshelf', 'fk' => null, 'auto' => true],
+                    ['modelo' => Anaquel::class, 'campo' => 'codigo', 'etiqueta' => 'Anaquel', 'icono' => 'bi-archive-fill', 'fk' => 'estante_id', 'auto' => true],
+                    ['modelo' => Coleccion::class, 'campo' => 'nombre', 'etiqueta' => 'Colección', 'icono' => 'bi-folder2', 'fk' => 'anaquel_id', 'unico_por_padre' => true, 'alfanumerico' => true],
                 ],
-                'documentos' => ['modelo' => Fondo::class, 'campo' => 'nombre', 'fk' => 'coleccion_id', 'carpeta' => 'fondo'],
+                'documentos' => ['modelo' => Fondo::class, 'campo' => 'nombre', 'fk' => 'coleccion_id', 'carpeta' => 'fondo', 'unico_por_padre' => true],
             ],
         ];
     }
@@ -177,11 +178,39 @@ class ExploradorComponent extends ComponentBase
         }
 
         $campo = $nivelConfig['campo'];
-
-        $this->validar($data, $campo);
-
         $modeloClase = $nivelConfig['modelo'];
         $id = $data['id'] ?? null;
+        $parentId = $data['parent_id'] ?? null;
+
+        if ($nivelConfig['fk'] && !$id && !$parentId) {
+            throw new ValidationException([$campo => 'No se encontró el nodo padre.']);
+        }
+
+        // Niveles automáticos (archivero, gaveta, estante, anaquel): se crean sin
+        // pedir datos, con un código correlativo (1, 2, 3...) dentro de su padre.
+        if (!empty($nivelConfig['auto']) && !$id) {
+            $nodo = new $modeloClase();
+
+            if ($nivelConfig['fk']) {
+                $nodo->{$nivelConfig['fk']} = $parentId;
+            }
+
+            if (in_array('url', $nodo->getFillable(), true)) {
+                $nodo->url = $this->generarURL();
+            }
+
+            $nodo->{$campo} = (string) $this->siguienteCorrelativo($modeloClase, $nivelConfig['fk'], $parentId);
+            $nodo->save();
+
+            return [
+                'estado' => 'exito',
+                'mensaje' => '¡' . $nivelConfig['etiqueta'] . ' ' . $nodo->{$campo} . ' creado!',
+                'id' => $nodo->id,
+                'nombre' => $nodo->{$campo},
+            ];
+        }
+
+        $this->validar($data, $campo, $nivelConfig);
 
         if ($id) {
             $nodo = $modeloClase::find($id);
@@ -189,25 +218,27 @@ class ExploradorComponent extends ComponentBase
             if (!$nodo) {
                 throw new ValidationException([$campo => 'El registro ya no existe.']);
             }
+
+            $parentId = $nodo->{$nivelConfig['fk']} ?? $parentId;
         } else {
             $nodo = new $modeloClase();
 
             if ($nivelConfig['fk']) {
-                $parentId = $data['parent_id'] ?? null;
-
-                if (!$parentId) {
-                    throw new ValidationException([$campo => 'No se encontró el nodo padre.']);
-                }
-
                 $nodo->{$nivelConfig['fk']} = $parentId;
             }
 
-            if ($nodo->isFillable('url')) {
+            if (in_array('url', $nodo->getFillable(), true)) {
                 $nodo->url = $this->generarURL();
             }
         }
 
-        $nodo->{$campo} = $data[$campo];
+        $valor = trim($data[$campo]);
+
+        if (!empty($nivelConfig['unico_por_padre'])) {
+            $this->verificarUnicoPorPadre($modeloClase, $campo, $valor, $nivelConfig['fk'], $parentId, $id, strtolower($nivelConfig['etiqueta']));
+        }
+
+        $nodo->{$campo} = $valor;
         $nodo->save();
 
         return [
@@ -216,6 +247,42 @@ class ExploradorComponent extends ComponentBase
             'id' => $nodo->id,
             'nombre' => $nodo->{$campo},
         ];
+    }
+
+    /**
+     * Siguiente número correlativo para un nivel automático, dentro del padre.
+     */
+    private function siguienteCorrelativo(string $modeloClase, ?string $fk, $parentId): int
+    {
+        $query = $modeloClase::query();
+
+        if ($fk) {
+            $query->where($fk, $parentId);
+        }
+
+        $max = (int) $query->max(DB::raw("COALESCE(NULLIF(regexp_replace(codigo, '[^0-9]', '', 'g'), ''), '0')::int"));
+
+        return $max + 1;
+    }
+
+    private function verificarUnicoPorPadre(string $modeloClase, string $campo, string $valor, ?string $fk, $parentId, $id, string $etiqueta): void
+    {
+        $query = $modeloClase::whereRaw('LOWER(TRIM(' . $campo . ')) = ?', [mb_strtolower($valor)]);
+
+        if ($fk) {
+            $query->where($fk, $parentId);
+        }
+
+        if ($id) {
+            $query->where('id', '!=', $id);
+        }
+
+        if ($query->exists()) {
+            $tipo = $campo === 'codigo' ? 'código' : 'nombre';
+            throw new ValidationException([
+                $campo => 'Ya hay ' . ($etiqueta === 'documento' ? 'un documento' : 'otra ' . $etiqueta) . ' con ese ' . $tipo . ' en este nivel.',
+            ]);
+        }
     }
 
     /**
@@ -246,8 +313,11 @@ class ExploradorComponent extends ComponentBase
         }
 
         $modeloClase = $config['modelo'];
+
+        $this->verificarUnicoPorPadre($modeloClase, $config['campo'], trim($data['nombre']), $config['fk'], $data['parent_id'], null, 'documento');
+
         $documento = new $modeloClase();
-        $documento->{$config['campo']} = $data['nombre'];
+        $documento->{$config['campo']} = trim($data['nombre']);
         $documento->{$config['fk']} = $data['parent_id'];
         $documento->archivo = $this->guardarArchivo($archivo, $config['carpeta']);
         $documento->save();
@@ -290,7 +360,9 @@ class ExploradorComponent extends ComponentBase
             throw new ValidationException($validator);
         }
 
-        $documento->{$config['campo']} = $data['nombre'];
+        $this->verificarUnicoPorPadre($config['modelo'], $config['campo'], trim($data['nombre']), $config['fk'], $documento->{$config['fk']}, $documento->id, 'documento');
+
+        $documento->{$config['campo']} = trim($data['nombre']);
 
         if ($archivo) {
             $documento->archivo = $this->guardarArchivo($archivo, $config['carpeta'], $documento->archivo);
@@ -377,17 +449,109 @@ class ExploradorComponent extends ComponentBase
         return $cadena;
     }
 
-    private function validar($data, $campo)
+    private function validar($data, $campo, $nivelConfig = [])
     {
-        $validator = Validator::make($data, [
-            $campo => 'required|min:1',
-        ], [
+        $reglas = [$campo => ['required', 'string', 'min:2', 'max:100']];
+        $mensajes = [
             $campo . '.required' => '* Campo obligatorio.',
-        ]);
+            $campo . '.min' => 'Mínimo 2 caracteres.',
+            $campo . '.max' => 'Máximo 100 caracteres.',
+        ];
+
+        if (!empty($nivelConfig['alfanumerico'])) {
+            $reglas[$campo][] = 'regex:/^[\pL\pN\s._\-]+$/u';
+            $mensajes[$campo . '.regex'] = 'Solo se permiten letras, números y espacios.';
+        }
+
+        $validator = Validator::make($data, $reglas, $mensajes);
 
         if ($validator->fails()) {
             throw new ValidationException($validator);
         }
+    }
+
+    /**
+     * Búsqueda global: encuentra documentos en cualquier parte de la cadena,
+     * con su ruta completa y la información para navegar hasta su carpeta.
+     */
+    public function onBuscarGlobal()
+    {
+        $data = Input::all();
+        $cadena = $this->obtenerCadena($data['modo'] ?? '');
+        $termino = trim($data['q'] ?? '');
+
+        if (mb_strlen($termino) < 2) {
+            return ['items' => []];
+        }
+
+        $config = $cadena['documentos'];
+        $modelo = $config['modelo'];
+
+        // Relaciones para reconstruir la ruta (nombres tal cual en los modelos viejos).
+        $relaciones = $data['modo'] === 'fabio'
+            ? ['Folder.Carpeta.Gaveta.Archivero']
+            : ['Coleccion.Anaquel.Estante'];
+
+        $documentos = $modelo::with($relaciones)
+            ->where($config['campo'], 'ilike', '%' . $termino . '%')
+            ->limit(60)
+            ->get();
+
+        $items = $documentos->map(function ($doc) use ($data, $config) {
+            if ($data['modo'] === 'fabio') {
+                $folder = $doc->Folder;
+                $carpeta = optional($folder)->Carpeta;
+                $gaveta = optional($carpeta)->Gaveta;
+                $archivero = optional($gaveta)->Archivero;
+
+                $ruta = array_filter([
+                    $archivero ? 'Archivero ' . $archivero->codigo : null,
+                    $gaveta ? 'Gaveta ' . $gaveta->codigo : null,
+                    $carpeta ? $carpeta->nombre : null,
+                    $folder ? $folder->nombre : null,
+                ]);
+
+                $navegacion = [
+                    ['nivel' => 0, 'id' => optional($archivero)->id, 'nombre' => optional($archivero)->codigo],
+                    ['nivel' => 1, 'id' => optional($gaveta)->id, 'nombre' => optional($gaveta)->codigo],
+                    ['nivel' => 2, 'id' => optional($carpeta)->id, 'nombre' => optional($carpeta)->nombre],
+                    ['nivel' => 3, 'id' => optional($folder)->id, 'nombre' => optional($folder)->nombre],
+                ];
+                $nivelHoja = 4;
+                $parentId = optional($folder)->id;
+            } else {
+                $coleccion = $doc->Coleccion;
+                $anaquel = optional($coleccion)->Anaquel;
+                $estante = optional($anaquel)->Estante;
+
+                $ruta = array_filter([
+                    $estante ? 'Estante ' . $estante->codigo : null,
+                    $anaquel ? 'Anaquel ' . $anaquel->codigo : null,
+                    $coleccion ? $coleccion->nombre : null,
+                ]);
+
+                $navegacion = [
+                    ['nivel' => 0, 'id' => optional($estante)->id, 'nombre' => optional($estante)->codigo],
+                    ['nivel' => 1, 'id' => optional($anaquel)->id, 'nombre' => optional($anaquel)->codigo],
+                    ['nivel' => 2, 'id' => optional($coleccion)->id, 'nombre' => optional($coleccion)->nombre],
+                ];
+                $nivelHoja = 3;
+                $parentId = optional($coleccion)->id;
+            }
+
+            return [
+                'id' => $doc->id,
+                'nombre' => $doc->{$config['campo']},
+                'ruta' => implode('  ›  ', $ruta),
+                'url' => 'storage/app/uploads/public/' . $config['carpeta'] . '/' . $doc->archivo,
+                'icono' => $this->iconoParaArchivo($doc->archivo),
+                'navegacion' => array_values($navegacion),
+                'nivelHoja' => $nivelHoja,
+                'parentId' => $parentId,
+            ];
+        })->filter(fn ($i) => $i['parentId'])->values();
+
+        return ['items' => $items];
     }
 
     private function guardarArchivo($archivo, $carpeta, $anterior = null)

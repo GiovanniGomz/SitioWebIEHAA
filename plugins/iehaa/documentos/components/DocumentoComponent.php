@@ -4,36 +4,27 @@ namespace IEHAA\Documentos\Components;
 
 use Cms\Classes\ComponentBase;
 use IEHAA\Documentos\Models\Documento;
-use Winter\Storm\Support\Facades\Input;
-use Winter\Storm\Exception\ValidationException;
-use Winter\Storm\Support\Facades\Validator;
-
+use Iehaa\Reportes\Classes\ReporteModulo;
 use Illuminate\Support\Facades\Storage;
-
-use Barryvdh\DomPDF\Facade\Pdf;
-
-require 'vendor/autoload.php';
-
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use Winter\Storm\Exception\ApplicationException;
+use Winter\Storm\Exception\ValidationException;
+use Winter\Storm\Support\Facades\Input;
+use Winter\Storm\Support\Facades\Validator;
 
 class DocumentoComponent extends ComponentBase
 {
-    /**
-     * Gets the details for the component
-     */
+    use ReporteModulo;
+
+    protected $rutaSubida = 'storage/app/uploads/public/documentos/';
+
     public function componentDetails()
     {
         return [
             'name'        => 'documentoComponent',
-            'description' => 'Modulo de documentos'
+            'description' => 'Modulo de descargas'
         ];
     }
 
-    /**
-     * Returns the properties provided by the component
-     */
     public function defineProperties()
     {
         return [];
@@ -41,269 +32,173 @@ class DocumentoComponent extends ComponentBase
 
     public function onRun()
     {
-        $this->page['documentos'] = Documento::all();
+        $this->page['documentos'] = Documento::orderBy('nombre')->get();
     }
 
     public function onRegistrar()
     {
         $data = Input::all();
         $archivo = Input::file('archivo');
+        $id = $data['id'] ?? null;
 
-        //Llave primaria
-        $id = $data['id'];
+        $this->validaciones($data, $archivo, $id);
 
+        $documento = $id ? Documento::find($id) : new Documento();
 
-        if ($id) { //Actualizando
-            $this->validacionesModificar($data, $archivo);
+        if (!$documento) {
+            throw new ValidationException(['nombre' => 'El documento ya no existe.']);
+        }
 
-            $documento = Documento::find($id);
-            $documento->nombre = $data['nombre'];
+        $documento->nombre = trim($data['nombre']);
 
-            if ($archivo) {
-                $documento->peso = $this->calcularPeso($archivo);
-                $documento->archivo = $this->guardarArchivo($archivo, $data['archivo_tmp']);
-            } else {
-                //Si no viene archivo es porque no se esta cambiando
-                $documento->archivo = $data['archivo_tmp'];
-            }
-
-            $mensaje = '¡Modificado correctamente!';
-        } else {
-            //Creando nuevo registro
-
-            $documento = new Documento();
-            $documento->nombre = $data['nombre'];
-
-            $this->validacionesRegistrar($data);
-
+        if ($archivo) {
             $documento->peso = $this->calcularPeso($archivo);
-            $documento->archivo = $this->guardarArchivo($archivo);
-
-            $mensaje = '¡Almacenado correctamente!';
+            $documento->archivo = $this->guardarArchivo($archivo, $documento->archivo);
         }
 
         $documento->save();
 
         return [
-            '#listado' => $this->renderPartial('@listado', [
-                'documentos' => Documento::all()
-            ]),
+            '#listado' => $this->renderPartial('@listado', ['documentos' => Documento::orderBy('nombre')->get()]),
             'estado' => 'exito',
-            'mensaje' => $mensaje
+            'mensaje' => $id ? '¡Modificado correctamente!' : '¡Almacenado correctamente!'
         ];
     }
 
-    function onGetDocumento()
+    public function onGetDocumento()
     {
-        $id = post('id');
-        $documento = Documento::find($id);
-
-        return ['documento' => $documento];
+        return ['documento' => Documento::find(post('id'))];
     }
 
-    function onEliminar()
+    public function onEliminar()
     {
-        $id = post('id');
-        $id = intval($id);
-        $documento = Documento::find($id);
+        $documento = Documento::find(intval(post('id')));
+
+        if (!$documento) {
+            return [
+                '#listado' => $this->renderPartial('@listado', ['documentos' => Documento::orderBy('nombre')->get()]),
+                'estado' => 'error',
+                'mensaje' => 'El documento ya no existe.'
+            ];
+        }
 
         $this->eliminarArchivo($documento->archivo);
-
         $documento->delete();
 
-        \Log::info(Documento::all());
-
         return [
-            '#listado' => $this->renderPartial('@listado', [
-                'documentos' => Documento::all()
-            ]),
+            '#listado' => $this->renderPartial('@listado', ['documentos' => Documento::orderBy('nombre')->get()]),
             'estado' => 'exito',
             'mensaje' => '¡Eliminado con exito!'
         ];
     }
 
-    public function validacionesRegistrar($data)
+    /**
+     * Descarga real del archivo (ruta registrada en routes.php).
+     */
+    public function descargar($id)
+    {
+        $documento = Documento::find(intval($id));
+
+        if (!$documento || !$documento->archivo) {
+            throw new ApplicationException('El documento no está disponible.');
+        }
+
+        $ruta = base_path($this->rutaSubida . $documento->archivo);
+
+        if (!is_file($ruta)) {
+            throw new ApplicationException('El archivo de este documento no se encuentra en el servidor.');
+        }
+
+        $extension = pathinfo($documento->archivo, PATHINFO_EXTENSION);
+        $nombreDescarga = \Str::slug($documento->nombre) . ($extension ? '.' . $extension : '');
+
+        return response()->download($ruta, $nombreDescarga);
+    }
+
+    public function validaciones($data, $archivo, $id = null)
     {
         $rules = [
-            'nombre' => 'required|min:3',
-            'archivo' => 'required'
+            'nombre' => ['required', 'string', 'min:3', 'max:150'],
         ];
 
-        $customMessages = [
-            'nombre.required' => '* Campo obligatorio.',
-            'nombre.min'      => 'Minimo 3 caracteres',
-            'archivo.required' => '* Campo obligatorio'
-        ];
+        if (!$id && !$archivo) {
+            $rules['archivo'] = ['required'];
+        }
 
-        $validator = Validator::make($data, $rules, $customMessages);
+        $validator = Validator::make($data, $rules, [
+            'nombre.required'  => '* Campo obligatorio.',
+            'nombre.min'       => 'Mínimo 3 caracteres.',
+            'nombre.max'       => 'Máximo 150 caracteres.',
+            'archivo.required' => '* Debés seleccionar un archivo.',
+        ]);
 
         if ($validator->fails()) {
             throw new ValidationException($validator);
+        }
+
+        $duplicado = Documento::whereRaw('LOWER(TRIM(nombre)) = ?', [mb_strtolower(trim($data['nombre']))])
+            ->when($id, fn ($q) => $q->where('id', '!=', $id))
+            ->exists();
+
+        if ($duplicado) {
+            throw new ValidationException(['nombre' => 'Ya existe una descarga con ese título.']);
         }
     }
 
-    public function validacionesModificar($data, $archivo)
+    protected function calcularPeso($archivo): string
     {
-        if (!$archivo && !$data['archivo_tmp']) {
+        $bytes = $archivo->getSize();
+        $unidades = ['B', 'KB', 'MB', 'GB'];
+        $i = 0;
 
-            $rules = [
-                'nombre' => 'required|min:3',
-                'archivo' => 'required'
-            ];
-
-            $customMessages = [
-                'nombre.required' => '* Campo obligatorio.',
-                'nombre.min'      => 'Minimo 3 caracteres',
-                'archivo.required' => '* Campo obligatorio'
-            ];
-        } else {
-            $rules = [
-                'nombre' => 'required|min:3',
-            ];
-
-            $customMessages = [
-                'nombre.required' => '* Campo obligatorio.',
-                'nombre.min'      => 'Minimo 3 caracteres',
-            ];
+        while ($bytes >= 1024 && $i < count($unidades) - 1) {
+            $bytes /= 1024;
+            $i++;
         }
 
-
-
-        $validator = Validator::make($data, $rules, $customMessages);
-
-        if ($validator->fails()) {
-            throw new ValidationException($validator);
-        }
+        return round($bytes, 2) . ' ' . $unidades[$i];
     }
 
     public function guardarArchivo($archivo, $nombreArchivo = false)
     {
-        $uploadPath = 'storage/app/uploads/public/documentos/';
+        $uploadPath = base_path($this->rutaSubida);
 
-        if ($nombreArchivo) $this->eliminarArchivo($nombreArchivo);
+        if ($nombreArchivo) {
+            $this->eliminarArchivo($nombreArchivo);
+        }
 
         if (!is_dir($uploadPath)) {
             mkdir($uploadPath, 0777, true);
         }
 
-        $nombreArchivo = time() . '_' . $archivo->getClientOriginalName();
+        $nombreArchivo = time() . '_' . preg_replace('/[^\w.\- ]+/u', '_', $archivo->getClientOriginalName());
         $archivo->move($uploadPath, $nombreArchivo);
+
         return $nombreArchivo;
     }
 
     public function eliminarArchivo($nombreArchivo)
     {
+        if (!$nombreArchivo) {
+            return;
+        }
+
+        $ruta = base_path($this->rutaSubida . $nombreArchivo);
+
+        if (is_file($ruta)) {
+            @unlink($ruta);
+        }
+
         Storage::delete('uploads/public/documentos/' . $nombreArchivo);
     }
 
-    public function generarPDF()
+    protected function datosReporte(): array
     {
-        \Log::info(json_encode(Documento::all()));
-
-        $data = [
-            'fecha' => now(),
-            'archivos' => Documento::all(),
-            'titulo' => 'Listado de documentos'
-        ];
-
-        $pdf = Pdf::loadView('iehaa.documentos::reporte', $data);
-
-        return $pdf->download('reporte_documentos.pdf');
-    }
-
-    public function generarExcel()
-    {
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
-
-        $sheet->setTitle('Documentos IEHAA');
-
-        // Estilos
-        $headerStyle = [
-            'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF'], 'size' => 12],
-            'fill' => ['fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID, 'startColor' => ['rgb' => '1F4E79']],
-            'alignment' => ['horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER],
-            'borders' => ['allBorders' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN]],
-        ];
-
-        $titleStyle = [
-            'font' => ['bold' => true, 'size' => 16],
-            'alignment' => ['horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER],
-        ];
-
-        $sheet->mergeCells('A1:C1');
-        $sheet->setCellValue('A1', 'INSTITUTO DE ESTUDIOS HISTÓRICOS, ANTROPOLÓGICOS Y ARQUEOLÓGICOS');
-        $sheet->getStyle('A1')->applyFromArray($titleStyle);
-
-        $sheet->mergeCells('A2:C2');
-        $sheet->setCellValue('A2', 'Reporte de Descargas');
-        $sheet->getStyle('A2')->getFont()->setBold(true)->setSize(14);
-
-        $sheet->getStyle('A2')->getAlignment()
-            ->setHorizontal(Alignment::HORIZONTAL_CENTER)
-            ->setVertical(Alignment::VERTICAL_CENTER);
-
-        $sheet->setCellValue('A3', 'Fecha de generación: ' . now()->format('d/m/Y H:i:s'));
-
-        $sheet->setCellValue('A5', '#');
-        $sheet->setCellValue('B5', 'Nombre del Documento');
-        $sheet->setCellValue('C5', 'Peso');
-
-        $sheet->getStyle('A5:C5')->applyFromArray($headerStyle);
-
-        $sheet->getColumnDimension('A')->setWidth(8);
-        $sheet->getColumnDimension('B')->setWidth(80);
-        $sheet->getColumnDimension('C')->setWidth(20);
-
-        $documentos = Documento::all();
-
-        $fila = 6;
-        $contador = 1;
-        foreach ($documentos as $doc) {
-            $sheet->setCellValue('A' . $fila, $contador);
-            $sheet->setCellValue('B' . $fila, $doc['nombre']);
-            $sheet->setCellValue('C' . $fila, $doc['peso']);
-
-            $sheet->getStyle('C' . $fila)->getAlignment()->setHorizontal('right');
-
-            $fila++;
-            $contador++;
+        $filas = [];
+        foreach (Documento::orderBy('nombre')->get() as $i => $d) {
+            $filas[] = [$i + 1, $d->nombre, $d->peso];
         }
 
-        $ultimaFila = $fila - 1;
-        $sheet->setCellValue('B' . $fila, 'TOTAL DOCUMENTOS:');
-        $sheet->setCellValue('C' . $fila, ($fila - 6) . ' documentos');
-        $sheet->getStyle('B' . $fila . ':C' . $fila)->getFont()->setBold(true);
-
-        $sheet->getStyle('A5:C' . $ultimaFila)->getBorders()->applyFromArray([
-            'allBorders' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN]
-        ]);
-
-        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
-
-        $filename = 'Reporte_Documentos_IEHAA_' . now()->format('Ymd_His') . '.xlsx';
-
-        return response()->streamDownload(function () use ($writer) {
-            $writer->save('php://output');
-        }, $filename, [
-            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        ]);
-    }
-
-    public function calcularPeso($documento)
-    {
-        $sizeDocumento = $documento->getSize();
-
-        $peso = $this->formatearDocumento($sizeDocumento);
-
-        return $peso;
-    }
-
-    public function formatearDocumento($bytes, $decimales = 2)
-    {
-        $size = ['B', 'KB', 'MB', 'GB', 'TB'];
-        $factor = floor((strlen($bytes) - 1) / 3);
-
-        return sprintf("%.{$decimales}f", $bytes / pow(1024, $factor)) . ' ' . $size[$factor];
+        return ['Listado de descargas', ['#', 'Título', 'Peso'], $filas, 'descargas'];
     }
 }
