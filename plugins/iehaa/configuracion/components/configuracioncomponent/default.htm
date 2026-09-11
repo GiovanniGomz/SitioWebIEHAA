@@ -62,7 +62,33 @@
 
         <div class="card mb-3">
             <div class="card-body">
-                <h6 class="fw-semibold mb-3">Página pública — Sección «Conservamos y estudiamos el patrimonio…»</h6>
+                <h6 class="fw-semibold mb-3">Página pública — Fondo de pantalla</h6>
+                <p class="text-muted small mb-3">Es la imagen grande que aparece de fondo al entrar al sitio (sección de inicio).</p>
+
+                <div id="fondo-preview-contenedor" class="mb-3 {{ configuracion.fondo_pantalla_url ? '' : 'd-none' }}">
+                    <img id="fondo-preview" src="{{ configuracion.fondo_pantalla_url }}"
+                        alt="Fondo actual" class="img-fluid rounded border" style="max-height: 220px; object-fit: cover;" />
+                    <div class="mt-2">
+                        <button type="button" class="btn btn-sm btn-outline-danger" id="btn-quitar-fondo">
+                            <i class="bi bi-trash"></i> Quitar fondo y usar el predeterminado
+                        </button>
+                    </div>
+                </div>
+
+                <input type="hidden" name="quitar_fondo_pantalla" id="quitar_fondo_pantalla" value="" />
+
+                <label class="file-drop" for="fondo_pantalla">
+                    <input type="file" id="fondo_pantalla" name="fondo_pantalla" accept="image/*" hidden />
+                    <i class="bi bi-cloud-arrow-up"></i>
+                    <span class="file-drop-text">Arrastrá una imagen aquí o hacé clic para seleccionar</span>
+                </label>
+                <div class="form-text">Formatos JPG, PNG o WEBP. Máximo 8 MB. Si no subís nada, se conserva el fondo actual.</div>
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-body">
+                <h6 class="fw-semibold mb-3">Página pública — Sección</h6>
 
                 <div class="mb-3">
                     <label class="form-label">Título de la sección</label>
@@ -116,6 +142,26 @@
 </div>
 
 <script>
+    // Vista previa instantánea al elegir una nueva imagen de fondo.
+    document.getElementById('fondo_pantalla').addEventListener('change', function () {
+        if (!this.files || !this.files[0]) return;
+
+        document.getElementById('quitar_fondo_pantalla').value = '';
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            var img = document.getElementById('fondo-preview');
+            img.src = e.target.result;
+            document.getElementById('fondo-preview-contenedor').classList.remove('d-none');
+        };
+        reader.readAsDataURL(this.files[0]);
+    });
+
+    document.getElementById('btn-quitar-fondo').addEventListener('click', function () {
+        document.getElementById('fondo_pantalla').value = '';
+        document.getElementById('quitar_fondo_pantalla').value = '1';
+        document.getElementById('fondo-preview-contenedor').classList.add('d-none');
+    });
+
     document.getElementById('config-form').addEventListener('submit', function (e) {
         e.preventDefault();
 
@@ -125,18 +171,13 @@
         exito.classList.add('d-none');
         document.getElementById('config-spinner').classList.remove('d-none');
 
-        var campos = ['nombre_sitio', 'descripcion_sitio', 'email_contacto', 'telefono_contacto',
-            'direccion', 'texto_nosotros', 'titulo_patrimonio', 'texto_patrimonio', 'video_url',
-            'mapa_embed', 'facebook_url', 'instagram_url'];
-        var data = {};
-        campos.forEach(function (c) { data[c] = document.getElementById(c).value; });
-
-        $.request('configuracionComponent::onGuardar', {
-            data: data,
+        $('#config-form').request('configuracionComponent::onGuardar', {
+            files: true,
             success: function (resp) {
                 document.getElementById('config-spinner').classList.add('d-none');
                 exito.textContent = resp.mensaje;
                 exito.classList.remove('d-none');
+                document.getElementById('quitar_fondo_pantalla').value = '';
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             },
             error: function (jqXHR) {

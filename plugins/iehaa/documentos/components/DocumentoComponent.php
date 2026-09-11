@@ -129,7 +129,7 @@ class DocumentoComponent extends ComponentBase
             'nombre.required'  => '* Campo obligatorio.',
             'nombre.min'       => 'Mínimo 3 caracteres.',
             'nombre.max'       => 'Máximo 150 caracteres.',
-            'archivo.required' => '* Debés seleccionar un archivo.',
+            'archivo.required' => '* Campo obligatorio.',
         ]);
 
         if ($validator->fails()) {
@@ -141,7 +141,7 @@ class DocumentoComponent extends ComponentBase
             ->exists();
 
         if ($duplicado) {
-            throw new ValidationException(['nombre' => 'Ya existe una descarga con ese título.']);
+            throw new ValidationException(['nombre' => 'Este valor ya existe.']);
         }
     }
 

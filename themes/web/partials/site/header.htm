@@ -1,4 +1,26 @@
+==
+<?php
+function onStart()
+{
+    $this['config'] = \Iehaa\Configuracion\Models\Configuracion::actual();
+}
+?>
+==
 <!-- Nav -->
+
+{% if config.facebook_url or config.instagram_url %}
+<div class="site-social-bar">
+    <div class="container-fluid container-xl d-flex justify-content-end align-items-center">
+        <span class="site-social-bar-label d-none d-sm-inline">Síguenos</span>
+        {% if config.facebook_url %}
+        <a href="{{ config.facebook_url }}" target="_blank" rel="noopener" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+        {% endif %}
+        {% if config.instagram_url %}
+        <a href="{{ config.instagram_url }}" target="_blank" rel="noopener" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
 
 <header id="header" class="header d-flex align-items-center sticky-top">
     <div class="container-fluid container-xl position-relative d-flex align-items-center">

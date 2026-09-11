@@ -105,7 +105,7 @@ class TipoPublicacionComponent extends ComponentBase
             ->exists();
 
         if ($duplicado) {
-            throw new ValidationException(['nombre' => 'Ya existe un tipo de publicación con ese nombre.']);
+            throw new ValidationException(['nombre' => 'Este valor ya existe.']);
         }
     }
 

@@ -1,0 +1,84 @@
+<div class="container" style="max-width: 700px;">
+    <nav class="submenu-desplazamiento mb-4">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item">
+                <a href="{{ 'cpanel'|page }}">
+                    <i class="bi bi-house-door-fill me-1"></i> IEHAA
+                </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">Mi perfil</li>
+        </ol>
+    </nav>
+
+    <h1>Mi perfil</h1>
+
+    <div class="card mb-3">
+        <div class="card-body">
+            <h6 class="fw-semibold mb-3">Foto de perfil</h6>
+
+            <div class="d-flex align-items-center gap-3 mb-3">
+                <img id="perfil-foto-preview" src="{{ usuario.foto_url }}" alt="Foto de perfil"
+                    class="rounded-circle {{ usuario.foto_url ? '' : 'd-none' }}"
+                    style="width: 72px; height: 72px; object-fit: cover;" />
+                <div id="perfil-foto-icono" class="avatar-circle {{ usuario.foto_url ? 'd-none' : '' }}" style="width: 72px; height: 72px; font-size: 1.75rem;">
+                    <i class="bi bi-person-fill"></i>
+                </div>
+                <div>
+                    <div class="fw-semibold">{{ usuario.nombre }}</div>
+                    <div class="text-muted small">{{ usuario.email }}</div>
+                </div>
+            </div>
+
+            <form id="formulario-foto" enctype="multipart/form-data">
+                <label class="file-drop" for="foto">
+                    <input type="file" id="foto" name="foto" accept="image/*" hidden />
+                    <i class="bi bi-cloud-arrow-up"></i>
+                    <span class="file-drop-text">Arrastrá una imagen aquí o hacé clic para seleccionar</span>
+                </label>
+            </form>
+            <div class="form-text mb-2">JPG, PNG o WEBP. Máximo 4 MB.</div>
+
+            {% if usuario.foto_url %}
+            <button type="button" class="btn btn-sm btn-outline-danger" id="btn-quitar-foto">
+                <i class="bi bi-trash"></i> Quitar foto
+            </button>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-body">
+            <h6 class="fw-semibold mb-3">Cambiar contraseña</h6>
+
+            <div data-validate-error class="alert alert-danger" style="display: none">
+                <p data-message class="mb-0"></p>
+            </div>
+            <div class="alert alert-success d-none" id="password-exito"></div>
+
+            <form id="formulario-password" data-request="perfilComponent::onCambiarPassword" data-request-validate
+                data-request-success="onPasswordExito(data)">
+                <div class="mb-3">
+                    <label for="password_actual" class="form-label">Contraseña actual</label>
+                    <input type="password" class="form-control" id="password_actual" name="password_actual" autocomplete="current-password" />
+                    <span data-validate-for="password_actual" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label for="password_nueva" class="form-label">Nueva contraseña</label>
+                    <input type="password" class="form-control" id="password_nueva" name="password_nueva" autocomplete="new-password" />
+                    <span data-validate-for="password_nueva" class="text-danger small"></span>
+                    <div class="form-text">Mínimo 8 caracteres.</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="password_nueva_confirmation" class="form-label">Confirmar nueva contraseña</label>
+                    <input type="password" class="form-control" id="password_nueva_confirmation" name="password_nueva_confirmation" autocomplete="new-password" />
+                </div>
+
+                <button type="submit" class="btn btn-primary">Actualizar contraseña</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="{{ '/assets/js/perfil/perfil.js'|theme }}"></script>

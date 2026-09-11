@@ -1,6 +1,7 @@
 ==
 <?php
 
+use Iehaa\Solicitudes\Components\SolicitudesComponent;
 use Iehaa\Usuarios\Classes\CpanelAuth;
 
 function onStart()
@@ -10,6 +11,28 @@ function onStart()
     }
 
     $this['styleVersion'] = @filemtime(base_path('themes/web/assets/css/style.css')) ?: time();
+}
+
+/**
+ * Handler global disponible en TODAS las páginas del panel (los handlers de
+ * un layout sí se registran a nivel de página; los de un partial no). Lo
+ * consulta app.js cada cierto tiempo para avisar en vivo apenas cae una
+ * solicitud nueva desde CEDJAG, sin esperar a recargar la página.
+ */
+function onCheckNotificaciones()
+{
+    $ultimas = SolicitudesComponent::ultimasPendientes();
+
+    return [
+        'pendientes' => SolicitudesComponent::pendientes(),
+        'ultimoId' => $ultimas->first()?->id ?? 0,
+        'items' => $ultimas->map(function ($s) {
+            return [
+                'id' => $s->id,
+                'nombre' => $s->nombre_solicitante,
+            ];
+        })->all(),
+    ];
 }
 ?>
 ==

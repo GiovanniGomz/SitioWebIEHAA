@@ -91,7 +91,7 @@ class Plugin extends PluginBase
             $msg = strtolower($throwable->getMessage());
 
             if (str_contains($msg, 'duplicate') || str_contains($msg, 'unique') || str_contains($msg, 'llave duplicada')) {
-                return 'Ya existe un registro con esos datos. Revisá los campos que deben ser únicos.';
+                return 'Este valor ya existe.';
             }
 
             if (
@@ -115,6 +115,9 @@ class Plugin extends PluginBase
         return [
             \Iehaa\Usuarios\Components\LoginComponent::class => 'loginComponent',
             \Iehaa\Usuarios\Components\UsuarioComponent::class => 'usuarioComponent',
+            \Iehaa\Usuarios\Components\RecuperarComponent::class => 'recuperarComponent',
+            \Iehaa\Usuarios\Components\RestablecerComponent::class => 'restablecerComponent',
+            \Iehaa\Usuarios\Components\PerfilComponent::class => 'perfilComponent',
         ];
     }
 

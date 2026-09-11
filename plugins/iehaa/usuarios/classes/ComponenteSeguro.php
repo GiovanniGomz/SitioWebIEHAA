@@ -53,7 +53,7 @@ trait ComponenteSeguro
         $msg = strtolower($e->getMessage());
 
         if (str_contains($msg, 'duplicate') || str_contains($msg, 'unique') || str_contains($msg, 'llave duplicada')) {
-            return 'Ya existe un registro con esos datos. Revisá los campos que deben ser únicos.';
+            return 'Este valor ya existe.';
         }
 
         if (str_contains($msg, 'foreign key') || str_contains($msg, 'foreign-key') || str_contains($msg, 'llave foránea') || str_contains($msg, 'still referenced')) {

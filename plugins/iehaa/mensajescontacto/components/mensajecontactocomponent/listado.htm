@@ -1,0 +1,48 @@
+<table class="table" id="tabla-mensajes-contacto">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Nombre</th>
+            <th scope="col">Correo</th>
+            <th scope="col">Asunto</th>
+            <th scope="col">Fecha</th>
+            <th scope="col">Estado</th>
+            <th scope="col">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% set contador = 1 %}
+        {% for m in mensajes %}
+        <tr class="{{ m.leido ? '' : 'fw-semibold' }}">
+            <th scope="row">{{ contador }}</th>
+            <td>{{ m.nombre }}</td>
+            <td>{{ m.email }}</td>
+            <td>{{ m.asunto }}</td>
+            <td>{{ m.created_at ? m.created_at.format('d/m/Y H:i') : '—' }}</td>
+            <td>
+                {% if m.leido %}
+                <span class="badge bg-secondary">Leído</span>
+                {% else %}
+                <span class="badge bg-danger">Sin leer</span>
+                {% endif %}
+            </td>
+            <td>
+                <button type="button" class="btn btn-primary btn-ver-mensaje"
+                    data-id="{{ m.id }}" data-nombre="{{ m.nombre }}" data-email="{{ m.email }}"
+                    data-asunto="{{ m.asunto }}" data-mensaje="{{ m.mensaje }}"
+                    data-fecha="{{ m.created_at ? m.created_at.format('d/m/Y H:i') : '' }}">
+                    <i class="bi bi-eye"></i>
+                </button>
+                <button type="button" class="btn btn-danger btn-eliminar" data-id="{{ m.id }}">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </td>
+        </tr>
+        {% set contador = contador + 1 %}
+        {% else %}
+        <tr>
+            <td colspan="7" class="text-center text-muted">Todavía no hay mensajes.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

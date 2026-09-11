@@ -1,0 +1,61 @@
+<table class="table" id="tabla-activo-fijo">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">N.º inventario</th>
+            <th scope="col">Descripción del bien</th>
+            <th scope="col">Responsable</th>
+            <th scope="col">Estado del bien</th>
+            <th scope="col">Estado</th>
+            <th scope="col">Adquisición</th>
+            <th scope="col">Precio</th>
+            <th scope="col">Archivos</th>
+            <th scope="col">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% set contador = 1 %}
+        {% for bien in bienes %}
+        <tr>
+            <th scope="row">{{ contador }}</th>
+            <td>{{ bien.numero_inventario }}</td>
+            <td>{{ bien.descripcion_bien }}</td>
+            <td>{{ bien.responsable }}</td>
+            <td>{{ bien.estado_bien }}</td>
+            <td>
+                {% if bien.estado == 'Activo' %}
+                <span class="badge bg-success">{{ bien.estado }}</span>
+                {% elseif bien.estado == 'De baja' or bien.estado == 'Descargado' %}
+                <span class="badge bg-danger">{{ bien.estado }}</span>
+                {% else %}
+                <span class="badge bg-secondary">{{ bien.estado }}</span>
+                {% endif %}
+            </td>
+            <td>{{ bien.forma_adquisicion }}{{ bien.fecha_adquisicion ? ' · ' ~ bien.fecha_adquisicion|date('d/m/Y') : '' }}</td>
+            <td>{{ bien.precio_formateado }}</td>
+            <td>
+                {% if bien.archivos|length %}
+                <button type="button" class="btn btn-sm btn-outline-secondary btn-ver-archivos"
+                    data-bien="{{ bien.descripcion_bien }}"
+                    data-archivos="{{ bien.archivos_json }}">
+                    <i class="bi bi-paperclip"></i> {{ bien.archivos|length }}
+                </button>
+                {% else %}
+                <span class="text-muted small">—</span>
+                {% endif %}
+            </td>
+            <td>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal"
+                    data-request="activoFijoComponent::onGetActivoFijo" data-request-data="id: {{ bien.id }}"
+                    data-request-success="cargarFormulario(data)">
+                    <i class="bi bi-pencil-square"></i>
+                </button>
+                <button type="button" class="btn btn-danger btn-eliminar" data-id="{{ bien.id }}">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </td>
+        </tr>
+        {% set contador = contador + 1 %}
+        {% endfor %}
+    </tbody>
+</table>

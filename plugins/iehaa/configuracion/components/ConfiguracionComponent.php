@@ -11,6 +11,8 @@ use Winter\Storm\Support\Facades\Validator;
 
 class ConfiguracionComponent extends ComponentBase
 {
+    protected $rutaSubida = 'storage/app/uploads/public/configuracion/';
+
     public function componentDetails()
     {
         return [
@@ -40,6 +42,7 @@ class ConfiguracionComponent extends ComponentBase
         }
 
         $data = Input::all();
+        $fondoPantalla = Input::file('fondo_pantalla');
 
         $validator = Validator::make($data, [
             'nombre_sitio' => 'required|min:3',
@@ -55,6 +58,19 @@ class ConfiguracionComponent extends ComponentBase
             'facebook_url.url' => 'El enlace de Facebook no es válido.',
             'instagram_url.url' => 'El enlace de Instagram no es válido.',
         ]);
+
+        if ($fondoPantalla) {
+            $validadorImagen = Validator::make(['fondo_pantalla' => $fondoPantalla], [
+                'fondo_pantalla' => 'image|max:8192',
+            ], [
+                'fondo_pantalla.image' => 'El fondo debe ser una imagen (JPG, PNG o WEBP).',
+                'fondo_pantalla.max' => 'La imagen no puede superar los 8 MB.',
+            ]);
+
+            if ($validadorImagen->fails()) {
+                throw new ValidationException($validadorImagen);
+            }
+        }
 
         if ($validator->fails()) {
             throw new ValidationException($validator);
@@ -79,11 +95,52 @@ class ConfiguracionComponent extends ComponentBase
         $configuracion->mapa_embed = $mapa ?: null;
         $configuracion->facebook_url = trim($data['facebook_url'] ?? '') ?: null;
         $configuracion->instagram_url = trim($data['instagram_url'] ?? '') ?: null;
+
+        if ($fondoPantalla) {
+            $anterior = $configuracion->fondo_pantalla;
+            $configuracion->fondo_pantalla = $this->guardarArchivo($fondoPantalla);
+
+            if ($anterior) {
+                $this->eliminarArchivoFisico($anterior);
+            }
+        } elseif (!empty($data['quitar_fondo_pantalla']) && $configuracion->fondo_pantalla) {
+            $this->eliminarArchivoFisico($configuracion->fondo_pantalla);
+            $configuracion->fondo_pantalla = null;
+        }
+
         $configuracion->save();
 
         return [
             'estado' => 'exito',
             'mensaje' => '¡Configuración guardada correctamente!',
+            'fondo_pantalla_url' => $configuracion->fondo_pantalla_url,
         ];
+    }
+
+    private function guardarArchivo($archivo): string
+    {
+        $uploadPath = base_path($this->rutaSubida);
+
+        if (!is_dir($uploadPath)) {
+            mkdir($uploadPath, 0777, true);
+        }
+
+        $nombre = time() . '_' . uniqid() . '_' . preg_replace('/[^\w.\- ]+/u', '_', $archivo->getClientOriginalName());
+        $archivo->move($uploadPath, $nombre);
+
+        return $nombre;
+    }
+
+    private function eliminarArchivoFisico(?string $nombreArchivo): void
+    {
+        if (!$nombreArchivo) {
+            return;
+        }
+
+        $ruta = base_path($this->rutaSubida . $nombreArchivo);
+
+        if (is_file($ruta)) {
+            @unlink($ruta);
+        }
     }
 }

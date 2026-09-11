@@ -27,7 +27,9 @@ class SolicitudesComponent extends ComponentBase
             return redirect('/login');
         }
 
-        $this->page['solicitudes'] = $this->obtenerTodas();
+        // Esta pantalla fue reemplazada por el módulo de Correspondencia
+        // (aceptar/rechazar + historial detallado + envío de correo).
+        return redirect('/correspondencia');
     }
 
     public function obtenerTodas()
