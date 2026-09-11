@@ -134,10 +134,10 @@ class InvestigadorComponent extends ComponentBase
             'telefono.regex'       => 'Debe ser un número salvadoreño válido de 8 dígitos.',
             'email.required'       => '* Campo obligatorio.',
             'email.email'          => 'Ingresá un correo válido.',
-            'facultad.required'    => '* Seleccioná una facultad.',
-            'categoria_investigador.required' => '* Seleccioná una categoría.',
-            'tipo_investigador.required'      => '* Seleccioná un tipo.',
-            'sexo.required'        => '* Seleccioná una opción.',
+            'facultad.required'    => '* Campo obligatorio.',
+            'categoria_investigador.required' => '* Campo obligatorio.',
+            'tipo_investigador.required'      => '* Campo obligatorio.',
+            'sexo.required'        => '* Campo obligatorio.',
             'descripcion.required' => '* Campo obligatorio.',
             'descripcion.min'      => 'Escribí al menos 10 caracteres.',
         ]);
@@ -151,7 +151,7 @@ class InvestigadorComponent extends ComponentBase
             ->exists();
 
         if ($emailDuplicado) {
-            throw new ValidationException(['email' => 'Ya existe un investigador con ese correo.']);
+            throw new ValidationException(['email' => 'Este valor ya existe.']);
         }
 
         $telefonoDuplicado = Investigador::where('telefono', $data['telefono'])
@@ -167,7 +167,7 @@ class InvestigadorComponent extends ComponentBase
             ->exists();
 
         if ($carnetDuplicado) {
-            throw new ValidationException(['carnet' => 'Ya existe un investigador con ese carnet.']);
+            throw new ValidationException(['carnet' => 'Este valor ya existe.']);
         }
     }
 

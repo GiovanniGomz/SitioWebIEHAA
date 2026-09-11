@@ -1,0 +1,58 @@
+<div id="listado-historial">
+    <table class="table" id="tabla-historial">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Solicitante</th>
+                <th scope="col">Documento</th>
+                <th scope="col">Categoría</th>
+                <th scope="col">Remitente</th>
+                <th scope="col">Fecha de atención</th>
+                <th scope="col">Correo</th>
+                <th scope="col">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% set contador = 1 %}
+            {% for c in historial %}
+            <tr>
+                <th scope="row">{{ contador }}</th>
+                <td>
+                    <div>{{ c.nombre_solicitante }}</div>
+                    <div class="text-muted small">{{ c.email_solicitante }}</div>
+                </td>
+                <td>
+                    <span class="badge {{ c.coleccion == 'Fabio Castillo' ? 'bg-primary' : 'bg-info' }} mb-1">{{ c.coleccion }}</span>
+                    <div class="small">{{ c.documento }}</div>
+                </td>
+                <td>{{ c.categoria }}</td>
+                <td>{{ c.remitente }}</td>
+                <td>{{ c.fecha_atencion_legible }}</td>
+                <td>
+                    {% if c.enviado_email %}
+                    <span class="badge bg-success" title="Enviado"><i class="bi bi-check-lg"></i> Enviado</span>
+                    {% else %}
+                    <span class="badge bg-danger" title="{{ c.detalle_envio }}"><i class="bi bi-x-lg"></i> No enviado</span>
+                    {% endif %}
+                </td>
+                <td class="text-nowrap">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-correspondencia"
+                        data-request="correspondenciaComponent::onGetCorrespondencia" data-request-data="id: {{ c.id }}"
+                        data-request-success="cargarFormularioEdicion(data)" title="Modificar">
+                        <i class="bi bi-pencil-square"></i>
+                    </button>
+                    {% if not c.enviado_email %}
+                    <button type="button" class="btn btn-outline-secondary btn-reenviar" data-id="{{ c.id }}" title="Reenviar correo">
+                        <i class="bi bi-envelope-arrow-up"></i>
+                    </button>
+                    {% endif %}
+                    <button type="button" class="btn btn-danger btn-eliminar" data-id="{{ c.id }}" title="Eliminar">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </td>
+            </tr>
+            {% set contador = contador + 1 %}
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

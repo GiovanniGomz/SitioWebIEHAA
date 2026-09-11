@@ -1,0 +1,5 @@
+1.0.0:
+    - "First version of mensajescontacto"
+1.0.1:
+    - "Create mensajes_contacto table"
+    - v1.0.1/create_mensajes_table.php

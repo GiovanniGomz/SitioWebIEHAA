@@ -111,7 +111,7 @@ class ProyectoComponent extends ComponentBase
             'titulo.required' => '* Campo obligatorio.',
             'titulo.min' => 'Mínimo 3 caracteres.',
             'descripcion.required' => '* Campo obligatorio.',
-            'investigador_id.required' => '* Seleccioná un investigador.',
+            'investigador_id.required' => '* Campo obligatorio.',
         ]);
 
         if ($validator->fails()) {

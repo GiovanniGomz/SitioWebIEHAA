@@ -130,8 +130,8 @@ class PublicacionComponent extends ComponentBase
             'descripcion.required' => '* Campo obligatorio.',
             'descripcion.regex' => 'La descripción debe contener texto o números.',
             'url.url' => 'Ingresá un enlace válido (debe empezar con http:// o https://).',
-            'tipo_publicacion_id.required' => '* Seleccioná un tipo.',
-            'investigador_id.required' => '* Seleccioná un investigador.',
+            'tipo_publicacion_id.required' => '* Campo obligatorio.',
+            'investigador_id.required' => '* Campo obligatorio.',
         ]);
 
         if ($validator->fails()) {

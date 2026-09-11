@@ -3,3 +3,6 @@
 1.0.1:
     - 'Create Inventarios Table'
     - v1.0.1/create_inventarios_table.php
+1.0.2:
+    - 'Módulo de Inventario de Activo Fijo'
+    - v1.0.2/rehacer_activo_fijo.php

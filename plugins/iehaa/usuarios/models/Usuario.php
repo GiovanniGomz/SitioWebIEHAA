@@ -27,7 +27,7 @@ class Usuario extends Model
     /**
      * @var array Fillable fields
      */
-    protected $fillable = ['id', 'nombre', 'email', 'password', 'rol', 'activo'];
+    protected $fillable = ['id', 'nombre', 'email', 'password', 'rol', 'activo', 'foto'];
 
     /**
      * @var array Attribute names which should be hashed using Bcrypt.
@@ -63,7 +63,7 @@ class Usuario extends Model
     /**
      * @var array Attributes to be removed from the API representation of the model (ex. toArray())
      */
-    protected $hidden = ['password'];
+    protected $hidden = ['password', 'reset_token', 'reset_token_expira'];
 
     /**
      * @var array Attributes to be cast to Argon (Carbon) instances
@@ -71,6 +71,7 @@ class Usuario extends Model
     protected $dates = [
         'created_at',
         'updated_at',
+        'reset_token_expira',
     ];
 
     /**
@@ -91,5 +92,16 @@ class Usuario extends Model
     public function esAdmin(): bool
     {
         return $this->rol === 'admin';
+    }
+
+    /**
+     * Ruta pública (relativa) de la foto de perfil, o null si el usuario
+     * todavía no subió ninguna (el panel muestra un ícono por defecto).
+     */
+    public function getFotoUrlAttribute(): ?string
+    {
+        return $this->foto
+            ? 'storage/app/uploads/public/perfiles/' . $this->foto
+            : null;
     }
 }

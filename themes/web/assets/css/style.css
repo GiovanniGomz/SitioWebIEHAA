@@ -220,6 +220,39 @@
     pointer-events: none;
 }
 
+/* ---------- Barra de redes sociales (encabezado del sitio público) ---------- */
+.site-social-bar {
+    background: var(--panel-ink);
+    padding: 6px 0;
+}
+
+.site-social-bar-label {
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-right: 12px;
+}
+
+.site-social-bar a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    margin-left: 8px;
+    border-radius: 50%;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.12);
+    font-size: 0.85rem;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.site-social-bar a:hover {
+    background: var(--ues-red);
+    color: #fff;
+}
+
 /* ===================== PANEL DE ADMINISTRACIÓN ===================== */
 
 body {
@@ -376,6 +409,11 @@ body {
     transition: color 0.16s ease;
 }
 
+.sidebar-nav .nav-link .badge {
+    font-size: 0.65rem;
+    padding: 0.25em 0.5em;
+}
+
 .sidebar-nav .nav-link:hover {
     background: rgba(255, 255, 255, 0.05);
     color: #fff;
@@ -456,6 +494,23 @@ body {
 
 .topbar .dropdown-header {
     font-size: 0.78rem;
+}
+
+/* Aviso en vivo: la campanita "suena" cuando llega una solicitud nueva */
+@keyframes notifPulso {
+    0%, 100% { transform: rotate(0deg); }
+    15% { transform: rotate(-16deg); }
+    30% { transform: rotate(14deg); }
+    45% { transform: rotate(-10deg); }
+    60% { transform: rotate(8deg); }
+    75% { transform: rotate(-4deg); }
+}
+
+#notif-btn.notif-pulso i {
+    display: inline-block;
+    color: var(--ues-red);
+    animation: notifPulso 0.7s ease-in-out 2;
+    transform-origin: top center;
 }
 
 /* ---------- CONTENIDO ---------- */

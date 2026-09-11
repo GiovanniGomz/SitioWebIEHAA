@@ -139,6 +139,14 @@ class ReporteComponent extends ComponentBase
                 ['label' => 'Descargas públicas', 'pdf' => '/reportePDFDescarga', 'excel' => '/reporteExcelDescarga'],
                 ['label' => 'Gestión documental', 'pdf' => '/reportePDFExpedientes', 'excel' => '/reporteExcelExpedientes'],
             ],
+            'CEDJAG y correspondencia' => [
+                ['label' => 'Correspondencia', 'pdf' => '/reportePDFCorrespondencia', 'excel' => '/reporteExcelCorrespondencia'],
+                ['label' => 'Categorías de correspondencia', 'pdf' => '/reportePDFCategoriasCorrespondencia', 'excel' => '/reporteExcelCategoriasCorrespondencia'],
+            ],
+            'Administración' => [
+                ['label' => 'Inventario de Activo Fijo (general)', 'pdf' => '/reportePDFActivoFijo', 'excel' => '/reporteExcelActivoFijo'],
+                ['label' => 'Mensajes de contacto', 'pdf' => '/reportePDFMensajesContacto', 'excel' => '/reporteExcelMensajesContacto'],
+            ],
             'Fabio Castillo' => [
                 ['label' => 'Archiveros', 'pdf' => '/reportePDFArchivero', 'excel' => '/reporteExcelArchivero'],
                 ['label' => 'Gavetas', 'pdf' => '/reportePDFGaveta', 'excel' => '/reporteExcelGaveta'],

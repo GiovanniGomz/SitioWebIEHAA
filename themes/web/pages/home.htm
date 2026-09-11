@@ -7,6 +7,8 @@ limite = "3"
 
 [publicacionComponent]
 limite = "3"
+
+[mensajeContactoComponent]
 ==
 <?php
 
@@ -33,7 +35,7 @@ function onStart()
   <!-- Hero Section -->
   <section id="hero" class="hero section">
 
-    <img src="{{ 'assets/img/fondo.jpg'|theme}}" alt="" data-aos="fade-in" class="">
+    <img src="{{ config.fondo_pantalla_url ?: ('assets/img/fondo.jpg'|theme) }}" alt="" data-aos="fade-in" class="">
 
     <div class="container">
       <div class="row justify-content-center" data-aos="zoom-out">
@@ -321,7 +323,7 @@ function onStart()
         </div>
 
         <div class="col-lg-8">
-          <form action="forms/contact.php" method="post" class="php-email-form" data-aos="fade-up" data-aos-delay="200">
+          <form onsubmit="return false;" class="php-email-form" data-aos="fade-up" data-aos-delay="200">
             <div class="row gy-4">
 
               <div class="col-md-6">

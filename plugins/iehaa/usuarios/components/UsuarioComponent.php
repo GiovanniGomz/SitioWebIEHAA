@@ -146,5 +146,15 @@ class UsuarioComponent extends ComponentBase
         if ($validator->fails()) {
             throw new ValidationException($validator);
         }
+
+        $id = $esModificar ? ($data['id'] ?? null) : null;
+
+        $emailDuplicado = Usuario::whereRaw('LOWER(TRIM(email)) = ?', [mb_strtolower(trim($data['email']))])
+            ->when($id, fn ($q) => $q->where('id', '!=', $id))
+            ->exists();
+
+        if ($emailDuplicado) {
+            throw new ValidationException(['email' => 'Este valor ya existe.']);
+        }
     }
 }

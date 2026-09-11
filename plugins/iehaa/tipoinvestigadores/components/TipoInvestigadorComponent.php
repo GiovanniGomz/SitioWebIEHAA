@@ -93,7 +93,7 @@ class TipoInvestigadorComponent extends ComponentBase
             'nombre.required' => '* Campo obligatorio.',
             'nombre.min'      => 'Mínimo 3 caracteres.',
             'nombre.max'      => 'Máximo 80 caracteres.',
-            'nombre.regex'    => 'Solo se permiten letras y espacios (sin números ni signos).',
+            'nombre.regex'    => 'Formato no válido.',
         ]);
 
         if ($validator->fails()) {
@@ -101,11 +101,11 @@ class TipoInvestigadorComponent extends ComponentBase
         }
 
         $duplicado = TipoInvestigador::whereRaw('LOWER(TRIM(nombre)) = ?', [mb_strtolower(trim($data['nombre']))])
-            ->when($id, fn ($q) => $q->where('id', '!=', $id))
+            ->when($id, fn($q) => $q->where('id', '!=', $id))
             ->exists();
 
         if ($duplicado) {
-            throw new ValidationException(['nombre' => 'Ya existe un tipo de investigador con ese nombre.']);
+            throw new ValidationException(['nombre' => 'Este valor ya existe.']);
         }
     }
 

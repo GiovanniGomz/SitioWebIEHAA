@@ -1,0 +1,50 @@
+<div id="listado-pendientes">
+    {% if pendientes|length %}
+    <div class="table-responsive">
+        <table class="table" id="tabla-pendientes">
+            <thead>
+                <tr>
+                    <th>Solicitante</th>
+                    <th>Contacto</th>
+                    <th>Documento</th>
+                    <th>Ubicación física</th>
+                    <th>Mensaje</th>
+                    <th>Fecha</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in pendientes %}
+                <tr>
+                    <td>{{ s.nombre_solicitante }}</td>
+                    <td>
+                        <div>{{ s.email_solicitante }}</div>
+                        {% if s.telefono_solicitante %}<div class="text-muted small">{{ s.telefono_solicitante }}</div>{% endif %}
+                    </td>
+                    <td>
+                        <span class="badge {{ s.tipo == 'fabio' ? 'bg-primary' : 'bg-info' }} mb-1">{{ s.coleccion }}</span>
+                        <div>{{ s.documento }}</div>
+                    </td>
+                    <td class="small">{{ s.ubicacion }}</td>
+                    <td class="small text-muted">{{ s.mensaje ?: '—' }}</td>
+                    <td class="small text-nowrap">{{ s.fecha }}</td>
+                    <td class="text-nowrap">
+                        <button type="button" class="btn btn-primary btn-sm btn-aceptar" data-id="{{ s.id }}">
+                            <i class="bi bi-check-lg"></i> Aceptar
+                        </button>
+                        <button type="button" class="btn btn-outline-danger btn-sm btn-rechazar" data-id="{{ s.id }}">
+                            <i class="bi bi-x-lg"></i> Rechazar
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="text-center text-muted py-4">
+        <i class="bi bi-check2-circle" style="font-size: 1.8rem;"></i>
+        <p class="mb-0 mt-2">No hay solicitudes pendientes.</p>
+    </div>
+    {% endif %}
+</div>

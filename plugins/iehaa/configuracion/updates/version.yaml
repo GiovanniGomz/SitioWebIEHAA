@@ -9,3 +9,6 @@
 1.0.3:
     - "Campos de la página pública (nosotros, sección patrimonio, mapa, redes)"
     - v1.0.3/add_campos_web.php
+1.0.4:
+    - "Fondo de pantalla del hero, editable desde el panel"
+    - v1.0.4/add_fondo_pantalla.php

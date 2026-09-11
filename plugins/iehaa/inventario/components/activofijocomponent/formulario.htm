@@ -1,0 +1,198 @@
+<div class="container formulario-contenedor">
+    <div class="modal fade" id="modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="formulario-titulo">Registrar bien</h1>
+                    <button type="button" class="btn-close" id="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                        onclick="resetear()"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div data-validate-error class="alert alert-danger" style="display: none">
+                        <p data-message class="mb-0"></p>
+                    </div>
+
+                    <form id="formulario" data-request="activoFijoComponent::onRegistrar" data-request-validate
+                        data-request-flash data-request-success="onRegistrar(data)" data-request-files
+                        data-request-update="'@listado': '#listado'" enctype="multipart/form-data">
+
+                        <input type="hidden" id="id" name="id" value="" />
+
+                        <h6 class="fw-semibold text-uppercase text-muted small mb-3">Identificación del bien</h6>
+
+                        <div class="row">
+                            <div class="mb-3 col-md-3">
+                                <div class="validacion">
+                                    <label for="numero_inventario" class="form-label">N.º de inventario</label>
+                                    <span data-validate-for="numero_inventario" class="text-danger small validacion-descripcion"></span>
+                                </div>
+                                <input type="text" class="form-control" id="numero_inventario" name="numero_inventario" placeholder="Ej: AF-2026-001" />
+                            </div>
+                            <div class="mb-3 col-md-9">
+                                <div class="validacion">
+                                    <label for="descripcion_bien" class="form-label">Descripción del bien</label>
+                                    <span data-validate-for="descripcion_bien" class="text-danger small validacion-descripcion"></span>
+                                </div>
+                                <input type="text" class="form-control" id="descripcion_bien" name="descripcion_bien" placeholder="Ej: Escritorio de oficina de metal" />
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="mb-3 col-md-4">
+                                <div class="validacion">
+                                    <label for="marca" class="form-label">Marca</label>
+                                    <span data-validate-for="marca" class="text-danger small validacion-descripcion"></span>
+                                </div>
+                                <input type="text" class="form-control" id="marca" name="marca" />
+                            </div>
+                            <div class="mb-3 col-md-4">
+                                <div class="validacion">
+                                    <label for="modelo" class="form-label">Modelo</label>
+                                    <span data-validate-for="modelo" class="text-danger small validacion-descripcion"></span>
+                                </div>
+                                <input type="text" class="form-control" id="modelo" name="modelo" />
+                            </div>
+                            <div class="mb-3 col-md-4">
+                                <div class="validacion">
+                                    <label for="serie" class="form-label">N.º de serie</label>
+                                    <span data-validate-for="serie" class="text-danger small validacion-descripcion"></span>
+                                </div>
+                                <input type="text" class="form-control" id="serie" name="serie" />
+                            </div>
+                        </div>
+
+                        <hr />
+                        <h6 class="fw-semibold text-uppercase text-muted small mb-3">Responsable y estado</h6>
+
+                        <div class="row">
+                            <div class="mb-3 col-md-4">
+                                <div class="validacion">
+                                    <label for="responsable" class="form-label">Responsable del bien</label>
+                                    <span data-validate-for="responsable" class="text-danger small validacion-descripcion"></span>
+                                </div>
+                                <input type="text" class="form-control" id="responsable" name="responsable" placeholder="Nombre del responsable" />
+                            </div>
+                            <div class="mb-3 col-md-4">
+                                <div class="validacion">
+                                    <label for="estado_bien" class="form-label">Estado del bien (condición)</label>
+                                    <span data-validate-for="estado_bien" class="text-danger small validacion-descripcion"></span>
+                                </div>
+                                <select class="form-select" id="estado_bien" name="estado_bien">
+                                    <option value="">Seleccione...</option>
+                                    {% for opcion in estadosBien %}
+                                    <option value="{{ opcion }}">{{ opcion }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="mb-3 col-md-4">
+                                <div class="validacion">
+                                    <label for="estado" class="form-label">Estado (situación administrativa)</label>
+                                    <span data-validate-for="estado" class="text-danger small validacion-descripcion"></span>
+                                </div>
+                                <select class="form-select" id="estado" name="estado">
+                                    <option value="">Seleccione...</option>
+                                    {% for opcion in estados %}
+                                    <option value="{{ opcion }}">{{ opcion }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <hr />
+                        <h6 class="fw-semibold text-uppercase text-muted small mb-3">Adquisición</h6>
+
+                        <div class="row">
+                            <div class="mb-3 col-md-4">
+                                <div class="validacion">
+                                    <label for="forma_adquisicion" class="form-label">Forma de adquisición</label>
+                                    <span data-validate-for="forma_adquisicion" class="text-danger small validacion-descripcion"></span>
+                                </div>
+                                <select class="form-select" id="forma_adquisicion" name="forma_adquisicion">
+                                    <option value="">Seleccione...</option>
+                                    {% for opcion in formasAdquisicion %}
+                                    <option value="{{ opcion }}">{{ opcion }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="mb-3 col-md-4">
+                                <label for="fecha_adquisicion" class="form-label">Fecha de adquisición</label>
+                                <input type="date" class="form-control" id="fecha_adquisicion" name="fecha_adquisicion" />
+                            </div>
+                            <div class="mb-3 col-md-4">
+                                <div class="validacion">
+                                    <label for="precio" class="form-label">Precio del bien (USD)</label>
+                                    <span data-validate-for="precio" class="text-danger small validacion-descripcion"></span>
+                                </div>
+                                <input type="number" min="0" step="0.01" class="form-control" id="precio" name="precio" placeholder="0.00" />
+                            </div>
+                        </div>
+
+                        <hr />
+                        <h6 class="fw-semibold text-uppercase text-muted small mb-3">Descripción y observaciones</h6>
+
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <div class="validacion">
+                                    <label for="descripcion" class="form-label">Descripción</label>
+                                    <span data-validate-for="descripcion" class="text-danger small validacion-descripcion"></span>
+                                </div>
+                                <textarea class="form-control" id="descripcion" name="descripcion" rows="3"></textarea>
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <div class="validacion">
+                                    <label for="observacion" class="form-label">Observación</label>
+                                    <span data-validate-for="observacion" class="text-danger small validacion-descripcion"></span>
+                                </div>
+                                <textarea class="form-control" id="observacion" name="observacion" rows="3"></textarea>
+                            </div>
+                        </div>
+
+                        <hr />
+                        <h6 class="fw-semibold text-uppercase text-muted small mb-3">Archivos adjuntos (opcional, hasta 5)</h6>
+
+                        <div id="af-archivos-actuales" class="mb-3 d-none">
+                            <label class="form-label">Archivos ya adjuntos</label>
+                            <ul class="list-group" id="af-lista-archivos-actuales"></ul>
+                        </div>
+
+                        <div class="mb-1">
+                            <div class="validacion">
+                                <label class="form-label">Agregar archivos</label>
+                                <span data-validate-for="archivos" class="text-danger small validacion-descripcion"></span>
+                            </div>
+                            <label class="file-drop" for="archivos">
+                                <input type="file" id="archivos" name="archivos[]" multiple hidden />
+                                <i class="bi bi-cloud-arrow-up"></i>
+                                <span class="file-drop-text">Arrastrá hasta 5 archivos aquí o hacé clic para seleccionar</span>
+                            </label>
+                        </div>
+
+                        <div class="modal-footer px-0 pb-0">
+                            <button type="button" class="btn btn-secondary" onclick="resetear()" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary" id="btnRegistrar">Registrar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: ver / descargar archivos adjuntos -->
+<div class="modal fade" id="af-modal-archivos" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="af-archivos-titulo">Archivos adjuntos</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <ul class="list-group" id="af-archivos-lista"></ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -185,17 +185,17 @@ class ExpedienteComponent extends ComponentBase
             'asunto.min'       => 'Mínimo 3 caracteres.',
             'asunto.regex'     => 'El asunto debe contener texto o números.',
             'fecha_final.after_or_equal' => 'La fecha final no puede ser anterior a la inicial.',
-            'unidad_instalacion.required' => '* Seleccioná una opción.',
+            'unidad_instalacion.required' => '* Campo obligatorio.',
             'unidad_instalacion.in'       => 'Opción no válida.',
-            'unidad_instalacion_otro.required' => '* Especificá la unidad de instalación.',
+            'unidad_instalacion_otro.required' => '* Campo obligatorio.',
             'cantidad_folios.integer' => 'Ingresá un número entero.',
             'cantidad_folios.min'     => 'No puede ser negativo.',
             'volumen.regex'           => 'El volumen solo admite texto y números.',
             'soporte.regex'           => 'El soporte solo admite texto y números.',
-            'formato.required'        => '* Seleccioná el formato.',
+            'formato.required'        => '* Campo obligatorio.',
             'formato.in'              => 'Formato no válido.',
             'estado_conservacion.regex' => 'El estado de conservación solo admite texto y números.',
-            'archivo.required'        => '* Subí el archivo digital.',
+            'archivo.required'        => '* Campo obligatorio.',
         ]);
 
         if ($validator->fails()) {

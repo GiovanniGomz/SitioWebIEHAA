@@ -6,3 +6,6 @@
 1.0.2:
     - "Seed default admin user"
     - v1.0.2/seed_admin_usuario.php
+1.0.3:
+    - "Recuperación de contraseña y foto de perfil"
+    - v1.0.3/add_recuperacion_y_perfil.php

@@ -1,8 +1,0 @@
-# ===================================
-#  Form Field Definitions
-# ===================================
-
-fields:
-    id:
-        label: 'iehaa.inventario::lang.models.general.id'
-        disabled: true
