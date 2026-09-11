@@ -45,7 +45,123 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     initTablasScrollables();
+    initNotificaciones();
+    initFormularioContacto();
 });
+
+// Formulario de contacto de la página pública: lo envía al sistema
+// (módulo Mensajes de contacto) en vez del "forms/contact.php" de la
+// plantilla original, que no existe.
+function initFormularioContacto() {
+    var form = document.querySelector('.php-email-form');
+    if (!form) return;
+
+    var loading = form.querySelector('.loading');
+    var errorMsg = form.querySelector('.error-message');
+    var sentMsg = form.querySelector('.sent-message');
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        loading.style.display = 'block';
+        errorMsg.style.display = 'none';
+        errorMsg.textContent = '';
+        sentMsg.style.display = 'none';
+
+        $.request('mensajeContactoComponent::onEnviar', {
+            data: {
+                nombre: form.querySelector('[name="name"]').value,
+                email: form.querySelector('[name="email"]').value,
+                asunto: form.querySelector('[name="subject"]').value,
+                mensaje: form.querySelector('[name="message"]').value
+            },
+            success: function (resp) {
+                loading.style.display = 'none';
+                sentMsg.textContent = resp.mensaje;
+                sentMsg.style.display = 'block';
+                form.reset();
+            },
+            error: function (jqXHR) {
+                loading.style.display = 'none';
+                var texto = 'No se pudo enviar el mensaje. Intentá nuevamente.';
+                try {
+                    var json = JSON.parse(jqXHR.responseText);
+                    texto = json.X_WINTER_ERROR_MESSAGE || json.message || texto;
+                } catch (err) { /* usar el mensaje genérico */ }
+                errorMsg.textContent = texto;
+                errorMsg.style.display = 'block';
+            }
+        });
+    });
+}
+
+// Avisa en vivo cuando llega una solicitud de préstamo nueva desde CEDJAG,
+// sin esperar a que se recargue la página. Consulta onCheckNotificaciones
+// (definido en el partial del sidebar, disponible en todo el panel).
+function initNotificaciones() {
+    var lista = document.getElementById('notif-lista');
+    if (!lista) return; // no estamos en el panel
+
+    var badge = document.getElementById('notif-badge');
+    var btn = document.getElementById('notif-btn');
+    var ultimoIdVisto = parseInt(lista.dataset.ultimoId || '0', 10);
+
+    function pintar(data) {
+        badge.textContent = data.pendientes;
+        badge.classList.toggle('d-none', data.pendientes <= 0);
+
+        var divisor = document.getElementById('notif-divisor');
+        while (divisor && divisor.nextElementSibling) { divisor.nextElementSibling.remove(); }
+
+        if (!data.items.length) {
+            var vacio = document.createElement('li');
+            vacio.innerHTML = '<span class="dropdown-item small text-muted">Sin solicitudes pendientes</span>';
+            lista.appendChild(vacio);
+        } else {
+            data.items.forEach(function (item) {
+                var li = document.createElement('li');
+                li.innerHTML = '<a class="dropdown-item small" href="/correspondencia">' +
+                    '<i class="bi bi-inbox-fill me-1 text-warning"></i> ' +
+                    item.nombre.replace(/</g, '&lt;') + ' solicitó un préstamo</a>';
+                lista.appendChild(li);
+            });
+        }
+    }
+
+    function avisar(nuevos) {
+        if (window.Swal) {
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'info',
+                title: nuevos === 1 ? '¡Nueva solicitud de préstamo!' : nuevos + ' nuevas solicitudes de préstamo',
+                text: 'Alguien está pidiendo un documento en CEDJAG.',
+                showConfirmButton: false,
+                timer: 6000,
+                timerProgressBar: true
+            });
+        }
+
+        if (btn) {
+            btn.classList.add('notif-pulso');
+            setTimeout(function () { btn.classList.remove('notif-pulso'); }, 3000);
+        }
+    }
+
+    function consultar() {
+        $.request('onCheckNotificaciones', {
+            success: function (data) {
+                if (data.ultimoId > ultimoIdVisto) {
+                    avisar(data.items.filter(function (i) { return i.id > ultimoIdVisto; }).length || 1);
+                    ultimoIdVisto = data.ultimoId;
+                }
+                pintar(data);
+            }
+        });
+    }
+
+    setInterval(consultar, 25000);
+}
 
 // Marca las tablas que tienen contenido oculto a la derecha para mostrar la
 // pista de degradado, y lo actualiza al hacer scroll / redimensionar.
@@ -121,10 +237,17 @@ function initFileDrop(scope) {
 
         function pintar() {
             if (!texto) return;
-            texto.textContent = (input.files && input.files.length)
-                ? input.files[0].name
-                : textoOriginal;
-            zona.classList.toggle('has-file', !!(input.files && input.files.length));
+            var n = input.files ? input.files.length : 0;
+
+            if (n === 0) {
+                texto.textContent = textoOriginal;
+            } else if (n === 1) {
+                texto.textContent = input.files[0].name;
+            } else {
+                texto.textContent = n + ' archivos seleccionados';
+            }
+
+            zona.classList.toggle('has-file', n > 0);
         }
 
         ['dragenter', 'dragover'].forEach(ev => zona.addEventListener(ev, e => {
@@ -161,16 +284,35 @@ function toggleScrolled() {
 
     const originalOpen = XMLHttpRequest.prototype.open;
     const originalSend = XMLHttpRequest.prototype.send;
+    const originalSetHeader = XMLHttpRequest.prototype.setRequestHeader;
 
     let requests = 0;
 
+    // Handlers AJAX que no deben mostrar el loader global: el sondeo de
+    // notificaciones se repite cada 25s en todo el panel y no es una acción
+    // del usuario, así que no debe parpadear el loader cada vez.
+    const HANDLERS_SIN_LOADER = ['onCheckNotificaciones'];
+
     XMLHttpRequest.prototype.open = function (method, url) {
         this._url = url;
+        this._sinLoader = false;
 
         return originalOpen.apply(this, arguments);
     };
 
+    XMLHttpRequest.prototype.setRequestHeader = function (name, value) {
+        if (name && name.toLowerCase() === 'x-winter-request-handler' && HANDLERS_SIN_LOADER.indexOf(value) !== -1) {
+            this._sinLoader = true;
+        }
+
+        return originalSetHeader.apply(this, arguments);
+    };
+
     XMLHttpRequest.prototype.send = function () {
+
+        if (this._sinLoader) {
+            return originalSend.apply(this, arguments);
+        }
 
         requests++;
 

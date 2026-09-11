@@ -1,6 +1,7 @@
 ==
 <?php
 
+use Iehaa\Mensajescontacto\Components\MensajeContactoComponent;
 use Iehaa\Solicitudes\Components\SolicitudesComponent;
 use Iehaa\Usuarios\Classes\CpanelAuth;
 
@@ -9,6 +10,7 @@ function onStart()
     $this['usuario'] = CpanelAuth::usuario();
     $this['solicitudesPendientesCount'] = SolicitudesComponent::pendientes();
     $this['solicitudesPendientesUltimas'] = SolicitudesComponent::ultimasPendientes();
+    $this['mensajesNoLeidosCount'] = MensajeContactoComponent::noLeidos();
     $this['rutaActual'] = '/' . trim(request()->path(), '/');
 }
 ?>
@@ -27,17 +29,21 @@ function onStart()
     </div>
 
     <div class="sidebar-user">
-        <div class="d-flex align-items-center">
+        <a href="/perfil" class="d-flex align-items-center text-decoration-none">
+            {% if usuario and usuario.foto_url %}
+            <img src="{{ usuario.foto_url }}" alt="" class="avatar-circle me-2" style="object-fit: cover;" />
+            {% else %}
             <div class="avatar-circle me-2">
                 <i class="bi bi-person-fill"></i>
             </div>
+            {% endif %}
             <div class="overflow-hidden">
                 <div class="text-white fw-semibold small text-truncate">{{ usuario ? usuario.nombre : 'Invitado' }}</div>
                 <div class="text-white-50 text-truncate" style="font-size: 0.72rem">
                     {{ usuario ? usuario.email : '' }}
                 </div>
             </div>
-        </div>
+        </a>
     </div>
 
     <nav class="sidebar-nav">
@@ -110,7 +116,37 @@ function onStart()
                 </a>
             </li>
 
+            <li class="nav-item"><span class="sidebar-section">CEDJAG</span></li>
+            <li class="nav-item">
+                <a class="nav-link {{ rutaActual == '/correspondencia' ? 'active' : '' }}" href="/correspondencia">
+                    <i class="bi bi-envelope-paper"></i> Correspondencia
+                    {% if solicitudesPendientesCount > 0 %}
+                    <span class="badge bg-danger rounded-pill ms-auto">{{ solicitudesPendientesCount }}</span>
+                    {% endif %}
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ rutaActual == '/categorias-correspondencia' ? 'active' : '' }}" href="/categorias-correspondencia">
+                    <i class="bi bi-tags"></i> Categorías de correspondencia
+                </a>
+            </li>
+
             <li class="nav-item"><span class="sidebar-section">Administración</span></li>
+            <li class="nav-item">
+                <a class="nav-link {{ rutaActual == '/mensajes-contacto' ? 'active' : '' }}" href="/mensajes-contacto">
+                    <i class="bi bi-chat-left-text"></i> Mensajes de contacto
+                    {% if mensajesNoLeidosCount > 0 %}
+                    <span id="mensajes-badge" class="badge bg-danger rounded-pill ms-auto">{{ mensajesNoLeidosCount }}</span>
+                    {% else %}
+                    <span id="mensajes-badge" class="badge bg-danger rounded-pill ms-auto d-none">{{ mensajesNoLeidosCount }}</span>
+                    {% endif %}
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ rutaActual == '/inventario-activo-fijo' ? 'active' : '' }}" href="/inventario-activo-fijo">
+                    <i class="bi bi-boxes"></i> Inventario de Activo Fijo
+                </a>
+            </li>
             <li class="nav-item">
                 <a class="nav-link {{ rutaActual == '/reportes' ? 'active' : '' }}" href="/reportes">
                     <i class="bi bi-bar-chart-line"></i> Reportes
@@ -153,29 +189,27 @@ function onStart()
         <div class="d-flex align-items-center gap-3">
             <!-- Notificaciones -->
             <div class="dropdown">
-                <button class="btn btn-link text-dark position-relative p-0" data-bs-toggle="dropdown">
+                <button class="btn btn-link text-dark position-relative p-0" id="notif-btn" data-bs-toggle="dropdown">
                     <i class="bi bi-bell fs-5"></i>
-                    {% if solicitudesPendientesCount > 0 %}
-                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                        style="font-size: 0.6rem">
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger {{ solicitudesPendientesCount > 0 ? '' : 'd-none' }}"
+                        id="notif-badge" style="font-size: 0.6rem">
                         {{ solicitudesPendientesCount }}
                     </span>
-                    {% endif %}
                 </button>
-                <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="min-width: 300px">
+                <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="min-width: 300px" id="notif-lista" data-ultimo-id="{{ solicitudesPendientesUltimas.first() ? solicitudesPendientesUltimas.first().id : 0 }}">
                     <li class="dropdown-header fw-semibold">Solicitudes de préstamo pendientes</li>
-                    <li>
+                    <li id="notif-divisor">
                         <hr class="dropdown-divider" />
                     </li>
                     {% for s in solicitudesPendientesUltimas %}
                     <li>
-                        <a class="dropdown-item small" href="/solicitudes">
+                        <a class="dropdown-item small" href="/correspondencia">
                             <i class="bi bi-inbox-fill me-1 text-warning"></i>
                             {{ s.nombre_solicitante }} solicitó un préstamo
                         </a>
                     </li>
                     {% else %}
-                    <li><span class="dropdown-item small text-muted">Sin solicitudes pendientes</span></li>
+                    <li><span class="dropdown-item small text-muted" id="notif-vacio">Sin solicitudes pendientes</span></li>
                     {% endfor %}
                 </ul>
             </div>
@@ -183,18 +217,22 @@ function onStart()
             <!-- Usuario -->
             <div class="dropdown">
                 <button class="btn btn-link text-dark d-flex align-items-center p-0" data-bs-toggle="dropdown">
+                    {% if usuario and usuario.foto_url %}
+                    <img src="{{ usuario.foto_url }}" alt="" class="avatar-circle-sm me-2" style="object-fit: cover;" />
+                    {% else %}
                     <div class="avatar-circle-sm me-2">
                         <i class="bi bi-person-fill"></i>
                     </div>
+                    {% endif %}
                     <span class="d-none d-md-inline small fw-medium">{{ usuario ? usuario.nombre : 'Invitado' }}</span>
                     <i class="bi bi-chevron-down ms-1 small"></i>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end shadow-sm">
                     <li>
-                        <a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i> Perfil</a>
+                        <a class="dropdown-item" href="/perfil"><i class="bi bi-person me-2"></i> Perfil</a>
                     </li>
                     <li>
-                        <a class="dropdown-item" href="#"><i class="bi bi-gear me-2"></i> Ajustes</a>
+                        <a class="dropdown-item" href="/perfil"><i class="bi bi-gear me-2"></i> Ajustes</a>
                     </li>
                     <li>
                         <hr class="dropdown-divider" />

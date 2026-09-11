@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Tu solicitud de préstamo fue aprobada</title>
+</head>
+<body style="margin:0; padding:0; background:#f3f4f6; font-family: Arial, Helvetica, sans-serif; color:#1f2430;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f3f4f6; padding:24px 0;">
+        <tr>
+            <td align="center">
+                <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="background:#ffffff; border-radius:10px; overflow:hidden; border:1px solid #e7e7ea;">
+                    <tr>
+                        <td style="background:#17181c; padding:20px 28px; border-top:3px solid #b3261e;">
+                            <div style="color:#ffffff; font-size:11px; letter-spacing:.12em; text-transform:uppercase; opacity:.6;">Universidad de El Salvador</div>
+                            <div style="color:#ffffff; font-size:16px; font-weight:bold; margin-top:2px;">Instituto de Estudios Históricos, Antropológicos y Arqueológicos</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding:28px;">
+                            <h2 style="margin:0 0 12px; font-size:19px; color:#17181c;">¡Tu solicitud fue aprobada!</h2>
+
+                            <p style="margin:0 0 16px; font-size:14px; line-height:1.6;">
+                                Hola <strong>{{ nombre_solicitante }}</strong>, tu solicitud de préstamo en CEDJAG fue
+                                revisada y aprobada por el instituto{% if tiene_adjunto %}. Adjuntamos el documento
+                                digital que solicitaste{% else %}. A continuación el detalle de tu préstamo{% endif %}.
+                            </p>
+
+                            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:13px; border-collapse:collapse; margin-bottom:16px;">
+                                <tr>
+                                    <td style="padding:8px 0; color:#6b7075; width:150px; border-bottom:1px solid #e7e7ea;">Documento</td>
+                                    <td style="padding:8px 0; font-weight:bold; border-bottom:1px solid #e7e7ea;">{{ documento_nombre }}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding:8px 0; color:#6b7075; border-bottom:1px solid #e7e7ea;">Colección</td>
+                                    <td style="padding:8px 0; border-bottom:1px solid #e7e7ea;">{{ coleccion }}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding:8px 0; color:#6b7075; border-bottom:1px solid #e7e7ea;">Ubicación física</td>
+                                    <td style="padding:8px 0; border-bottom:1px solid #e7e7ea;">{{ ubicacion }}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding:8px 0; color:#6b7075; border-bottom:1px solid #e7e7ea;">Categoría</td>
+                                    <td style="padding:8px 0; border-bottom:1px solid #e7e7ea;">{{ categoria }}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding:8px 0; color:#6b7075;">Fecha de atención</td>
+                                    <td style="padding:8px 0;">{{ fecha_atencion }}</td>
+                                </tr>
+                            </table>
+
+                            {% if tiene_adjunto %}
+                            <div style="background:#fdeeed; border:1px solid #f3c9c9; color:#8f141f; font-size:13px; border-radius:8px; padding:12px 14px; margin-bottom:16px;">
+                                <strong>📎 Documento adjunto:</strong> encontrarás el archivo digital solicitado en esta misma correspondencia.
+                            </div>
+                            {% else %}
+                            <div style="background:#f7f7f8; border:1px solid #e7e7ea; color:#3f4147; font-size:13px; border-radius:8px; padding:12px 14px; margin-bottom:16px;">
+                                Este documento no cuenta con versión digital. Podés retirarlo o consultarlo directamente en el instituto, en la ubicación indicada arriba.
+                            </div>
+                            {% endif %}
+
+                            {% if mensaje_admin %}
+                            <p style="margin:0 0 16px; font-size:13px; line-height:1.6; color:#3f4147;">
+                                <strong>Nota del instituto:</strong> {{ mensaje_admin }}
+                            </p>
+                            {% endif %}
+
+                            <p style="margin:24px 0 0; font-size:12px; color:#9aa0a8;">
+                                Este correo se generó automáticamente desde el sistema de gestión documental del IEHAA.
+                                Si no solicitaste este préstamo, podés ignorar este mensaje.
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding:16px 28px; background:#fafafa; border-top:1px solid #e7e7ea; text-align:center; font-size:11px; color:#9aa0a8;">
+                            Universidad de El Salvador · IEHAA · Ciudad Universitaria, San Salvador
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

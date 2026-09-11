@@ -38,9 +38,9 @@ class LoginComponent extends ComponentBase
             'email' => 'required|email',
             'password' => 'required',
         ], [
-            'email.required' => 'El correo es obligatorio.',
+            'email.required' => '* Campo obligatorio.',
             'email.email' => 'Correo inválido.',
-            'password.required' => 'La contraseña es obligatoria.',
+            'password.required' => '* Campo obligatorio.',
         ]);
 
         if ($validator->fails()) {

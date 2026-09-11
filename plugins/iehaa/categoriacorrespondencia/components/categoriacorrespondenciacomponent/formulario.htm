@@ -1,0 +1,37 @@
+<div class="container formulario-contenedor">
+    <div class="modal fade" id="modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="formulario-titulo">Registrar categoría</h1>
+                    <button type="button" class="btn-close" id="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                        onclick="resetear()"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div data-validate-error class="alert alert-danger" style="display: none">
+                        <p data-message class="mb-0"></p>
+                    </div>
+
+                    <form id="formulario" data-request="categoriaCorrespondenciaComponent::onRegistrar" data-request-validate
+                        data-request-flash data-request-success="onRegistrar(data)"
+                        data-request-update="'@listado': '#listado'">
+
+                        <input type="hidden" id="id" name="id" value="" />
+
+                        <div class="mb-3">
+                            <div class="validacion">
+                                <label for="nombre" class="form-label">Nombre de la categoría</label>
+                                <span data-validate-for="nombre" class="text-danger small validacion-descripcion"></span>
+                            </div>
+                            <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ej: Correspondencia oficial" />
+                        </div>
+
+                        <button type="submit" id="btnRegistrar" class="btn btn-primary w-100">Registrar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

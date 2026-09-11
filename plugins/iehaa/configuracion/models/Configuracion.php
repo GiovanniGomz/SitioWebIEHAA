@@ -21,7 +21,7 @@ class Configuracion extends Model
         'id', 'nombre_sitio', 'descripcion_sitio', 'email_contacto',
         'telefono_contacto', 'direccion', 'logo',
         'texto_nosotros', 'titulo_patrimonio', 'texto_patrimonio', 'video_url',
-        'mapa_embed', 'facebook_url', 'instagram_url',
+        'mapa_embed', 'facebook_url', 'instagram_url', 'fondo_pantalla',
     ];
 
     public $rules = [
@@ -47,6 +47,17 @@ class Configuracion extends Model
     public $morphMany = [];
     public $attachOne = [];
     public $attachMany = [];
+
+    /**
+     * Ruta pública (relativa) del fondo de pantalla subido, o null si todavía
+     * no se configuró ninguno (la página pública usa una imagen por defecto).
+     */
+    public function getFondoPantallaUrlAttribute(): ?string
+    {
+        return $this->fondo_pantalla
+            ? 'storage/app/uploads/public/configuracion/' . $this->fondo_pantalla
+            : null;
+    }
 
     /**
      * Devuelve la única fila de configuración (la crea con valores por

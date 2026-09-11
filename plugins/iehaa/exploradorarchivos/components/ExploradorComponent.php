@@ -278,9 +278,8 @@ class ExploradorComponent extends ComponentBase
         }
 
         if ($query->exists()) {
-            $tipo = $campo === 'codigo' ? 'código' : 'nombre';
             throw new ValidationException([
-                $campo => 'Ya hay ' . ($etiqueta === 'documento' ? 'un documento' : 'otra ' . $etiqueta) . ' con ese ' . $tipo . ' en este nivel.',
+                $campo => 'Este valor ya existe.',
             ]);
         }
     }
