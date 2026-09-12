@@ -29,6 +29,22 @@
     --active: var(--ues-red);
     --text-main: var(--panel-ink);
     --text-muted: var(--panel-muted);
+
+    /* Paleta de métricas del dashboard: el rojo institucional como color
+       principal, combinado con verde/dorado/azul pizarra — no todo rojo. */
+    --stat-primary: var(--ues-red);
+    --stat-primary-tint: var(--ues-red-tint);
+    --stat-success: #1d6f42;
+    --stat-success-tint: #e7f4ec;
+    --stat-warning: #a86a12;
+    --stat-warning-tint: #fbf1e0;
+    --stat-info: #2c5282;
+    --stat-info-tint: #e9eff8;
+
+    /* Superficies auxiliares (fondos ligeramente distintos al blanco, thead,
+       hover de filas, botones secundarios) — en modo oscuro cambian junto
+       con el resto. */
+    --surface-alt: #f6f6f7;
 }
 
 /* ===================== GLOBALES HEREDADAS ===================== */
@@ -83,6 +99,17 @@
 
 .mostrar {
     display: flex !important;
+}
+
+/* main.css (plantilla del sitio público) le pone fondo blanco y borde a
+   CUALQUIER <section>, y acá se usan como simples contenedores (botonera,
+   reportes, etc.) — sin esto quedan como cajas blancas sueltas, muy visible
+   en modo oscuro. */
+.main-content section,
+.modal section {
+    background-color: transparent;
+    border: none;
+    padding: 0;
 }
 
 .reportes {
@@ -357,8 +384,8 @@ body {
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    background: #efeff1;
-    color: #55585f;
+    background: var(--surface-alt);
+    color: var(--panel-ink-2);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -467,7 +494,7 @@ body {
     left: var(--sidebar-width);
     right: 0;
     height: var(--topbar-height);
-    background: #fff;
+    background: var(--surface);
     border-bottom: 1px solid var(--border);
     z-index: 1030;
     display: flex;
@@ -477,6 +504,12 @@ body {
 
 .topbar .btn-link {
     text-decoration: none;
+}
+
+/* Los íconos del topbar usan .text-dark (fijo en Bootstrap); acá los
+   dejamos atados al tema para que sigan visibles en modo oscuro. */
+.topbar .text-dark {
+    color: var(--panel-ink) !important;
 }
 
 .topbar .dropdown-menu {
@@ -562,7 +595,7 @@ body {
 /* ---------- FOOTER ---------- */
 .dashboard-footer {
     margin-left: var(--sidebar-width);
-    background: #fff;
+    background: var(--surface);
     border-top: 1px solid var(--border);
     transition: margin-left 0.3s ease;
 }
@@ -619,8 +652,28 @@ body {
     justify-content: center;
     font-size: 1.25rem;
     flex-shrink: 0;
-    background: var(--ues-red-tint) !important;
-    color: var(--ues-red) !important;
+}
+
+/* Cada tarjeta de métrica tiene su propio color — combinan con el rojo
+   institucional sin volver todo el panel rojo. */
+.stat-icon.bg-primary {
+    background: var(--stat-primary-tint) !important;
+    color: var(--stat-primary) !important;
+}
+
+.stat-icon.bg-success {
+    background: var(--stat-success-tint) !important;
+    color: var(--stat-success) !important;
+}
+
+.stat-icon.bg-warning {
+    background: var(--stat-warning-tint) !important;
+    color: var(--stat-warning) !important;
+}
+
+.stat-icon.bg-info {
+    background: var(--stat-info-tint) !important;
+    color: var(--stat-info) !important;
 }
 
 .card-dashboard .card-body:has(.stat-icon) .text-muted.small {
@@ -638,6 +691,72 @@ body {
     color: var(--panel-ink);
     line-height: 1.1;
     margin-top: 0.15rem;
+}
+
+.dashboard-stat-sub {
+    font-size: 0.72rem;
+    margin-top: 0.1rem;
+}
+
+/* Accesos rápidos: chips discretos, no botones de acción principal */
+.dashboard-acceso-rapido {
+    background: var(--surface-alt);
+    color: var(--panel-ink-2);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0.4rem 0.9rem;
+    font-size: 0.82rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: all 0.16s ease;
+}
+
+.dashboard-acceso-rapido:hover {
+    background: var(--ues-red);
+    border-color: var(--ues-red);
+    color: #fff;
+}
+
+/* Íconos redondos de las listas "recientes" del dashboard */
+.dashboard-item-icono {
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    margin-top: 0.1rem;
+}
+
+.dashboard-lista-reciente .list-group-item {
+    border-color: var(--border);
+}
+
+/* Gráfico de dona + leyenda */
+#grafico-fondos {
+    max-width: 100%;
+}
+
+.dashboard-chart-leyenda li {
+    font-size: 0.82rem;
+    color: var(--panel-ink-2);
+    border-bottom: 1px dashed var(--border);
+}
+
+.dashboard-chart-leyenda li:last-child {
+    border-bottom: 0;
+}
+
+.dashboard-chart-punto {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    margin-right: 0.5rem;
 }
 
 /* Listas dentro de cards */
@@ -808,7 +927,7 @@ body {
 }
 
 .main-content .table > thead th {
-    background: #fafafa;
+    background: var(--surface-alt);
     color: var(--panel-muted);
     text-transform: uppercase;
     font-size: 0.68rem;
@@ -832,7 +951,7 @@ body {
 }
 
 .main-content .table > tbody > tr:hover > * {
-    background-color: #fafbfc;
+    background-color: var(--surface-alt);
 }
 
 .main-content .table th[scope="row"] {
@@ -1020,17 +1139,17 @@ body {
 
 .main-content .btn-secondary,
 .modal .btn-secondary {
-    --bs-btn-bg: #fff;
+    --bs-btn-bg: var(--surface);
     --bs-btn-color: var(--panel-ink-2);
     --bs-btn-border-color: var(--border-strong);
-    --bs-btn-hover-bg: #f2f2f3;
+    --bs-btn-hover-bg: var(--surface-alt);
     --bs-btn-hover-color: var(--panel-ink);
     --bs-btn-hover-border-color: var(--border-strong);
 }
 
 .main-content .btn-light {
-    --bs-btn-bg: #f4f4f5;
-    --bs-btn-border-color: #f4f4f5;
+    --bs-btn-bg: var(--surface-alt);
+    --bs-btn-border-color: var(--surface-alt);
     --bs-btn-color: var(--panel-ink-2);
 }
 
@@ -1097,7 +1216,7 @@ body {
     padding: 1.25rem 1rem;
     border: 1.5px dashed var(--border-strong);
     border-radius: 10px;
-    background: #fafafa;
+    background: var(--surface-alt);
     color: var(--panel-muted);
     font-size: 0.86rem;
     cursor: pointer;
@@ -1187,7 +1306,7 @@ body {
 }
 
 .main-content .dt-paging .dt-paging-button:hover {
-    background: #f2f2f3 !important;
+    background: var(--surface-alt) !important;
     border-color: var(--border-strong) !important;
     color: var(--ues-red) !important;
     border-radius: 6px;
@@ -1239,4 +1358,78 @@ body {
 
 .scroll-top:hover {
     background: var(--ues-red) !important;
+}
+
+/* =====================================================================
+   MODO OSCURO (solo panel administrativo)
+   Bootstrap 5.3 ya retematiza sus propios componentes (modales, dropdowns,
+   formularios, tablas) con [data-bs-theme="dark"]; acá solo redefinimos
+   nuestras propias variables y los pocos lugares donde el CSS del panel
+   fija un color a mano en vez de usar una variable.
+   ===================================================================== */
+[data-bs-theme="dark"] {
+    --panel-ink: #eef0f4;
+    --panel-ink-2: #c7cad3;
+    --panel-muted: #92969f;
+
+    --body-bg: #14151a;
+    --surface: #1c1d24;
+    --surface-alt: #24252d;
+    --border: #2e2f39;
+    --border-strong: #3b3d49;
+
+    --sidebar-bg: #101114;
+
+    --ues-red-tint: rgba(213, 76, 68, 0.16);
+    --stat-primary-tint: rgba(213, 76, 68, 0.16);
+    --stat-success-tint: rgba(52, 168, 106, 0.14);
+    --stat-warning-tint: rgba(214, 158, 60, 0.14);
+    --stat-info-tint: rgba(88, 145, 214, 0.14);
+
+    /* Los tonos de acento se aclaran un poco para que contrasten sobre
+       fondos oscuros (los mismos valores oscuros casi no se leían). */
+    --stat-success: #3fb87a;
+    --stat-warning: #d6a13c;
+    --stat-info: #6ba2e8;
+}
+
+[data-bs-theme="dark"] .sidebar-brand,
+[data-bs-theme="dark"] .sidebar-user {
+    border-bottom-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+/* Bootstrap no retematiza .text-dark / .bg-white / .btn-light porque son
+   colores "fijos" a propósito — en el panel sí deben seguir el tema. */
+[data-bs-theme="dark"] .main-content.bg-white,
+[data-bs-theme="dark"] .card-header.bg-white,
+[data-bs-theme="dark"] .modal .bg-white {
+    background-color: var(--surface) !important;
+}
+
+[data-bs-theme="dark"] .main-content .table td .btn-primary,
+[data-bs-theme="dark"] .main-content .table td .btn-danger {
+    --bs-btn-bg: var(--surface-alt);
+}
+
+[data-bs-theme="dark"] .dt-layout-table::after,
+[data-bs-theme="dark"] .table-responsive-wrap::after {
+    background: linear-gradient(to right, rgba(20, 21, 26, 0), rgba(20, 21, 26, 0.95));
+}
+
+[data-bs-theme="dark"] .file-drop.has-file {
+    background: rgba(63, 184, 122, 0.12);
+}
+
+[data-bs-theme="dark"] .loader-overlay {
+    background-color: var(--body-bg);
+}
+
+[data-bs-theme="dark"] .card-dashboard:hover {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+}
+
+/* Star rating / gráficos: Chart.js dibuja en <canvas>, no hereda el tema
+   solo; ver initGraficoDashboard() en dashboard.htm. */
+[data-bs-theme="dark"] .dashboard-chart-leyenda {
+    color: var(--panel-muted);
 }

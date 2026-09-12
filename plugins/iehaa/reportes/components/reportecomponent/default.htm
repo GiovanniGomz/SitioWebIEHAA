@@ -127,6 +127,12 @@
 
 <script>
     (function () {
+        // Colores de rango medio a propósito: ni muy oscuros (se pierden con
+        // el fondo del modo oscuro) ni muy claros (se pierden con el blanco
+        // del modo claro).
+        var esOscuro = document.documentElement.getAttribute('data-bs-theme') === 'dark';
+        var bordeSegmento = esOscuro ? '#1c1d24' : '#fff';
+
         function grafica(id, tipo, data, colores) {
             var ctx = document.getElementById(id);
             if (!ctx || !data.labels.length) return;
@@ -140,7 +146,7 @@
                         backgroundColor: colores,
                         borderRadius: tipo === 'bar' ? 6 : 0,
                         borderWidth: tipo === 'bar' ? 0 : 2,
-                        borderColor: '#fff'
+                        borderColor: bordeSegmento
                     }]
                 },
                 options: {
@@ -151,7 +157,7 @@
             });
         }
 
-        var paleta = ['#b31b28', '#17181c', '#8f141f', '#6b7280', '#d18b91', '#3f4147', '#c0555e', '#9ca3af'];
+        var paleta = ['#b31b28', '#2c5282', '#a86a12', '#5c6773', '#d18b91', '#3fb87a', '#c0555e', '#9ca3af'];
 
         grafica('grafica-facultades', 'bar', {{ graficaFacultades|raw }}, paleta);
         grafica('grafica-categorias', 'doughnut', {{ graficaCategorias|raw }}, paleta);

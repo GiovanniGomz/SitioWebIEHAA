@@ -48,7 +48,41 @@ document.addEventListener('DOMContentLoaded', function () {
     initNotificaciones();
     initFormularioContacto();
     initScrollAErrorValidacion();
+    initTema();
 });
+
+// Modo claro / oscuro del panel. El tema ya se aplica al vuelo en <head>
+// (antes de pintar, para no parpadear); acá solo se sincroniza el ícono y
+// se atiende el clic para cambiarlo.
+function initTema() {
+    var boton = document.getElementById('theme-toggle');
+    if (!boton) return;
+
+    var icono = document.getElementById('theme-toggle-icono');
+
+    function pintarIcono() {
+        var esOscuro = document.documentElement.getAttribute('data-bs-theme') === 'dark';
+        icono.className = esOscuro ? 'bi bi-sun-fill' : 'bi bi-moon-stars-fill';
+        boton.title = esOscuro ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro';
+    }
+
+    pintarIcono();
+
+    boton.addEventListener('click', function () {
+        var actual = document.documentElement.getAttribute('data-bs-theme') === 'dark' ? 'dark' : 'light';
+        var nuevo = actual === 'dark' ? 'light' : 'dark';
+
+        document.documentElement.setAttribute('data-bs-theme', nuevo);
+        pintarIcono();
+
+        try { localStorage.setItem('iehaa-tema', nuevo); } catch (e) { /* sin almacenamiento disponible */ }
+
+        // Los gráficos de Chart.js no repintan solos al cambiar de tema.
+        if (typeof window.actualizarGraficosPorTema === 'function') {
+            window.actualizarGraficosPorTema(nuevo);
+        }
+    });
+}
 
 // En formularios largos (modales con muchas secciones, como Gestión
 // documental) un campo obligatorio puede quedar fuera de la vista cuando se
