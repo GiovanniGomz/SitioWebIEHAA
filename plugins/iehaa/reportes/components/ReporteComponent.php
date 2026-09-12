@@ -146,6 +146,7 @@ class ReporteComponent extends ComponentBase
             'Administración' => [
                 ['label' => 'Inventario de Activo Fijo (general)', 'pdf' => '/reportePDFActivoFijo', 'excel' => '/reporteExcelActivoFijo'],
                 ['label' => 'Mensajes de contacto', 'pdf' => '/reportePDFMensajesContacto', 'excel' => '/reporteExcelMensajesContacto'],
+                ['label' => 'Anuncios', 'pdf' => '/reportePDFAnuncios', 'excel' => '/reporteExcelAnuncios'],
             ],
             'Fabio Castillo' => [
                 ['label' => 'Archiveros', 'pdf' => '/reportePDFArchivero', 'excel' => '/reporteExcelArchivero'],

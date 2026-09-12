@@ -46,6 +46,17 @@ function onCheckNotificaciones()
     <meta name="description" content="" />
     <meta name="keywords" content="" />
 
+    <!-- Tema (claro/oscuro): se aplica ANTES de pintar la página para que no
+         se vea un parpadeo claro→oscuro al cargar. -->
+    <script>
+        (function () {
+            try {
+                var tema = localStorage.getItem('iehaa-tema') || 'light';
+                document.documentElement.setAttribute('data-bs-theme', tema);
+            } catch (e) { /* localStorage bloqueado: se queda en claro */ }
+        })();
+    </script>
+
     <!-- Favicons -->
     <link href="{{ 'assets/img/favicon.png'|theme}}" rel="icon" />
     <link href="{{ 'assets/img/apple-touch-icon.png'|theme}}" rel="apple-touch-icon" />
@@ -83,6 +94,9 @@ function onCheckNotificaciones()
     <!-- List.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/2.3.1/list.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/list.pagination.js/0.1.1/list.pagination.min.js"></script>
+
+    <!-- Chart.js (gráficos del dashboard) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.1/chart.umd.min.js"></script>
 </head>
 
 <body class="index-page">

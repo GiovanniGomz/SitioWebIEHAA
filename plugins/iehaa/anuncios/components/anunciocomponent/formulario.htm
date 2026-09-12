@@ -1,0 +1,86 @@
+<div class="container formulario-contenedor">
+    <div class="modal fade" id="modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="formulario-titulo">Registrar anuncio</h1>
+                    <button type="button" class="btn-close" id="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                        onclick="resetear()"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div data-validate-error class="alert alert-danger" style="display: none">
+                        <p data-message class="mb-0"></p>
+                    </div>
+
+                    <form id="formulario" data-request="anuncioComponent::onRegistrar" data-request-validate
+                        data-request-flash data-request-success="onRegistrar(data)" data-request-files
+                        data-request-update="'@listado': '#listado'" enctype="multipart/form-data">
+
+                        <input type="hidden" id="id" name="id" value="" />
+                        <input type="hidden" id="quitar_imagen" name="quitar_imagen" value="" />
+
+                        <div class="mb-3">
+                            <div class="validacion">
+                                <label for="titulo" class="form-label">Título</label>
+                                <span data-validate-for="titulo" class="text-danger small validacion-descripcion"></span>
+                            </div>
+                            <input type="text" class="form-control" id="titulo" name="titulo" placeholder="Título del anuncio" />
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="validacion">
+                                <label for="texto" class="form-label">Texto</label>
+                                <span data-validate-for="texto" class="text-danger small validacion-descripcion"></span>
+                            </div>
+                            <textarea class="form-control" id="texto" name="texto" rows="4" placeholder="Contenido del anuncio"></textarea>
+                        </div>
+
+                        <div class="row">
+                            <div class="mb-3 col-md-8">
+                                <div class="validacion">
+                                    <label for="video_url" class="form-label">Enlace de video (opcional)</label>
+                                    <span data-validate-for="video_url" class="text-danger small validacion-descripcion"></span>
+                                </div>
+                                <input type="url" class="form-control" id="video_url" name="video_url"
+                                    placeholder="https://www.youtube.com/watch?v=..." />
+                            </div>
+                            <div class="mb-3 col-md-4">
+                                <label for="orden" class="form-label">Orden</label>
+                                <input type="number" class="form-control" id="orden" name="orden" value="0" min="0" />
+                                <div class="form-text">Los anuncios se muestran de menor a mayor.</div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label d-block">Imagen (opcional)</label>
+
+                            <div id="anuncio-preview-contenedor" class="mb-2 d-none">
+                                <img id="anuncio-preview" src="" alt="" class="img-fluid rounded border" style="max-height: 160px; object-fit: cover;" />
+                                <div class="mt-2">
+                                    <button type="button" class="btn btn-sm btn-outline-danger" id="btn-quitar-imagen">
+                                        <i class="bi bi-trash"></i> Quitar imagen
+                                    </button>
+                                </div>
+                            </div>
+
+                            <label class="file-drop" for="imagen">
+                                <input type="file" id="imagen" name="imagen" accept="image/*" hidden />
+                                <i class="bi bi-cloud-arrow-up"></i>
+                                <span class="file-drop-text">Arrastrá una imagen aquí o hacé clic para seleccionar</span>
+                            </label>
+                            <div class="form-text">JPG, PNG o WEBP. Si dejás video y no subís imagen, se muestra solo el botón de reproducir.</div>
+                        </div>
+
+                        <div class="form-check form-switch mb-0">
+                            <input class="form-check-input" type="checkbox" id="activo" name="activo" checked />
+                            <label class="form-check-label" for="activo">Visible en la página principal</label>
+                        </div>
+
+                        <button type="submit" id="btnRegistrar" class="btn btn-primary w-100 mt-3">Registrar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -109,7 +109,7 @@ class CedjagComponent extends ComponentBase
 
         return [
             'estado' => 'exito',
-            'mensaje' => '¡Solicitud enviada! El instituto se pondrá en contacto con vos pronto.',
+            'mensaje' => '¡Solicitud enviada! El instituto se pondrá en contacto con usted pronto.',
         ];
     }
 }

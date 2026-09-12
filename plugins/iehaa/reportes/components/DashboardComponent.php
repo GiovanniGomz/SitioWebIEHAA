@@ -34,13 +34,25 @@ class DashboardComponent extends ComponentBase
         }
 
         $this->page['tarjetas'] = [
-            ['label' => 'Usuarios del panel', 'valor' => Usuario::count(), 'icono' => 'bi-people-fill', 'color' => 'primary'],
-            ['label' => 'Investigadores', 'valor' => Investigador::count(), 'icono' => 'bi-person-badge-fill', 'color' => 'success'],
-            ['label' => 'Documentos totales', 'valor' => Documento::count() + Fabio::count() + Fondo::count(), 'icono' => 'bi-file-earmark-text-fill', 'color' => 'warning'],
-            ['label' => 'Publicaciones', 'valor' => Publicacion::count(), 'icono' => 'bi-journal-text', 'color' => 'info'],
+            ['label' => 'Usuarios del panel', 'valor' => Usuario::count(), 'icono' => 'bi-people-fill', 'color' => 'primary', 'sub' => 'Con acceso al sistema'],
+            ['label' => 'Investigadores', 'valor' => Investigador::count(), 'icono' => 'bi-person-badge-fill', 'color' => 'success', 'sub' => 'Registrados en total'],
+            ['label' => 'Documentos totales', 'valor' => Documento::count() + Fabio::count() + Fondo::count(), 'icono' => 'bi-file-earmark-text-fill', 'color' => 'warning', 'sub' => 'Entre fondos y descargas'],
+            ['label' => 'Publicaciones', 'valor' => Publicacion::count(), 'icono' => 'bi-journal-text', 'color' => 'info', 'sub' => 'Producción académica'],
         ];
 
         $this->page['proyectosRecientes'] = Proyecto::with('investigador')->orderByDesc('id')->limit(5)->get();
         $this->page['publicacionesRecientes'] = Publicacion::with('investigador')->orderByDesc('id')->limit(5)->get();
+
+        $fabioTotal = Fabio::count();
+        $fondoTotal = Fondo::count();
+        $descargasTotal = Documento::count();
+
+        $this->page['graficoFondos'] = [
+            'labels' => ['Fabio Castillo', 'Fondo Bibliográfico', 'Descargas públicas'],
+            'valores' => [$fabioTotal, $fondoTotal, $descargasTotal],
+        ];
+
+        $this->page['fechaHoy'] = now()->format('d/m/Y');
+        $this->page['usuarioActual'] = CpanelAuth::usuario();
     }
 }

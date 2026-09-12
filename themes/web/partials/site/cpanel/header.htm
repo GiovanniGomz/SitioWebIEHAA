@@ -163,6 +163,11 @@ function onStart()
                     <i class="bi bi-gear"></i> Configuración
                 </a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link {{ rutaActual == '/anuncios' ? 'active' : '' }}" href="/anuncios">
+                    <i class="bi bi-megaphone"></i> Anuncios
+                </a>
+            </li>
             {% endif %}
 
             <li class="nav-item">
@@ -187,6 +192,11 @@ function onStart()
         </div>
 
         <div class="d-flex align-items-center gap-3">
+            <!-- Tema claro / oscuro -->
+            <button class="btn btn-link text-dark p-0" id="theme-toggle" type="button" title="Cambiar tema">
+                <i class="bi bi-moon-stars-fill" id="theme-toggle-icono"></i>
+            </button>
+
             <!-- Notificaciones -->
             <div class="dropdown">
                 <button class="btn btn-link text-dark position-relative p-0" id="notif-btn" data-bs-toggle="dropdown">

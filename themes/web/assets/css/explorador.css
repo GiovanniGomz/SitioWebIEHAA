@@ -295,3 +295,71 @@
     background: #dcfce7;
     color: #16a34a;
 }
+
+/* ---------- Modo oscuro ----------
+   Este archivo tiene su propia paleta fija (independiente de style.css),
+   así que acá se traduce cada color a su equivalente sobre fondo oscuro. */
+[data-bs-theme="dark"] .explorador-titulo,
+[data-bs-theme="dark"] .explorador-card-nombre {
+    color: var(--panel-ink, #eef0f4);
+}
+
+[data-bs-theme="dark"] .explorador-subtitulo,
+[data-bs-theme="dark"] .explorador-breadcrumb .breadcrumb-item.active,
+[data-bs-theme="dark"] .explorador-stepper-item,
+[data-bs-theme="dark"] .explorador-vacio,
+[data-bs-theme="dark"] .explorador-buscador i,
+[data-bs-theme="dark"] .explorador-card-meta {
+    color: var(--panel-muted, #92969f);
+}
+
+[data-bs-theme="dark"] .explorador-stepper-item.explorador-stepper-hecho {
+    color: #3fb87a;
+}
+
+[data-bs-theme="dark"] .explorador-stepper-bolita {
+    background: var(--surface-alt, #24252d);
+    color: var(--panel-muted, #92969f);
+}
+
+[data-bs-theme="dark"] .explorador-stepper-item.explorador-stepper-hecho .explorador-stepper-bolita {
+    background: rgba(63, 184, 122, 0.16);
+    color: #3fb87a;
+}
+
+[data-bs-theme="dark"] .explorador-stepper-flecha {
+    color: var(--border-strong, #3b3d49);
+}
+
+[data-bs-theme="dark"] .explorador-buscador input {
+    border-color: var(--border-strong, #3b3d49);
+}
+
+[data-bs-theme="dark"] .explorador-dropzone {
+    background: var(--surface-alt, #24252d);
+    border-color: var(--border-strong, #3b3d49);
+    color: var(--panel-ink-2, #c7cad3);
+}
+
+[data-bs-theme="dark"] .explorador-card {
+    background: var(--surface, #1c1d24);
+    border-color: var(--border, #2e2f39);
+}
+
+[data-bs-theme="dark"] .explorador-card:hover {
+    border-color: var(--border-strong, #3b3d49);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+}
+
+[data-bs-theme="dark"] .explorador-card-ruta {
+    color: var(--panel-muted, #92969f);
+}
+
+[data-bs-theme="dark"] .explorador-card-acciones button {
+    background: var(--surface-alt, #24252d);
+    color: var(--panel-ink-2, #c7cad3);
+}
+
+[data-bs-theme="dark"] .explorador-card-acciones button:hover {
+    background: var(--border-strong, #3b3d49);
+}
