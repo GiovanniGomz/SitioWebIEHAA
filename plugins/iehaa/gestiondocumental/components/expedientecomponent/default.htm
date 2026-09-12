@@ -41,3 +41,10 @@
 {% partial '@formulario' %}
 
 <script src="{{ '/assets/js/expediente/expediente.js'|theme }}"></script>
+{% if errorDescarga %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        Swal.fire('Aviso', {{ errorDescarga|json_encode|raw }}, 'error');
+    });
+</script>
+{% endif %}

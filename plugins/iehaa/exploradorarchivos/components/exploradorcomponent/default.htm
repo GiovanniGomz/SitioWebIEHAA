@@ -61,18 +61,27 @@
 
                 <form id="explorador-form-nodo">
                     <div class="mb-3">
-                        <label class="form-label" id="explorador-campo-label">Nombre</label>
-                        <input type="text" class="form-control" id="explorador-campo-valor" required />
+                        <div class="validacion">
+                            <label class="form-label" id="explorador-campo-label">Nombre</label>
+                            <span class="text-danger small validacion-descripcion" id="explorador-campo-error"></span>
+                        </div>
+                        <input type="text" class="form-control" id="explorador-campo-valor" />
                     </div>
                 </form>
 
                 <form id="explorador-form-archivo">
                     <div class="mb-3">
-                        <label class="form-label">Nombre del documento</label>
-                        <input type="text" class="form-control" id="explorador-doc-nombre" required />
+                        <div class="validacion">
+                            <label class="form-label">Nombre del documento</label>
+                            <span class="text-danger small validacion-descripcion" id="explorador-doc-nombre-error"></span>
+                        </div>
+                        <input type="text" class="form-control" id="explorador-doc-nombre" />
                     </div>
                     <div class="mb-3">
-                        <label class="form-label" id="explorador-doc-archivo-label">Archivo</label>
+                        <div class="validacion">
+                            <label class="form-label" id="explorador-doc-archivo-label">Archivo</label>
+                            <span class="text-danger small validacion-descripcion" id="explorador-doc-archivo-error"></span>
+                        </div>
                         <input type="file" class="form-control" id="explorador-doc-archivo" />
                         <div class="form-text" id="explorador-doc-archivo-ayuda"></div>
                     </div>
