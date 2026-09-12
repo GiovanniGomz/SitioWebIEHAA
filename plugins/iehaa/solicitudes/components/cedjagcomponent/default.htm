@@ -30,11 +30,6 @@
                     <p class="cedjag-card-ubicacion"><i class="bi bi-geo-alt-fill"></i> {{ item.ubicacion }}</p>
 
                     <div class="cedjag-card-acciones">
-                        {% if item.tieneDigital %}
-                        <a href="{{ item.urlDigital }}" target="_blank" class="btn btn-sm btn-outline-secondary">
-                            <i class="bi bi-file-earmark-text"></i> Ver digital
-                        </a>
-                        {% endif %}
                         <button type="button" class="btn btn-sm btn-primary btn-solicitar"
                             data-tipo="{{ item.tipo }}" data-id="{{ item.id }}" data-nombre="{{ item.nombre }}"
                             data-coleccion="{{ item.coleccion }}" data-ubicacion="{{ item.ubicacion }}">

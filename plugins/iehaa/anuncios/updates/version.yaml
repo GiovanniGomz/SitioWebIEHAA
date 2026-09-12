@@ -1,0 +1,5 @@
+1.0.0:
+    - "First version of anuncios"
+1.0.1:
+    - "Create anuncios table"
+    - v1.0.1/create_anuncios_table.php

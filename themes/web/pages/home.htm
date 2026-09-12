@@ -12,6 +12,7 @@ limite = "3"
 ==
 <?php
 
+use Iehaa\Anuncios\Models\Anuncio;
 use Iehaa\Configuracion\Models\Configuracion;
 use Iehaa\Documentos\Models\Documento;
 use Iehaa\Fabio\Models\Fabio;
@@ -27,6 +28,7 @@ function onStart()
     $this['totalPublicaciones'] = Publicacion::count();
     $this['totalDescargas'] = Documento::count() + Fabio::count() + Fondo::count();
     $this['config'] = Configuracion::actual();
+    $this['anuncios'] = Anuncio::where('activo', true)->orderBy('orden')->orderBy('id')->get();
 }
 ?>
 ==
@@ -274,7 +276,42 @@ function onStart()
 
   </section><!-- /Services Section -->
 
-  <!-- Aqui va la sección de preguntas frecuentes -->
+  {% if anuncios|length > 0 %}
+  <!-- Anuncios (administrables desde el panel) -->
+  <section id="anuncios" class="about-alt section">
+    <div class="container section-title" data-aos="fade-up">
+      <h2>Anuncios</h2>
+    </div>
+
+    {% for anuncio in anuncios %}
+    {% set tieneMedio = anuncio.imagen_url or anuncio.video_url %}
+    <div class="container {{ not loop.last ? 'mb-5' : '' }}">
+      <div class="row gy-4 align-items-center {{ tieneMedio and loop.index0 is odd ? 'flex-row-reverse' : '' }}">
+        {% if tieneMedio %}
+        <div class="col-lg-5" data-aos="fade-up" data-aos-delay="100">
+          {% if anuncio.imagen_url %}
+          <div class="position-relative">
+            <img src="{{ anuncio.imagen_url }}" class="img-fluid rounded" alt="{{ anuncio.titulo }}">
+            {% if anuncio.video_url %}
+            <a href="{{ anuncio.video_url }}" class="glightbox pulsating-play-btn"></a>
+            {% endif %}
+          </div>
+          {% else %}
+          <a href="{{ anuncio.video_url }}" class="glightbox anuncio-video-solo">
+            <i class="bi bi-play-circle-fill"></i>
+          </a>
+          {% endif %}
+        </div>
+        {% endif %}
+        <div class="{{ tieneMedio ? 'col-lg-7' : 'col-12 text-center' }} content" data-aos="fade-up" data-aos-delay="200">
+          <h3>{{ anuncio.titulo }}</h3>
+          <p style="white-space: pre-line;">{{ anuncio.texto }}</p>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </section><!-- /Anuncios -->
+  {% endif %}
 
   <!-- Contact Section -->
   <section id="contact" class="contact section">

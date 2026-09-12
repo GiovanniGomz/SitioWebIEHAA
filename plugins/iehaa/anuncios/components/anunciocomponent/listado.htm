@@ -1,0 +1,55 @@
+<table class="table" id="tabla-anuncios">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Imagen</th>
+            <th scope="col">Título</th>
+            <th scope="col">Video</th>
+            <th scope="col">Orden</th>
+            <th scope="col">Estado</th>
+            <th scope="col">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% set contador = 1 %}
+        {% for anuncio in anuncios %}
+        <tr>
+            <th scope="row">{{ contador }}</th>
+            <td>
+                {% if anuncio.imagen_url %}
+                <img src="{{ anuncio.imagen_url }}" alt="" style="width: 48px; height: 48px; object-fit: cover; border-radius: 6px;" />
+                {% else %}
+                <span class="text-muted small">—</span>
+                {% endif %}
+            </td>
+            <td>{{ anuncio.titulo }}</td>
+            <td>
+                {% if anuncio.video_url %}
+                <i class="bi bi-camera-reels-fill text-primary" title="Tiene video"></i>
+                {% else %}
+                <span class="text-muted small">—</span>
+                {% endif %}
+            </td>
+            <td>{{ anuncio.orden }}</td>
+            <td>
+                {% if anuncio.activo %}
+                <span class="badge bg-success">Visible</span>
+                {% else %}
+                <span class="badge bg-secondary">Oculto</span>
+                {% endif %}
+            </td>
+            <td>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal"
+                    data-request="anuncioComponent::onGetAnuncio" data-request-data="id: {{ anuncio.id }}"
+                    data-request-success="cargarFormulario(data)">
+                    <i class="bi bi-pencil-square"></i>
+                </button>
+                <button type="button" class="btn btn-danger btn-eliminar" data-id="{{ anuncio.id }}">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </td>
+        </tr>
+        {% set contador = contador + 1 %}
+        {% endfor %}
+    </tbody>
+</table>
