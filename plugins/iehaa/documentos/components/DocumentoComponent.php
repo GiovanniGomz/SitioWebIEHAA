@@ -6,7 +6,6 @@ use Cms\Classes\ComponentBase;
 use IEHAA\Documentos\Models\Documento;
 use Iehaa\Reportes\Classes\ReporteModulo;
 use Illuminate\Support\Facades\Storage;
-use Winter\Storm\Exception\ApplicationException;
 use Winter\Storm\Exception\ValidationException;
 use Winter\Storm\Support\Facades\Input;
 use Winter\Storm\Support\Facades\Validator;
@@ -33,6 +32,10 @@ class DocumentoComponent extends ComponentBase
     public function onRun()
     {
         $this->page['documentos'] = Documento::orderBy('nombre')->get();
+
+        if (session()->has('error_descarga')) {
+            $this->page['errorDescarga'] = session()->pull('error_descarga');
+        }
     }
 
     public function onRegistrar()
@@ -100,13 +103,13 @@ class DocumentoComponent extends ComponentBase
         $documento = Documento::find(intval($id));
 
         if (!$documento || !$documento->archivo) {
-            throw new ApplicationException('El documento no está disponible.');
+            return redirect('/descargas')->with('error_descarga', 'El documento no está disponible.');
         }
 
         $ruta = base_path($this->rutaSubida . $documento->archivo);
 
         if (!is_file($ruta)) {
-            throw new ApplicationException('El archivo de este documento no se encuentra en el servidor.');
+            return redirect('/descargas')->with('error_descarga', 'El archivo de este documento no se encuentra en el servidor.');
         }
 
         $extension = pathinfo($documento->archivo, PATHINFO_EXTENSION);

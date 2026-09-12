@@ -6,7 +6,6 @@ use Cms\Classes\ComponentBase;
 use Iehaa\Gestiondocumental\Models\Expediente;
 use Iehaa\Reportes\Classes\ReporteModulo;
 use Illuminate\Support\Facades\Storage;
-use Winter\Storm\Exception\ApplicationException;
 use Winter\Storm\Exception\ValidationException;
 use Winter\Storm\Support\Facades\Input;
 use Winter\Storm\Support\Facades\Validator;
@@ -34,6 +33,10 @@ class ExpedienteComponent extends ComponentBase
     {
         $this->page['expedientes'] = $this->obtenerTodos();
         $this->page['unidades'] = Expediente::UNIDADES;
+
+        if (session()->has('error_descarga')) {
+            $this->page['errorDescarga'] = session()->pull('error_descarga');
+        }
     }
 
     public function obtenerTodos()
@@ -127,13 +130,13 @@ class ExpedienteComponent extends ComponentBase
         $expediente = Expediente::find(intval($id));
 
         if (!$expediente || !$expediente->archivo) {
-            throw new ApplicationException('Este expediente no tiene un documento adjunto.');
+            return redirect('/gestion-documental')->with('error_descarga', 'Este expediente no tiene un documento adjunto.');
         }
 
         $ruta = base_path($this->rutaSubida . $expediente->archivo);
 
         if (!is_file($ruta)) {
-            throw new ApplicationException('El documento de este expediente no se encuentra en el servidor.');
+            return redirect('/gestion-documental')->with('error_descarga', 'El documento de este expediente no se encuentra en el servidor.');
         }
 
         $extension = pathinfo($expediente->archivo, PATHINFO_EXTENSION);

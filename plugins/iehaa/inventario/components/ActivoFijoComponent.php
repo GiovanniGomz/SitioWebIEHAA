@@ -7,7 +7,6 @@ use Iehaa\Inventario\Models\ActivoFijo;
 use Iehaa\Inventario\Models\ActivoFijoArchivo;
 use Iehaa\Reportes\Classes\ReporteModulo;
 use Illuminate\Support\Facades\Storage;
-use Winter\Storm\Exception\ApplicationException;
 use Winter\Storm\Exception\ValidationException;
 use Winter\Storm\Support\Facades\Input;
 use Winter\Storm\Support\Facades\Validator;
@@ -40,6 +39,10 @@ class ActivoFijoComponent extends ComponentBase
         $this->page['estados'] = ActivoFijo::ESTADOS;
         $this->page['formasAdquisicion'] = ActivoFijo::FORMAS_ADQUISICION;
         $this->page['responsables'] = $this->obtenerResponsables();
+
+        if (session()->has('error_descarga')) {
+            $this->page['errorDescarga'] = session()->pull('error_descarga');
+        }
     }
 
     public function obtenerTodos()
@@ -166,13 +169,13 @@ class ActivoFijoComponent extends ComponentBase
         $archivo = ActivoFijoArchivo::find(intval($archivoId));
 
         if (!$archivo) {
-            throw new ApplicationException('El archivo no está disponible.');
+            return redirect('/inventario-activo-fijo')->with('error_descarga', 'El archivo no está disponible.');
         }
 
         $ruta = base_path($this->rutaSubida . $archivo->archivo);
 
         if (!is_file($ruta)) {
-            throw new ApplicationException('El archivo no se encuentra en el servidor.');
+            return redirect('/inventario-activo-fijo')->with('error_descarga', 'El archivo no se encuentra en el servidor.');
         }
 
         return response()->download($ruta, $archivo->nombre_original ?: $archivo->archivo);
