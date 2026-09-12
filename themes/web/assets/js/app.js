@@ -47,7 +47,21 @@ document.addEventListener('DOMContentLoaded', function () {
     initTablasScrollables();
     initNotificaciones();
     initFormularioContacto();
+    initScrollAErrorValidacion();
 });
+
+// En formularios largos (modales con muchas secciones, como Gestión
+// documental) un campo obligatorio puede quedar fuera de la vista cuando se
+// envía el formulario: el mensaje "* Campo obligatorio." SÍ aparece, pero si
+// nadie lo ve porque está scrolleado fuera de pantalla, parece que "no pasó
+// nada". Acá desplazamos siempre hasta el primer campo con error.
+function initScrollAErrorValidacion() {
+    $(window).on('ajaxInvalidField', function (event, fieldElement, fieldName, fieldMessages, isFirstInvalidField) {
+        if (!isFirstInvalidField || !fieldElement || typeof fieldElement.scrollIntoView !== 'function') return;
+
+        fieldElement.scrollIntoView({ block: 'center' });
+    });
+}
 
 // Formulario de contacto de la página pública: lo envía al sistema
 // (módulo Mensajes de contacto) en vez del "forms/contact.php" de la

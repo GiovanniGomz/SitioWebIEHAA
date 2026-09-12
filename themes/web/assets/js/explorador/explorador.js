@@ -66,15 +66,51 @@ window.addEventListener('load', function () {
     var formError = document.getElementById('explorador-form-error');
     var btnGuardar = document.getElementById('explorador-btn-guardar');
     var btnGuardarSpinner = document.getElementById('explorador-btn-guardar-spinner');
+    var campoError = document.getElementById('explorador-campo-error');
+    var docNombreError = document.getElementById('explorador-doc-nombre-error');
+    var docArchivoError = document.getElementById('explorador-doc-archivo-error');
 
     function mostrarError(msg) {
         formError.textContent = msg;
         formError.classList.remove('d-none');
     }
 
+    // Mensajes por campo, igual que en el resto de los módulos: arriba del
+    // input correspondiente, no en un cartel genérico aparte.
+    function mostrarErrorCampo(span, msg) {
+        if (span) span.textContent = msg;
+    }
+
     function limpiarError() {
         formError.classList.add('d-none');
         formError.textContent = '';
+        [campoError, docNombreError, docArchivoError].forEach(function (span) {
+            if (span) span.textContent = '';
+        });
+    }
+
+    // Traduce la respuesta de error de Winter (X_WINTER_ERROR_MESSAGE /
+    // X_WINTER_ERROR_FIELDS) a los mensajes por campo del modal, igual que
+    // hace automáticamente data-request-validate en los demás formularios.
+    function mostrarErroresServidor(jqXHR, mapaCampos) {
+        var json;
+        try { json = JSON.parse(jqXHR.responseText); } catch (e) { json = null; }
+
+        var fields = json && json.X_WINTER_ERROR_FIELDS;
+        var hayCampo = false;
+
+        if (fields) {
+            Object.keys(mapaCampos).forEach(function (campo) {
+                if (fields[campo] && fields[campo].length) {
+                    mostrarErrorCampo(mapaCampos[campo], fields[campo][0]);
+                    hayCampo = true;
+                }
+            });
+        }
+
+        if (!hayCampo) {
+            mostrarError((json && json.X_WINTER_ERROR_MESSAGE) || extraerError(jqXHR));
+        }
     }
 
     function etiquetaDe(nivel) {
@@ -95,7 +131,14 @@ window.addEventListener('load', function () {
 
     function irABreadcrumb(idx) {
         var item = estado.breadcrumb[idx];
-        navegar(item.nivel, item.id, estado.breadcrumb.slice(0, idx + 1));
+
+        // Cada entrada del breadcrumb (salvo la raíz) guarda el nivel EN el
+        // que se hizo clic, no el nivel que hay que mostrar al volver ahí.
+        // Por ejemplo, al hacer clic en "Archivero 5" (nivel 0) hay que
+        // mostrar sus gavetas (nivel 1) — sin el +1 se volvía a la raíz.
+        var nivelDestino = idx === 0 ? 0 : item.nivel + 1;
+
+        navegar(nivelDestino, item.id, estado.breadcrumb.slice(0, idx + 1));
     }
 
     // Botón atrás/adelante del navegador: restaura el nivel guardado en el historial
@@ -225,6 +268,14 @@ window.addEventListener('load', function () {
             ? ''
             : '  <button type="button" class="explorador-btn-editar" title="Editar"><i class="bi bi-pencil-fill"></i></button>';
 
+        // Los niveles automáticos (archivero, gaveta, estante, anaquel) solo
+        // guardan un número correlativo como identificador: sin la etiqueta
+        // adelante ("Archivero 1"), todas las tarjetas se ven iguales y no
+        // se distingue cuál es cuál.
+        var nombreMostrado = esAuto(estado.nivel)
+            ? (etiquetaDe(estado.nivel) + ' ' + item.nombre)
+            : item.nombre;
+
         card.innerHTML =
             '<div class="explorador-card-acciones">' +
             botonEditar +
@@ -233,6 +284,8 @@ window.addEventListener('load', function () {
             '<i class="bi ' + iconoNivelActual() + ' explorador-card-icono"></i>' +
             '<div class="explorador-card-nombre"></div>' +
             '<div class="explorador-card-meta">' + textoHijos + ' adentro</div>';
+
+        card.querySelector('.explorador-card-nombre').textContent = nombreMostrado;
 
         card.addEventListener('click', function (e) {
             if (e.target.closest('.explorador-btn-eliminar') || e.target.closest('.explorador-btn-editar')) return;
@@ -527,14 +580,17 @@ window.addEventListener('load', function () {
         limpiarError();
 
         if (estado.esHoja) {
+            var faltaAlgo = false;
+
             if (!docNombre.value.trim()) {
-                mostrarError('Escribí un nombre para el documento.');
-                return;
+                mostrarErrorCampo(docNombreError, '* Campo obligatorio.');
+                faltaAlgo = true;
             }
             if (!estado.editandoId && !docArchivo.files.length) {
-                mostrarError('Seleccioná un archivo.');
-                return;
+                mostrarErrorCampo(docArchivoError, '* Campo obligatorio.');
+                faltaAlgo = true;
             }
+            if (faltaAlgo) return;
 
             var handlerDoc = estado.editandoId ? handlerEditarDoc : handlerSubir;
             var datosDoc = { modo: modo, parent_id: estado.parentId, nombre: docNombre.value.trim() };
@@ -552,14 +608,14 @@ window.addEventListener('load', function () {
                 },
                 error: function (jqXHR) {
                     btnGuardarSpinner.classList.add('d-none');
-                    mostrarError(extraerError(jqXHR));
+                    mostrarErroresServidor(jqXHR, { nombre: docNombreError, archivo: docArchivoError });
                 }
             });
         } else {
             var campo = campoLabel.textContent === 'Código' ? 'codigo' : 'nombre';
 
             if (!campoValor.value.trim()) {
-                mostrarError('Este campo es obligatorio.');
+                mostrarErrorCampo(campoError, '* Campo obligatorio.');
                 return;
             }
 
@@ -578,7 +634,7 @@ window.addEventListener('load', function () {
                 },
                 error: function (jqXHR) {
                     btnGuardarSpinner.classList.add('d-none');
-                    mostrarError(extraerError(jqXHR));
+                    mostrarErroresServidor(jqXHR, { codigo: campoError, nombre: campoError });
                 }
             });
         }
@@ -587,6 +643,7 @@ window.addEventListener('load', function () {
     function extraerError(jqXHR) {
         try {
             var json = JSON.parse(jqXHR.responseText);
+            if (json.X_WINTER_ERROR_MESSAGE) return json.X_WINTER_ERROR_MESSAGE;
             if (json.message) return json.message;
         } catch (e) { /* noop */ }
 
