@@ -280,6 +280,27 @@
     color: #fff;
 }
 
+/* ---------- Anuncios (sección opcional en la página de inicio) ---------- */
+.anuncio-video-solo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 16 / 10;
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--ues-red), transparent 92%);
+    border: 1.5px dashed color-mix(in srgb, var(--ues-red), transparent 60%);
+    transition: background 0.2s ease;
+}
+
+.anuncio-video-solo:hover {
+    background: color-mix(in srgb, var(--ues-red), transparent 85%);
+}
+
+.anuncio-video-solo i {
+    font-size: 4rem;
+    color: var(--ues-red);
+}
+
 /* ===================== PANEL DE ADMINISTRACIÓN ===================== */
 
 body {
@@ -636,8 +657,12 @@ body {
     padding: 1.25rem;
 }
 
-/* Tarjetas de métricas (dashboard / reportes) */
-.main-content .card-dashboard .card-body {
+/* Tarjetas de métricas (dashboard / reportes) — SOLO las que tienen un
+   ícono de estadística adentro (número + ícono en fila). Sin el :has()
+   esta regla también agarraba las tarjetas de "recientes" (listas), y su
+   <ul class="list-group"> (que Bootstrap ya pone en flex-column) quedaba
+   sin ancho fijo, desbordándose con títulos largos. */
+.main-content .card-dashboard .card-body:has(.stat-icon) {
     display: flex;
     align-items: center;
     gap: 0.9rem;
@@ -734,6 +759,13 @@ body {
 
 .dashboard-lista-reciente .list-group-item {
     border-color: var(--border);
+}
+
+/* Los ítems de la lista son flex; sin min-width:0 el texto largo empuja el
+   contenedor en vez de recortarse con "...", y la tarjeta se desborda. */
+.dashboard-lista-reciente .list-group-item > div:last-child {
+    min-width: 0;
+    flex: 1 1 auto;
 }
 
 /* Gráfico de dona + leyenda */
