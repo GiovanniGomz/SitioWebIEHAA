@@ -791,6 +791,18 @@ body {
     margin-right: 0.5rem;
 }
 
+/* El dashboard es la única página del panel sin fondo propio (no lleva
+   .bg-white como el resto de los módulos), así que en modo claro se veía
+   gris (heredaba el --body-bg de <body>). En modo oscuro se deja tal cual
+   estaba: el gris oscuro del fondo general ya combina bien ahí. */
+.main-content.dashboard-fondo-claro {
+    background: #fff;
+}
+
+[data-bs-theme="dark"] .main-content.dashboard-fondo-claro {
+    background: transparent;
+}
+
 /* Listas dentro de cards */
 .main-content .list-group-item {
     border-color: var(--border);
