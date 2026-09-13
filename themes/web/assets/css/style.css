@@ -247,37 +247,37 @@
     pointer-events: none;
 }
 
-/* ---------- Barra de redes sociales (encabezado del sitio público) ---------- */
-.site-social-bar {
-    background: var(--panel-ink);
-    padding: 6px 0;
+/* ---------- Redes sociales, integradas en la misma barra roja del encabezado ---------- */
+.header-social {
+    gap: 8px;
+    margin-left: 18px;
+    padding-left: 18px;
+    border-left: 1px solid rgba(255, 255, 255, 0.25);
 }
 
-.site-social-bar-label {
-    color: rgba(255, 255, 255, 0.55);
-    font-size: 0.72rem;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    margin-right: 12px;
-}
-
-.site-social-bar a {
+.header-social a {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 26px;
-    height: 26px;
-    margin-left: 8px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
     color: #fff;
-    background: rgba(255, 255, 255, 0.12);
-    font-size: 0.85rem;
-    transition: background 0.2s ease, color 0.2s ease;
+    background: rgba(255, 255, 255, 0.14);
+    font-size: 0.9rem;
+    transition: background 0.2s ease, transform 0.15s ease;
 }
 
-.site-social-bar a:hover {
-    background: var(--ues-red);
-    color: #fff;
+.header-social a:hover {
+    background: rgba(255, 255, 255, 0.28);
+    transform: translateY(-1px);
+}
+
+@media (max-width: 1199.98px) {
+    .header-social {
+        margin-left: 10px;
+        padding-left: 10px;
+    }
 }
 
 /* ---------- Anuncios (sección opcional en la página de inicio) ---------- */
