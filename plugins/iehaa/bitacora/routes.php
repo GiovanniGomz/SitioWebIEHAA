@@ -3,19 +3,17 @@
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['web', 'cpanel.auth'])->group(function () {
-    Route::get('/reportePDFAnuncios', function () {
+    Route::get('/reportePDFBitacora', function () {
         if (!\Iehaa\Usuarios\Classes\CpanelAuth::esAdmin()) {
             return redirect('/dashboard');
         }
-
-        return (new \Iehaa\Anuncios\Components\AnuncioComponent())->generarPdf();
+        return (new \Iehaa\Bitacora\Components\BitacoraComponent())->generarPdf();
     });
 
-    Route::get('/reporteExcelAnuncios', function () {
+    Route::get('/reporteExcelBitacora', function () {
         if (!\Iehaa\Usuarios\Classes\CpanelAuth::esAdmin()) {
             return redirect('/dashboard');
         }
-
-        return (new \Iehaa\Anuncios\Components\AnuncioComponent())->generarExcel();
+        return (new \Iehaa\Bitacora\Components\BitacoraComponent())->generarExcel();
     });
 });

@@ -1,0 +1,31 @@
+<table class="table" id="tabla-bitacora">
+    <thead>
+        <tr>
+            <th scope="col">Fecha y hora</th>
+            <th scope="col">Usuario</th>
+            <th scope="col">Acción</th>
+            <th scope="col">Módulo</th>
+            <th scope="col">Detalle</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for r in registros %}
+        <tr>
+            <td class="text-nowrap" data-order="{{ r.created_at|date('YmdHis') }}">{{ r.created_at|date('d/m/Y H:i:s') }}</td>
+            <td>
+                {% if r.usuario_nombre %}
+                {{ r.usuario_nombre }}
+                {% else %}
+                <span class="text-muted">Sistema / visitante</span>
+                {% endif %}
+            </td>
+            <td>
+                {% set colores = {'crear': 'success', 'modificar': 'primary', 'eliminar': 'danger', 'login': 'info', 'login_fallido': 'warning', 'logout': 'secondary', 'password': 'warning', 'respaldo': 'success', 'descarga': 'info', 'reporte': 'secondary'} %}
+                <span class="badge bg-{{ colores[r.accion] ?? 'secondary' }}">{{ r.accion_etiqueta }}</span>
+            </td>
+            <td>{{ r.modulo }}</td>
+            <td>{{ r.descripcion }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

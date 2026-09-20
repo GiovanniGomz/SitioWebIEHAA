@@ -168,6 +168,16 @@ function onStart()
                     <i class="bi bi-megaphone"></i> Anuncios
                 </a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link {{ rutaActual == '/respaldos' ? 'active' : '' }}" href="/respaldos">
+                    <i class="bi bi-database-down"></i> Respaldos
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ rutaActual == '/bitacora' ? 'active' : '' }}" href="/bitacora">
+                    <i class="bi bi-clock-history"></i> Bitácora
+                </a>
+            </li>
             {% endif %}
 
             <li class="nav-item">

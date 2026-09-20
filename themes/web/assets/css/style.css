@@ -1321,6 +1321,11 @@ body {
     background-color: var(--panel-ink) !important;
 }
 
+/* En modo oscuro --panel-ink es claro: el texto de la etiqueta debe ser oscuro. */
+[data-bs-theme="dark"] .main-content .badge.bg-primary {
+    color: #14151a !important;
+}
+
 .main-content .badge.bg-success {
     background-color: #1d6f42 !important;
 }

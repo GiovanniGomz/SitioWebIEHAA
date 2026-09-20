@@ -1,0 +1,88 @@
+<div class="container documento">
+    <nav class="submenu-desplazamiento mb-4">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item">
+                <a href="{{ 'cpanel'|page }}">
+                    <i class="bi bi-house-door-fill me-1"></i> IEHAA
+                </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">Respaldos</li>
+        </ol>
+    </nav>
+
+    <h1>Respaldos de la base de datos</h1>
+    <p class="text-muted">El sistema guarda copias de seguridad automáticas en la carpeta <code>storage/app/backups</code> del proyecto. También podés generar un respaldo en cualquier momento y guardarlo en el lugar de tu PC que prefieras.</p>
+
+    <div class="row g-3 mb-4">
+        <div class="col-lg-5">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h6 class="fw-semibold mb-2"><i class="bi bi-lightning-charge me-1"></i> Respaldar ahora</h6>
+                    <p class="text-muted small">Crea una copia completa de la base de datos en este momento. Al terminar podés descargarla y guardarla donde quieras (disco externo, USB, nube).</p>
+                    <button type="button" class="btn btn-primary" id="btn-respaldar">
+                        <i class="bi bi-database-down me-1"></i> Respaldar ahora
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-7">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h6 class="fw-semibold mb-3"><i class="bi bi-clock-history me-1"></i> Respaldo automático</h6>
+
+                    <form id="form-ajustes" data-request="respaldoComponent::onGuardarAjustes" data-request-validate novalidate
+                        data-request-success="onGuardarAjustes(data)">
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" role="switch" id="automatico"
+                                name="automatico" value="1" {{ ajustes.automatico ? 'checked' : '' }}>
+                            <label class="form-check-label" for="automatico">Hacer respaldos automáticos</label>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-sm-6">
+                                <label class="form-label small" for="frecuencia">Frecuencia</label>
+                                <select class="form-select" id="frecuencia" name="frecuencia">
+                                    {% for horas, etiqueta in frecuencias %}
+                                    <option value="{{ horas }}" {{ ajustes.frecuencia == horas ? 'selected' : '' }}>{{ etiqueta }}</option>
+                                    {% endfor %}
+                                </select>
+                                <span data-validate-for="frecuencia" class="text-danger small validacion-descripcion"></span>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label small" for="retencion">Copias que se conservan</label>
+                                <input type="number" class="form-control" id="retencion" name="retencion"
+                                    value="{{ ajustes.retencion }}">
+                                <span data-validate-for="retencion" class="text-danger small validacion-descripcion"></span>
+                            </div>
+                        </div>
+
+                        <div class="d-flex flex-wrap align-items-center gap-3 mt-3">
+                            <button type="submit" class="btn btn-primary btn-sm">Guardar configuración</button>
+                            <div class="small text-muted" id="estado-automatico">{% partial '@estado' %}</div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h5 class="mb-3 fw-semibold text-body">Copias guardadas</h5>
+    <div id="listado">{% partial '@listado' %}</div>
+
+    <details class="mt-4 text-muted small">
+        <summary>¿Cómo se restaura un respaldo?</summary>
+        <p class="mt-2 mb-1">Por seguridad, restaurar solo se hace por consola (reemplaza los datos actuales, por eso antes se crea un respaldo de seguridad):</p>
+        <pre class="mb-0"><code>php artisan iehaa:restaurar iehaa_20260101_020000_auto.dump</code></pre>
+        <p class="mt-2 mb-0">Si el respaldo está en otra PC, copiá el archivo <code>.dump</code> a <code>storage/app/backups</code> y ejecutá el mismo comando.</p>
+    </details>
+</div>
+
+<script src="{{ '/assets/js/respaldo/respaldo.js'|theme }}"></script>
+{% if errorDescarga %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        Swal.fire('Aviso', {{ errorDescarga|json_encode|raw }}, 'error');
+    });
+</script>
+{% endif %}
