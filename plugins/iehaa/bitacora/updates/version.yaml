@@ -1,0 +1,5 @@
+1.0.0:
+    - "First version of bitacora"
+1.0.1:
+    - "Create bitacora table"
+    - v1.0.1/create_bitacora_table.php

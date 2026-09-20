@@ -1,0 +1,36 @@
+<table class="table" id="tabla-respaldos">
+    <thead>
+        <tr>
+            <th scope="col">Archivo</th>
+            <th scope="col">Tipo</th>
+            <th scope="col">Fecha</th>
+            <th scope="col">Tamaño</th>
+            <th scope="col">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for r in respaldos %}
+        <tr>
+            <td class="text-break">{{ r.nombre }}</td>
+            <td>
+                {% if r.tipo == 'auto' %}
+                <span class="badge bg-info">Automático</span>
+                {% else %}
+                <span class="badge bg-primary">Manual</span>
+                {% endif %}
+            </td>
+            <td class="text-nowrap" data-order="{{ r.fecha|date('YmdHis') }}">{{ r.fecha|date('d/m/Y H:i') }}</td>
+            <td class="text-nowrap" data-order="{{ r.peso }}">{{ r.peso >= 1048576 ? (r.peso / 1048576)|number_format(1) ~ ' MB' : (r.peso / 1024)|number_format(0) ~ ' KB' }}</td>
+            <td class="text-nowrap">
+                <button type="button" class="btn btn-primary btn-descargar" data-archivo="{{ r.nombre }}"
+                    title="Descargar y guardar en mi PC">
+                    <i class="bi bi-download"></i>
+                </button>
+                <button type="button" class="btn btn-danger btn-eliminar" data-archivo="{{ r.nombre }}" title="Eliminar">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

@@ -50,6 +50,8 @@ class LoginComponent extends ComponentBase
         $usuario = CpanelAuth::attempt($data['email'], $data['password']);
 
         if (!$usuario) {
+            \Iehaa\Bitacora\Models\Bitacora::registrar('login_fallido', 'Sesión', 'Intento de inicio de sesión fallido con el correo ' . mb_substr(trim($data['email']), 0, 120));
+
             throw new ValidationException([
                 'email' => 'Correo o contraseña incorrectos.'
             ]);

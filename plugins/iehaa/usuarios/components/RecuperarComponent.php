@@ -93,6 +93,8 @@ class RecuperarComponent extends ComponentBase
         $usuario->save();
         $usuario->timestamps = true;
 
+        \Iehaa\Bitacora\Models\Bitacora::registrar('password', 'Usuarios', "Solicitó restablecer su contraseña ({$usuario->email})", $usuario);
+
         $enlace = url('/restablecer-password') . '?email=' . urlencode($usuario->email) . '&token=' . $token;
 
         try {

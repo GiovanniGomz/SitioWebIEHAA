@@ -5,6 +5,7 @@ namespace Iehaa\Anuncios\Components;
 use Cms\Classes\ComponentBase;
 use Iehaa\Anuncios\Models\Anuncio;
 use Iehaa\Reportes\Classes\ReporteModulo;
+use Iehaa\Usuarios\Classes\CpanelAuth;
 use Winter\Storm\Exception\ValidationException;
 use Winter\Storm\Support\Facades\Input;
 use Winter\Storm\Support\Facades\Validator;
@@ -30,6 +31,10 @@ class AnuncioComponent extends ComponentBase
 
     public function onRun()
     {
+        if (!CpanelAuth::esAdmin()) {
+            return redirect('/dashboard');
+        }
+
         $this->page['anuncios'] = $this->obtenerTodos();
     }
 
@@ -40,6 +45,10 @@ class AnuncioComponent extends ComponentBase
 
     public function onRegistrar()
     {
+        if (!CpanelAuth::esAdmin()) {
+            return redirect('/dashboard');
+        }
+
         $data = Input::all();
         $imagen = Input::file('imagen');
         $id = $data['id'] ?? null;
@@ -81,11 +90,19 @@ class AnuncioComponent extends ComponentBase
 
     public function onGetAnuncio()
     {
+        if (!CpanelAuth::esAdmin()) {
+            return redirect('/dashboard');
+        }
+
         return ['anuncio' => Anuncio::find(post('id'))];
     }
 
     public function onEliminar()
     {
+        if (!CpanelAuth::esAdmin()) {
+            return redirect('/dashboard');
+        }
+
         $anuncio = Anuncio::find(intval(post('id')));
 
         if (!$anuncio) {
