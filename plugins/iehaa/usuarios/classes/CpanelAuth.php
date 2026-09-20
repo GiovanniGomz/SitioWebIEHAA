@@ -22,6 +22,8 @@ class CpanelAuth
 
         session()->put(self::SESSION_KEY, $usuario->id);
 
+        \Iehaa\Bitacora\Models\Bitacora::registrar('login', 'Sesión', "Inició sesión ({$usuario->email})", $usuario);
+
         return $usuario;
     }
 
@@ -50,6 +52,12 @@ class CpanelAuth
 
     public static function logout(): void
     {
+        $usuario = self::usuario();
+
+        if ($usuario) {
+            \Iehaa\Bitacora\Models\Bitacora::registrar('logout', 'Sesión', "Cerró sesión ({$usuario->email})", $usuario);
+        }
+
         session()->forget(self::SESSION_KEY);
     }
 }
