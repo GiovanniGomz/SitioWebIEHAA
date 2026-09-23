@@ -140,7 +140,8 @@ class ReporteComponent extends ComponentBase
                 ['label' => 'Gestión documental', 'pdf' => '/reportePDFExpedientes', 'excel' => '/reporteExcelExpedientes'],
             ],
             'CEDJAG y correspondencia' => [
-                ['label' => 'Correspondencia', 'pdf' => '/reportePDFCorrespondencia', 'excel' => '/reporteExcelCorrespondencia'],
+                ['label' => 'Préstamo CEDJAG', 'pdf' => '/reportePDFCorrespondencia', 'excel' => '/reporteExcelCorrespondencia'],
+                ['label' => 'Correspondencia', 'pdf' => '/reportePDFRegistroCorrespondencia', 'excel' => '/reporteExcelRegistroCorrespondencia'],
                 ['label' => 'Categorías de correspondencia', 'pdf' => '/reportePDFCategoriasCorrespondencia', 'excel' => '/reporteExcelCategoriasCorrespondencia'],
             ],
             'Administración' => [

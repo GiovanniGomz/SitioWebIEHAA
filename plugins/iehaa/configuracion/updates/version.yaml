@@ -12,3 +12,6 @@
 1.0.4:
     - "Fondo de pantalla del hero, editable desde el panel"
     - v1.0.4/add_fondo_pantalla.php
+1.0.5:
+    - "Reemplazar Instagram por YouTube en las redes sociales"
+    - v1.0.5/rename_instagram_a_youtube.php

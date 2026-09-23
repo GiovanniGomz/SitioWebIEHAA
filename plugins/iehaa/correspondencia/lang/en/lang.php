@@ -2,7 +2,7 @@
 
 return [
     'plugin' => [
-        'name' => 'Correspondencia',
-        'description' => 'Aceptar o rechazar solicitudes de préstamo y llevar el historial de correspondencia entregada',
+        'name' => 'Préstamo CEDJAG',
+        'description' => 'Aceptar o rechazar solicitudes de préstamo de CEDJAG y llevar el historial de lo entregado',
     ],
 ];

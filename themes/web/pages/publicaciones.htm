@@ -39,15 +39,21 @@ limite = "24"
               {% if publicacion.tipo_publicacion %}<span class="badge bg-secondary">{{ publicacion.tipo_publicacion.nombre }}</span>{% endif %}
               {% if publicacion.investigador %}<i class="bi bi-person-fill ms-1"></i> {{ publicacion.investigador.nombre }} {{ publicacion.investigador.apellido }}{% endif %}
             </p>
-            <div class="mt-auto d-flex gap-2">
+            <div class="mt-auto d-flex flex-wrap gap-2">
               <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
                   data-bs-target="#publicacion-modal" data-titulo="{{ publicacion.titulo }}"
                   data-descripcion="{{ publicacion.descripcion }}"
                   data-tipo="{{ publicacion.tipo_publicacion ? publicacion.tipo_publicacion.nombre : '' }}"
                   data-investigador="{{ publicacion.investigador ? publicacion.investigador.nombre ~ ' ' ~ publicacion.investigador.apellido : '' }}"
-                  data-fecha="{{ publicacion.fecha ? publicacion.fecha|date('d/m/Y') : '' }}">
+                  data-fecha="{{ publicacion.fecha ? publicacion.fecha|date('d/m/Y') : '' }}"
+                  data-url="{{ publicacion.url }}">
                   <i class="bi bi-eye"></i> Leer más
               </button>
+              {% if publicacion.url %}
+              <a href="{{ publicacion.url }}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-success">
+                <i class="bi bi-box-arrow-up-right"></i> Ver publicación
+              </a>
+              {% endif %}
               {% if publicacion.archivo %}
               <a href="storage/app/uploads/public/publicaciones/{{ publicacion.archivo }}" download
                   class="btn btn-sm btn-outline-secondary">
@@ -85,6 +91,9 @@ limite = "24"
         <div class="modal-body">
           <p class="text-muted small mb-3" id="publicacion-modal-meta"></p>
           <p id="publicacion-modal-descripcion"></p>
+          <a href="#" target="_blank" rel="noopener" id="publicacion-modal-url" class="d-none small">
+            <i class="bi bi-box-arrow-up-right me-1"></i> Ver publicación donde fue publicada
+          </a>
         </div>
       </div>
     </div>
@@ -104,6 +113,15 @@ limite = "24"
       if (inv) partes.push('Investigador: ' + inv);
       if (fecha) partes.push(fecha);
       document.getElementById('publicacion-modal-meta').textContent = partes.join(' — ');
+
+      var url = btn.getAttribute('data-url');
+      var enlaceUrl = document.getElementById('publicacion-modal-url');
+      if (url) {
+        enlaceUrl.href = url;
+        enlaceUrl.classList.remove('d-none');
+      } else {
+        enlaceUrl.classList.add('d-none');
+      }
     });
   </script>
 </main>

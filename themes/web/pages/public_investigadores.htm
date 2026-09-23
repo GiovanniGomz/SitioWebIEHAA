@@ -41,15 +41,24 @@ layout = "default"
                         <h3 class="titulo">{{ investigador.nombre }} {{ investigador.apellido }}</h3>
                         <p class="descripcion mb-1">{{ investigador.facultad ? investigador.facultad.nombre : '' }}</p>
                         <p class="descripcion small text-muted mb-2">{{ investigador.carnet }}</p>
-                        <button type="button" class="btn btn-sm btn-outline-primary mt-auto align-self-start"
-                            data-bs-toggle="modal" data-bs-target="#investigador-modal"
-                            data-nombre="{{ investigador.nombre }} {{ investigador.apellido }}"
-                            data-facultad="{{ investigador.facultad ? investigador.facultad.nombre : '' }}"
-                            data-tipo="{{ investigador.tipo_investigador ? investigador.tipo_investigador.nombre : '' }}"
-                            data-categoria="{{ investigador.categoria_investigador ? investigador.categoria_investigador.nombre : '' }}"
-                            data-descripcion="{{ investigador.descripcion }}">
-                            <i class="bi bi-eye"></i> Ver perfil
-                        </button>
+                        <div class="d-flex flex-wrap gap-2 mt-auto align-items-center">
+                            <button type="button" class="btn btn-sm btn-outline-primary align-self-start"
+                                data-bs-toggle="modal" data-bs-target="#investigador-modal"
+                                data-nombre="{{ investigador.nombre }} {{ investigador.apellido }}"
+                                data-facultad="{{ investigador.facultad ? investigador.facultad.nombre : '' }}"
+                                data-tipo="{{ investigador.tipo_investigador ? investigador.tipo_investigador.nombre : '' }}"
+                                data-categoria="{{ investigador.categoria_investigador ? investigador.categoria_investigador.nombre : '' }}"
+                                data-descripcion="{{ investigador.descripcion }}"
+                                data-orcid="{{ investigador.orcid }}">
+                                <i class="bi bi-eye"></i> Ver perfil
+                            </button>
+                            {% if investigador.orcid %}
+                            <a href="https://orcid.org/{{ investigador.orcid }}" target="_blank" rel="noopener"
+                                class="btn btn-sm btn-outline-success align-self-start" title="Ver perfil ORCID">
+                                <i class="bi bi-mortarboard"></i> ORCID
+                            </a>
+                            {% endif %}
+                        </div>
                     </div>
                 </div><!-- End Service Item -->
 
@@ -75,6 +84,9 @@ layout = "default"
                 <div class="modal-body">
                     <p class="text-muted small mb-3" id="investigador-modal-meta"></p>
                     <p id="investigador-modal-descripcion"></p>
+                    <a href="#" target="_blank" rel="noopener" id="investigador-modal-orcid" class="d-none small">
+                        <i class="bi bi-mortarboard me-1"></i> Ver perfil ORCID
+                    </a>
                 </div>
             </div>
         </div>
@@ -95,6 +107,15 @@ layout = "default"
                 if (valor) partes.push(valor);
             });
             document.getElementById('investigador-modal-meta').textContent = partes.join(' — ');
+
+            var orcid = btn.getAttribute('data-orcid');
+            var enlaceOrcid = document.getElementById('investigador-modal-orcid');
+            if (orcid) {
+                enlaceOrcid.href = 'https://orcid.org/' + orcid;
+                enlaceOrcid.classList.remove('d-none');
+            } else {
+                enlaceOrcid.classList.add('d-none');
+            }
         });
     </script>
 </main>

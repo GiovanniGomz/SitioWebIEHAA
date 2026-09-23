@@ -6,3 +6,6 @@
 1.0.8:
     - "Publicaciones deja de ser obligatorio en investigadores"
     - v1.0.8/publicaciones_nullable.php
+1.0.9:
+    - "Código ORCID del investigador"
+    - v1.0.9/add_orcid.php

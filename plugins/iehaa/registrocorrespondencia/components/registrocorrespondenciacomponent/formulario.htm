@@ -1,0 +1,109 @@
+<div class="container formulario-contenedor">
+    <div class="modal fade" id="modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="formulario-titulo">Registrar correspondencia</h1>
+                    <button type="button" class="btn-close" id="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                        onclick="resetear()"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div data-validate-error class="alert alert-danger" style="display: none">
+                        <p data-message></p>
+                    </div>
+
+                    <form id="formulario" data-request="registroCorrespondenciaComponent::onRegistrar" data-request-validate
+                        data-request-flash data-request-success="onRegistrar(data)" data-request-files
+                        data-request-update="'@listado': '#listado'" enctype="multipart/form-data">
+
+                        <input type="hidden" id="id" name="id" value="" />
+
+                        <div class="mb-3">
+                            <div class="validacion">
+                                <label for="nombre" class="form-label">Nombre</label>
+                                <span data-validate-for="nombre" class="text-danger small validacion-descripcion"></span>
+                            </div>
+                            <input type="text" class="form-control" id="nombre" name="nombre"
+                                placeholder="Nombre de la persona o institución" />
+                        </div>
+
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <div class="validacion">
+                                    <label for="facultad_id" class="form-label">Facultad</label>
+                                    <span data-validate-for="facultad_id" class="text-danger small validacion-descripcion"></span>
+                                </div>
+                                <select class="form-select" id="facultad_id" name="facultad_id">
+                                    <option value="">Seleccione...</option>
+                                    {% for facultad in facultades %}
+                                    <option value="{{ facultad.id }}">{{ facultad.nombre }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <div class="validacion">
+                                    <label for="categoria_correspondencia_id" class="form-label">Categoría de correspondencia</label>
+                                    <span data-validate-for="categoria_correspondencia_id" class="text-danger small validacion-descripcion"></span>
+                                </div>
+                                <select class="form-select" id="categoria_correspondencia_id" name="categoria_correspondencia_id">
+                                    <option value="">Seleccione...</option>
+                                    {% for categoria in categorias %}
+                                    <option value="{{ categoria.id }}">{{ categoria.nombre }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <div class="validacion">
+                                    <label class="form-label d-block">Tipo</label>
+                                    <span data-validate-for="tipo" class="text-danger small validacion-descripcion"></span>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="tipo" id="tipo-enviado" value="enviado" checked />
+                                    <label class="form-check-label" for="tipo-enviado">Enviado</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="tipo" id="tipo-recibido" value="recibido" />
+                                    <label class="form-check-label" for="tipo-recibido">Recibido</label>
+                                </div>
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <div class="validacion">
+                                    <label for="fecha" class="form-label" id="fecha-label">Fecha de envío</label>
+                                    <span data-validate-for="fecha" class="text-danger small validacion-descripcion"></span>
+                                </div>
+                                <input type="date" class="form-control" id="fecha" name="fecha" />
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="validacion">
+                                <label class="form-label d-block">Documento</label>
+                                <span data-validate-for="archivo" class="text-danger small validacion-descripcion"></span>
+                            </div>
+
+                            <div id="correspondencia-archivo-actual" class="mb-2 d-none">
+                                <a href="#" id="correspondencia-archivo-enlace" target="_blank" class="btn btn-sm btn-outline-secondary">
+                                    <i class="bi bi-file-earmark-text"></i> Ver documento actual
+                                </a>
+                                <div class="form-text">Subí un archivo nuevo para reemplazarlo.</div>
+                            </div>
+
+                            <label class="file-drop" for="archivo">
+                                <input type="file" id="archivo" name="archivo" hidden />
+                                <i class="bi bi-cloud-arrow-up"></i>
+                                <span class="file-drop-text">Arrastrá el documento aquí o hacé clic para seleccionar</span>
+                            </label>
+                        </div>
+
+                        <button type="submit" id="btnRegistrar" class="btn btn-primary w-100">Registrar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

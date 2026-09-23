@@ -40,12 +40,20 @@ limite = "24"
               <i class="bi bi-person-fill"></i> {{ proyecto.investigador.nombre }} {{ proyecto.investigador.apellido }}
             </p>
             {% endif %}
-            <button type="button" class="btn btn-sm btn-outline-primary mt-auto align-self-start" data-bs-toggle="modal"
-                data-bs-target="#proyecto-modal" data-titulo="{{ proyecto.titulo }}"
-                data-descripcion="{{ proyecto.descripcion }}" data-detalle="{{ proyecto.detalle }}"
-                data-investigador="{{ proyecto.investigador ? proyecto.investigador.nombre ~ ' ' ~ proyecto.investigador.apellido : '' }}">
-                <i class="bi bi-eye"></i> Leer más
-            </button>
+            <div class="mt-auto d-flex flex-wrap gap-2">
+              <button type="button" class="btn btn-sm btn-outline-primary align-self-start" data-bs-toggle="modal"
+                  data-bs-target="#proyecto-modal" data-titulo="{{ proyecto.titulo }}"
+                  data-descripcion="{{ proyecto.descripcion }}" data-detalle="{{ proyecto.detalle }}"
+                  data-investigador="{{ proyecto.investigador ? proyecto.investigador.nombre ~ ' ' ~ proyecto.investigador.apellido : '' }}">
+                  <i class="bi bi-eye"></i> Leer más
+              </button>
+              {% if proyecto.archivo %}
+              <a href="storage/app/uploads/public/proyectos/{{ proyecto.archivo }}" download
+                  class="btn btn-sm btn-outline-secondary align-self-start">
+                <i class="bi bi-download"></i> Descargar
+              </a>
+              {% endif %}
+            </div>
           </div>
         </div><!-- End Service Item -->
         {% else %}
