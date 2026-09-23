@@ -27,9 +27,9 @@ class SolicitudesComponent extends ComponentBase
             return redirect('/login');
         }
 
-        // Esta pantalla fue reemplazada por el módulo de Correspondencia
+        // Esta pantalla fue reemplazada por el módulo de Préstamo CEDJAG
         // (aceptar/rechazar + historial detallado + envío de correo).
-        return redirect('/correspondencia');
+        return redirect('/prestamo-cedjag');
     }
 
     public function obtenerTodas()

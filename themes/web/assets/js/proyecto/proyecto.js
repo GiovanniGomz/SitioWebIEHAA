@@ -12,6 +12,24 @@ function eventos() {
         const btn = e.target.closest('.btn-eliminar');
         if (btn) avisoEliminar(btn.dataset.id);
     });
+
+    var btnQuitarArchivo = document.getElementById('btn-quitar-archivo');
+    if (btnQuitarArchivo) {
+        btnQuitarArchivo.addEventListener('click', function () {
+            document.getElementById('archivo').value = '';
+            document.getElementById('quitar_archivo').value = '1';
+            document.getElementById('proyecto-archivo-actual').classList.add('d-none');
+        });
+    }
+
+    var inputArchivo = document.getElementById('archivo');
+    if (inputArchivo) {
+        inputArchivo.addEventListener('change', function () {
+            if (this.files && this.files[0]) {
+                document.getElementById('quitar_archivo').value = '';
+            }
+        });
+    }
 }
 
 function iniciarTabla() {
@@ -67,6 +85,16 @@ function cargarFormulario(data) {
     document.querySelector('#descripcion').value = proyecto.descripcion;
     document.querySelector('#detalle').value = proyecto.detalle || '';
     document.querySelector('#id').value = proyecto.id;
+    document.querySelector('#quitar_archivo').value = '';
+    document.querySelector('#archivo').value = '';
+
+    var actual = document.getElementById('proyecto-archivo-actual');
+    if (proyecto.archivo_url) {
+        document.getElementById('proyecto-archivo-enlace').href = proyecto.archivo_url;
+        actual.classList.remove('d-none');
+    } else {
+        actual.classList.add('d-none');
+    }
 }
 
 function resetear() {
@@ -90,6 +118,9 @@ function limpiar() {
     document.querySelector('#descripcion').value = '';
     document.querySelector('#detalle').value = '';
     document.querySelector('#id').value = '';
+    document.querySelector('#quitar_archivo').value = '';
+    document.querySelector('#archivo').value = '';
+    document.getElementById('proyecto-archivo-actual').classList.add('d-none');
     limpiarErrores();
 }
 

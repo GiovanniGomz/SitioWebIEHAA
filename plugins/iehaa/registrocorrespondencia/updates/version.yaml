@@ -1,0 +1,5 @@
+1.0.0:
+    - "First version of registrocorrespondencia"
+1.0.1:
+    - "Create registro_correspondencia table"
+    - v1.0.1/create_registro_correspondencia_table.php

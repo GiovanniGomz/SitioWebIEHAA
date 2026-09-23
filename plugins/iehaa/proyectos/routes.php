@@ -10,4 +10,8 @@ Route::middleware(['web', 'cpanel.auth'])->group(function () {
     Route::get('/reporteExcelProyectos', function () {
         return (new \Iehaa\Proyectos\Components\ProyectoComponent())->generarExcel();
     });
+
+    Route::get('/descarga-proyecto/{id}', function ($id) {
+        return (new \Iehaa\Proyectos\Components\ProyectoComponent())->descargar($id);
+    })->where('id', '[0-9]+');
 });

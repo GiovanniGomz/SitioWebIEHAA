@@ -15,10 +15,11 @@
                     </div>
 
                     <form id="formulario" data-request="proyectoComponent::onRegistrar" data-request-validate
-                        data-request-flash data-request-success="onRegistrar(data)"
-                        data-request-update="'@listado': '#listado'">
+                        data-request-flash data-request-success="onRegistrar(data)" data-request-files
+                        data-request-update="'@listado': '#listado'" enctype="multipart/form-data">
 
                         <input type="hidden" id="id" name="id" value="" />
+                        <input type="hidden" id="quitar_archivo" name="quitar_archivo" value="" />
 
                         <div class="mb-3">
                             <div class="validacion">
@@ -43,7 +44,7 @@
 
                         <div class="mb-3">
                             <div class="validacion">
-                                <label for="descripcion" class="form-label">Descripción</label>
+                                <label for="descripcion" class="form-label">Resumen del proyecto</label>
                                 <span data-validate-for="descripcion" class="text-danger small validacion-descripcion"></span>
                             </div>
                             <textarea class="form-control" id="descripcion" name="descripcion" rows="3"
@@ -51,9 +52,29 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="detalle" class="form-label">Detalle</label>
+                            <label for="detalle" class="form-label">Otros detalles del proyecto</label>
                             <textarea class="form-control" id="detalle" name="detalle" rows="4"
-                                placeholder="Detalle completo del proyecto (opcional)"></textarea>
+                                placeholder="Otros detalles del proyecto (opcional)"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label d-block">Documento del proyecto (opcional)</label>
+
+                            <div id="proyecto-archivo-actual" class="mb-2 d-none">
+                                <a href="#" id="proyecto-archivo-enlace" target="_blank" class="btn btn-sm btn-outline-secondary">
+                                    <i class="bi bi-file-earmark-text"></i> Ver documento actual
+                                </a>
+                                <button type="button" class="btn btn-sm btn-outline-danger" id="btn-quitar-archivo">
+                                    <i class="bi bi-x-lg"></i> Quitar
+                                </button>
+                            </div>
+
+                            <label class="file-drop" for="archivo">
+                                <input type="file" id="archivo" name="archivo" hidden />
+                                <i class="bi bi-cloud-arrow-up"></i>
+                                <span class="file-drop-text">Arrastrá el documento aquí o hacé clic para seleccionar</span>
+                            </label>
+                            <span data-validate-for="archivo" class="text-danger small validacion-descripcion"></span>
                         </div>
 
                         <button type="submit" id="btnRegistrar" class="btn btn-primary w-100">Registrar</button>

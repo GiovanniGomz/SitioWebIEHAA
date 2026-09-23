@@ -4,6 +4,7 @@
             <th scope="col">#</th>
             <th scope="col">Nombre Completo</th>
             <th scope="col">Carnet</th>
+            <th scope="col">ORCID</th>
             <th scope="col">Email</th>
             <th scope="col">Facultad</th>
             <th scope="col">Acciones</th>
@@ -15,6 +16,7 @@
             <th scope="row">{{ contador }}</th>
             <td>{{ investigador.nombre }} {{ investigador.apellido }}</td>
             <td>{{ investigador.carnet|upper }}</td>
+            <td>{{ investigador.orcid ?: '—' }}</td>
             <td>{{ investigador.email }}</td>
             <td>{{ investigador.facultad.nombre }}</td>
             <td>

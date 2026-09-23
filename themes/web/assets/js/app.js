@@ -168,7 +168,7 @@ function initNotificaciones() {
         } else {
             data.items.forEach(function (item) {
                 var li = document.createElement('li');
-                li.innerHTML = '<a class="dropdown-item small" href="/correspondencia">' +
+                li.innerHTML = '<a class="dropdown-item small" href="/prestamo-cedjag">' +
                     '<i class="bi bi-inbox-fill me-1 text-warning"></i> ' +
                     item.nombre.replace(/</g, '&lt;') + ' solicitó un préstamo</a>';
                 lista.appendChild(li);

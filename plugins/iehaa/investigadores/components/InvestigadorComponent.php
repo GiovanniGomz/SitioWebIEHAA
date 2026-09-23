@@ -51,6 +51,7 @@ class InvestigadorComponent extends ComponentBase
 
         $data['carnet'] = strtoupper(trim($data['carnet'] ?? ''));
         $data['telefono'] = preg_replace('/\D+/', '', $data['telefono'] ?? '');
+        $data['orcid'] = trim($data['orcid'] ?? '');
 
         $this->validaciones($data, $id);
 
@@ -70,6 +71,7 @@ class InvestigadorComponent extends ComponentBase
         $investigador->tipo_investigador_id = $data['tipo_investigador'];
         $investigador->sexo = $data['sexo'];
         $investigador->descripcion = trim($data['descripcion']);
+        $investigador->orcid = $data['orcid'];
 
         $investigador->save();
 
@@ -123,6 +125,7 @@ class InvestigadorComponent extends ComponentBase
             'tipo_investigador'      => ['required'],
             'sexo'                   => ['required'],
             'descripcion'            => ['required', 'string', 'min:10'],
+            'orcid'                  => ['required', 'regex:/^\d{4}-\d{4}-\d{4}-\d{3}[\dX]$/'],
         ], [
             'nombre.required'      => '* Campo obligatorio.',
             'nombre.regex'         => 'El nombre solo admite letras y espacios.',
@@ -140,6 +143,8 @@ class InvestigadorComponent extends ComponentBase
             'sexo.required'        => '* Campo obligatorio.',
             'descripcion.required' => '* Campo obligatorio.',
             'descripcion.min'      => 'Escribí al menos 10 caracteres.',
+            'orcid.required'       => '* Campo obligatorio.',
+            'orcid.regex'          => 'Formato inválido. Debe ser como 0000-0002-1825-0097.',
         ]);
 
         if ($validator->fails()) {
@@ -169,6 +174,14 @@ class InvestigadorComponent extends ComponentBase
         if ($carnetDuplicado) {
             throw new ValidationException(['carnet' => 'Este valor ya existe.']);
         }
+
+        $orcidDuplicado = Investigador::where('orcid', $data['orcid'])
+            ->when($id, fn ($q) => $q->where('id', '!=', $id))
+            ->exists();
+
+        if ($orcidDuplicado) {
+            throw new ValidationException(['orcid' => 'Este valor ya existe.']);
+        }
     }
 
     protected function datosReporte(): array
@@ -179,6 +192,7 @@ class InvestigadorComponent extends ComponentBase
                 $i + 1,
                 trim($inv->nombre . ' ' . $inv->apellido),
                 strtoupper($inv->carnet),
+                $inv->orcid ?: '—',
                 $inv->telefono,
                 $inv->email,
                 optional($inv->facultad)->nombre ?: '—',
@@ -189,7 +203,7 @@ class InvestigadorComponent extends ComponentBase
 
         return [
             'Listado de investigadores',
-            ['#', 'Nombre completo', 'Carnet', 'Teléfono', 'Correo', 'Facultad', 'Tipo', 'Categoría'],
+            ['#', 'Nombre completo', 'Carnet', 'ORCID', 'Teléfono', 'Correo', 'Facultad', 'Tipo', 'Categoría'],
             $filas,
             'investigadores',
         ];

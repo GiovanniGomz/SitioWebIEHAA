@@ -21,7 +21,7 @@ class Configuracion extends Model
         'id', 'nombre_sitio', 'descripcion_sitio', 'email_contacto',
         'telefono_contacto', 'direccion', 'logo',
         'texto_nosotros', 'titulo_patrimonio', 'texto_patrimonio', 'video_url',
-        'mapa_embed', 'facebook_url', 'instagram_url', 'fondo_pantalla',
+        'mapa_embed', 'facebook_url', 'youtube_url', 'fondo_pantalla',
     ];
 
     public $rules = [

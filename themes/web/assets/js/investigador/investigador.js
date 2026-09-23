@@ -15,6 +15,15 @@ function eventos() {
             avisoEliminar(btn.dataset.id);
         }
     });
+
+    // Ayuda a escribir el ORCID sin tener que teclear los guiones.
+    var campoOrcid = document.getElementById('orcid');
+    if (campoOrcid) {
+        campoOrcid.addEventListener('input', function () {
+            var digitos = this.value.replace(/[^0-9X]/gi, '').toUpperCase().slice(0, 16);
+            this.value = digitos.match(/.{1,4}/g)?.join('-') || digitos;
+        });
+    }
 }
 
 function iniciarTabla() {
@@ -76,6 +85,7 @@ function cargarFormulario(data) {
     document.querySelector('#nombre').value = investigador.nombre;
     document.querySelector('#apellido').value = investigador.apellido;
     document.querySelector('#carnet').value = (investigador.carnet || '').toUpperCase();
+    document.querySelector('#orcid').value = investigador.orcid || '';
     document.querySelector('#telefono').value = investigador.telefono;
     document.querySelector('#facultad').value = investigador.facultad_id;
     document.querySelector('#categoria_investigador').value = investigador.categoria_investigador_id;
@@ -102,7 +112,7 @@ function modoRegistrar() {
 }
 
 function limpiar() {
-    ['#nombre', '#apellido', '#carnet', '#telefono', '#facultad', '#categoria_investigador',
+    ['#nombre', '#apellido', '#carnet', '#orcid', '#telefono', '#facultad', '#categoria_investigador',
         '#email', '#tipo_investigador', '#sexo', '#descripcion', '#id'].forEach(sel => {
             const el = document.querySelector(sel);
             if (el) el.value = '';
