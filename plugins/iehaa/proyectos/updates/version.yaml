@@ -3,3 +3,6 @@
 1.0.1:
     - "Create Proyectos Table"
     - v1.0.1/create_proyectos_table.php
+1.0.2:
+    - "Documento del proyecto, descargable en la página pública"
+    - v1.0.2/add_archivo.php

@@ -4,7 +4,8 @@
             <th scope="col">#</th>
             <th scope="col">Título</th>
             <th scope="col">Investigador</th>
-            <th scope="col">Descripción</th>
+            <th scope="col">Resumen del proyecto</th>
+            <th scope="col">Documento</th>
             <th scope="col">Acciones</th>
         </tr>
     </thead>
@@ -15,6 +16,15 @@
             <td>{{ proyecto.titulo }}</td>
             <td>{{ proyecto.investigador ? proyecto.investigador.nombre ~ ' ' ~ proyecto.investigador.apellido : '—' }}</td>
             <td>{{ proyecto.descripcion|slice(0, 80) }}{{ proyecto.descripcion|length > 80 ? '...' : '' }}</td>
+            <td>
+                {% if proyecto.archivo %}
+                <a class="btn btn-secondary btn-sm" href="/descarga-proyecto/{{ proyecto.id }}" data-loader>
+                    <i class="bi bi-download me-1"></i> Descargar
+                </a>
+                {% else %}
+                <span class="text-muted small">—</span>
+                {% endif %}
+            </td>
             <td>
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal"
                     data-request="proyectoComponent::onGetProyecto" data-request-data="id: {{ proyecto.id }}"

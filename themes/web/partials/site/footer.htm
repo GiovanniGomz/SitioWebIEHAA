@@ -11,6 +11,7 @@ function onStart()
         <div class="row gy-4">
             <div class="col-lg-5 col-md-12 footer-about">
                 <a href="/" class="logo d-flex align-items-center">
+                    <img src="{{ 'assets/img/logo-iehaa-rojo-footer.png'|theme }}" alt="IEHAA" />
                     <span class="sitename">{{ config.nombre_sitio ?: 'IEHAA' }}</span>
                 </a>
                 <p>«La Universidad se niega a morir»</p>
@@ -18,8 +19,8 @@ function onStart()
                     {% if config.facebook_url %}
                     <a href="{{ config.facebook_url }}" target="_blank" rel="noopener"><i class="bi bi-facebook"></i></a>
                     {% endif %}
-                    {% if config.instagram_url %}
-                    <a href="{{ config.instagram_url }}" target="_blank" rel="noopener"><i class="bi bi-instagram"></i></a>
+                    {% if config.youtube_url %}
+                    <a href="{{ config.youtube_url }}" target="_blank" rel="noopener"><i class="bi bi-youtube"></i></a>
                     {% endif %}
                 </div>
             </div>

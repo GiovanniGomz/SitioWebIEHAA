@@ -26,7 +26,7 @@ class Proyecto extends Model
     /**
      * @var array Fillable fields
      */
-    protected $fillable = ['id', 'titulo', 'descripcion', 'detalle', 'investigador_id'];
+    protected $fillable = ['id', 'titulo', 'descripcion', 'detalle', 'investigador_id', 'archivo'];
 
     /**
      * @var array Validation rules for attributes
@@ -63,4 +63,11 @@ class Proyecto extends Model
     public $morphMany = [];
     public $attachOne = [];
     public $attachMany = [];
+
+    public function getArchivoUrlAttribute(): ?string
+    {
+        return $this->archivo
+            ? 'storage/app/uploads/public/proyectos/' . $this->archivo
+            : null;
+    }
 }

@@ -1,0 +1,51 @@
+<table class="table" id="tabla-correspondencia">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Nombre</th>
+            <th scope="col">Facultad</th>
+            <th scope="col">Tipo</th>
+            <th scope="col">Categoría</th>
+            <th scope="col">Fecha</th>
+            <th scope="col">Archivo</th>
+            <th scope="col">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% set contador = 1 %} {% for registro in registros %}
+        <tr>
+            <th scope="row">{{ contador }}</th>
+            <td>{{ registro.nombre }}</td>
+            <td>{{ registro.facultad ? registro.facultad.nombre : '—' }}</td>
+            <td>
+                {% if registro.tipo == 'recibido' %}
+                <span class="badge bg-info">Recibido</span>
+                {% else %}
+                <span class="badge bg-primary">Enviado</span>
+                {% endif %}
+            </td>
+            <td>{{ registro.categoria ? registro.categoria.nombre : '—' }}</td>
+            <td class="text-nowrap">{{ registro.fecha ? registro.fecha|date('d/m/Y') : '—' }}</td>
+            <td>
+                {% if registro.archivo %}
+                <a class="btn btn-secondary btn-sm" href="/descarga-correspondencia/{{ registro.id }}" data-loader>
+                    <i class="bi bi-download me-1"></i> Descargar
+                </a>
+                {% else %}
+                <span class="text-muted small">—</span>
+                {% endif %}
+            </td>
+            <td class="text-nowrap">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal"
+                    data-request="registroCorrespondenciaComponent::onGetRegistro" data-request-data="id: {{ registro.id }}"
+                    data-request-success="cargarFormulario(data)">
+                    <i class="bi bi-pencil-square"></i>
+                </button>
+                <button type="button" class="btn btn-danger btn-eliminar" data-id="{{ registro.id }}">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </td>
+        </tr>
+        {% set contador = contador + 1 %} {% endfor %}
+    </tbody>
+</table>

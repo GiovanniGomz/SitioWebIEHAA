@@ -29,7 +29,10 @@ class Plugin extends PluginBase
     /**
      * Register method, called when the plugin is first registered.
      */
-    public function register(): void {}
+    public function register(): void
+    {
+        $this->registerConsoleCommand('iehaa.probar-correo', \Iehaa\Usuarios\Console\ProbarCorreo::class);
+    }
 
     /**
      * Boot method, called right before the request route.

@@ -118,11 +118,16 @@ function onStart()
 
             <li class="nav-item"><span class="sidebar-section">CEDJAG</span></li>
             <li class="nav-item">
-                <a class="nav-link {{ rutaActual == '/correspondencia' ? 'active' : '' }}" href="/correspondencia">
-                    <i class="bi bi-envelope-paper"></i> Correspondencia
+                <a class="nav-link {{ rutaActual == '/prestamo-cedjag' ? 'active' : '' }}" href="/prestamo-cedjag">
+                    <i class="bi bi-envelope-paper"></i> Préstamo CEDJAG
                     {% if solicitudesPendientesCount > 0 %}
                     <span class="badge bg-danger rounded-pill ms-auto">{{ solicitudesPendientesCount }}</span>
                     {% endif %}
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ rutaActual == '/correspondencia' ? 'active' : '' }}" href="/correspondencia">
+                    <i class="bi bi-send"></i> Correspondencia
                 </a>
             </li>
             <li class="nav-item">
@@ -223,7 +228,7 @@ function onStart()
                     </li>
                     {% for s in solicitudesPendientesUltimas %}
                     <li>
-                        <a class="dropdown-item small" href="/correspondencia">
+                        <a class="dropdown-item small" href="/prestamo-cedjag">
                             <i class="bi bi-inbox-fill me-1 text-warning"></i>
                             {{ s.nombre_solicitante }} solicitó un préstamo
                         </a>
