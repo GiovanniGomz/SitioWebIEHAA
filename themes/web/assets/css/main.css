@@ -13,50 +13,42 @@
 /* Fonts */
 :root {
     --default-font:
-        "Roboto", system-ui, -apple-system, "Segoe UI", Roboto,
+        "Inter", system-ui, -apple-system, "Segoe UI",
         "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif,
         "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
         "Noto Color Emoji";
-    --heading-font: "Raleway", sans-serif;
-    --nav-font: "Poppins", sans-serif;
+    --heading-font: "Fraunces", Georgia, serif;
+    --nav-font: "Inter", sans-serif;
 }
 
 /* Global Colors - The following color variables are used throughout the website. Updating them here will change the color scheme of the entire website */
 :root {
     --background-color: #ffffff; /* Background color for the entire website, including individual sections */
-    --default-color: #444444; /* Default color used for the majority of the text content across the entire website */
-    --heading-color: rgb(
-        139,
-        14,
-        19
-    ); /* Color for headings, subheadings and title throughout the website */
-    --accent-color: rgb(
-        139,
-        14,
-        19
-    ); /* Accent color that represents your brand on the website. It's used for buttons, links, and other elements that need to stand out */
+    --default-color: #2b2b28; /* Default color used for the majority of the text content across the entire website */
+    --heading-color: var(--ies-red-600); /* Color for headings, subheadings and title throughout the website */
+    --accent-color: var(--ies-red-600); /* Accent color that represents your brand on the website. It's used for buttons, links, and other elements that need to stand out */
     --surface-color: #ffffff; /* The surface color is used as a background of boxed elements within sections, such as cards, icon boxes, or other elements that require a visual separation from the global background. */
     --contrast-color: #ffffff; /* Contrast color for text, ensuring readability against backgrounds of accent, heading, or default colors. */
 
-    --primario: rgb(139, 14, 19);
+    --primario: var(--ies-red-600);
     --blanco: #fff;
-    --gris-claro: #e1e1e1;
+    --gris-claro: var(--ies-rule);
 }
 
 /* Nav Menu Colors - The following color variables are used specifically for the navigation menu. They are separate from the global colors to allow for more customization options */
 :root {
-    --nav-color: #124265; /* The default color of the main navmenu links */
-    --nav-hover-color: #2487ce; /* Applied to main navmenu links when they are hovered over or active */
+    --nav-color: var(--ies-ink-900); /* The default color of the main navmenu links */
+    --nav-hover-color: var(--ies-red-600); /* Applied to main navmenu links when they are hovered over or active */
     --nav-mobile-background-color: #ffffff; /* Used as the background color for mobile navigation menu */
     --nav-dropdown-background-color: #ffffff; /* Used as the background color for dropdown items that appear when hovering over primary navigation items */
-    --nav-dropdown-color: #124265; /* Used for navigation links of the dropdown items in the navigation menu. */
-    --nav-dropdown-hover-color: #2487ce; /* Similar to --nav-hover-color, this color is applied to dropdown navigation links when they are hovered over. */
+    --nav-dropdown-color: var(--ies-ink-900); /* Used for navigation links of the dropdown items in the navigation menu. */
+    --nav-dropdown-hover-color: var(--ies-red-600); /* Similar to --nav-hover-color, this color is applied to dropdown navigation links when they are hovered over. */
 }
 
 /* Color Presets - These classes override global colors when applied to any section or element, providing reuse of the sam color scheme. */
 
 .light-background {
-    --background-color: #f6fafd;
+    --background-color: var(--ies-paper);
     --surface-color: #ffffff;
 }
 
@@ -928,12 +920,17 @@ section,
     padding: 50px 30px;
     position: relative;
     overflow: hidden;
-    box-shadow: 0 0 29px 0 rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease-in-out;
-    border-radius: 8px;
+    border: 1px solid var(--ies-rule);
+    border-top: 3px solid var(--ies-red-600);
+    transition: border-color 0.3s ease;
+    border-radius: 2px;
     z-index: 1;
     height: 100%;
     width: 100%;
+}
+
+.hero .icon-box:hover {
+    border-color: var(--ies-red-600);
 }
 
 .hero .icon-box .title {
@@ -1210,130 +1207,87 @@ section,
 /*--------------------------------------------------------------
 # Services Section
 --------------------------------------------------------------*/
-.services .service-item {
-    background-color: var(--blanco);
-    box-shadow: 0px 5px 90px 0px rgba(0, 0, 0, 0.1);
+/* "Ficha de expediente" — reemplaza las tarjetas .service-item de colores
+   arbitrarios por un lenguaje de catálogo de archivo: papel, regla roja
+   superior, numeración editorial. El color deja de asignarse por posición
+   en el loop; el único acento es el rojo institucional, con intención. */
+.record-card {
+    position: relative;
+    background-color: var(--ies-paper);
+    border: 1px solid var(--ies-rule);
+    border-top: 3px solid var(--ies-red-600);
+    border-radius: 2px;
     height: 100%;
-    padding: 60px 30px;
-    text-align: center;
-    transition: 0.3s;
-    border-radius: 5px;
+    padding: 52px 30px 32px;
+    text-align: left;
+    transition: border-color 0.25s ease, transform 0.25s ease;
 }
 
-.services .service-item .icon {
-    margin: 0 auto;
-    width: 100px;
-    height: 100px;
+.record-card:hover {
+    border-color: var(--ies-red-600);
+    transform: translateY(-2px);
+}
+
+.record-card__index {
+    position: absolute;
+    top: 18px;
+    right: 22px;
+    font-family: "Fraunces", Georgia, serif;
+    font-weight: 500;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    color: var(--ies-red-600);
+}
+
+.record-card__icon {
+    width: 46px;
+    height: 46px;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: ease-in-out 0.3s;
-    position: relative;
+    border: 1px solid var(--ies-rule);
+    border-radius: 50%;
+    margin-bottom: 20px;
+    color: var(--ies-red-600);
+    font-size: 18px;
+    transition: border-color 0.25s ease;
 }
 
-.services .service-item .icon i {
-    font-size: 36px;
-    transition: 0.5s;
-    position: relative;
+.record-card:hover .record-card__icon {
+    border-color: var(--ies-red-600);
 }
 
-.services .service-item .icon svg {
-    position: absolute;
-    top: 0;
-    left: 0;
+.record-card h3 {
+    font-family: "Fraunces", Georgia, serif;
+    font-weight: 600;
+    font-size: 21px;
+    margin: 0 0 12px;
 }
 
-.services .service-item .icon svg path {
-    transition: 0.5s;
-    fill: color-mix(in srgb, var(--default-color), transparent 95%);
-}
-
-.services .service-item h3 {
-    font-weight: 700;
-    margin: 10px 0 15px 0;
-    font-size: 22px;
-}
-
-.services .service-item p {
+.record-card p {
     line-height: 24px;
     font-size: 14px;
     margin-bottom: 0;
+    color: var(--default-color);
 }
 
-.services .service-item:hover {
-    box-shadow: 0px 5px 35px 0px rgba(0, 0, 0, 0.1);
-}
-
-.services .service-item.item-cyan i {
-    color: #0dcaf0;
-}
-
-.services .service-item.item-cyan:hover .icon i {
-    color: #fff;
-}
-
-.services .service-item.item-cyan:hover .icon path {
-    fill: #0dcaf0;
-}
-
-.services .service-item.item-orange i {
-    color: #fd7e14;
-}
-
-.services .service-item.item-orange:hover .icon i {
-    color: #fff;
-}
-
-.services .service-item.item-orange:hover .icon path {
-    fill: #fd7e14;
-}
-
-.services .service-item.item-teal i {
-    color: #20c997;
-}
-
-.services .service-item.item-teal:hover .icon i {
-    color: #fff;
-}
-
-.services .service-item.item-teal:hover .icon path {
-    fill: #20c997;
-}
-
-.services .service-item.item-red i {
-    color: #df1529;
-}
-
-.services .service-item.item-red:hover .icon i {
-    color: #fff;
-}
-
-.services .service-item.item-red:hover .icon path {
-    fill: #df1529;
-}
-
-.services .service-item.item-indigo i {
-    color: #6610f2;
-}
-
-.services .service-item.item-indigo:hover .icon i {
-    color: #fff;
-}
-
-.services .service-item.item-indigo:hover .icon path {
-    fill: #6610f2;
-}
-
-.services .service-item.item-pink i {
-    color: #f3268c;
-}
-
-.services .service-item.item-pink:hover .icon i {
-    color: #fff;
-}
-
-.services .service-item.item-pink:hover .icon path {
-    fill: #f3268c;
+/* Ficha de investigador: avatar cuadrado de iniciales en vez de blob +
+   icono genérico — no depende de fotografías que no existen. */
+.researcher-avatar {
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--ies-paper-alt);
+    border: 1px solid var(--ies-rule);
+    border-radius: 2px;
+    margin-bottom: 20px;
+    font-family: "Fraunces", Georgia, serif;
+    font-weight: 600;
+    font-size: 19px;
+    letter-spacing: 0.02em;
+    color: var(--ies-red-600);
 }
 
 /*--------------------------------------------------------------

@@ -1,9 +1,10 @@
 :root {
-    --auth-accent: #c1272d;
-    --auth-accent-hover: #a21f24;
-    --auth-ink: #1f2430;
-    --auth-muted: #6b7280;
+    --auth-accent: var(--ies-red-600);
+    --auth-accent-hover: var(--ies-red-700);
+    --auth-ink: var(--ies-ink-900);
+    --auth-muted: var(--ies-ink-400);
     --auth-border: #e4e6ea;
+    --auth-heading-font: "Fraunces", Georgia, serif;
 }
 
 *,
@@ -18,7 +19,7 @@ body.auth-body {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: "Poppins", -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    font-family: "Inter", -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
     color: var(--auth-ink);
     background: #ffffff;
     padding: 1.5rem;
@@ -55,7 +56,8 @@ body.auth-body {
 }
 
 .auth-name {
-    font-size: 0.98rem;
+    font-family: var(--auth-heading-font);
+    font-size: 1.08rem;
     font-weight: 600;
     line-height: 1.4;
     color: var(--auth-ink);
@@ -89,7 +91,7 @@ body.auth-body {
 
 .auth-card .form-control:focus {
     border-color: var(--auth-accent);
-    box-shadow: 0 0 0 3px rgba(193, 39, 45, 0.12);
+    box-shadow: 0 0 0 3px rgba(179, 38, 30, 0.12);
     outline: none;
 }
 
