@@ -17,24 +17,24 @@
 
 .explorador-breadcrumb .breadcrumb-item a {
     text-decoration: none;
-    color: #b31b28;
+    color: var(--ues-red);
     cursor: pointer;
 }
 
 .explorador-breadcrumb .breadcrumb-item.active {
-    color: #64748b;
+    color: var(--panel-muted);
 }
 
 .explorador-titulo {
     font-weight: 700;
     font-size: 1.5rem;
     margin: 0;
-    color: #1e293b;
+    color: var(--panel-ink);
 }
 
 .explorador-subtitulo {
     font-size: 0.85rem;
-    color: #64748b;
+    color: var(--panel-muted);
     margin: 0.15rem 0 0;
 }
 
@@ -65,7 +65,7 @@
     white-space: nowrap;
     font-size: 0.78rem;
     font-weight: 600;
-    color: #94a3b8;
+    color: var(--border-strong);
     flex-shrink: 0;
 }
 
@@ -77,32 +77,32 @@
     align-items: center;
     justify-content: center;
     background: #e2e8f0;
-    color: #64748b;
+    color: var(--panel-muted);
     font-size: 0.72rem;
     flex-shrink: 0;
 }
 
 .explorador-stepper-item.explorador-stepper-hecho {
-    color: #16a34a;
+    color: var(--stat-success);
 }
 
 .explorador-stepper-item.explorador-stepper-hecho .explorador-stepper-bolita {
-    background: #dcfce7;
-    color: #16a34a;
+    background: var(--stat-success-tint);
+    color: var(--stat-success);
 }
 
 .explorador-stepper-item.explorador-stepper-activo {
-    color: #b31b28;
+    color: var(--ues-red);
 }
 
 .explorador-stepper-item.explorador-stepper-activo .explorador-stepper-bolita {
-    background: #b31b28;
+    background: var(--ues-red);
     color: #fff;
     box-shadow: 0 0 0 4px rgba(179, 27, 40, 0.15);
 }
 
 .explorador-stepper-flecha {
-    color: #cbd5e1;
+    color: var(--border);
     flex-shrink: 0;
     font-size: 0.7rem;
 }
@@ -116,7 +116,7 @@
     left: 0.75rem;
     top: 50%;
     transform: translateY(-50%);
-    color: #94a3b8;
+    color: var(--border-strong);
     font-size: 0.85rem;
 }
 
@@ -141,8 +141,8 @@
 
 .explorador-dropzone.explorador-dropzone-activa {
     background: #f8e9eb;
-    border-color: #b31b28;
-    color: #b31b28;
+    border-color: var(--ues-red);
+    color: var(--ues-red);
 }
 
 .explorador-dropzone i {
@@ -175,7 +175,7 @@
 
 .explorador-vacio {
     text-align: center;
-    color: #94a3b8;
+    color: var(--border-strong);
     padding: 3rem 0;
 }
 
@@ -204,7 +204,7 @@
 
 .explorador-card .explorador-card-icono {
     font-size: 2.6rem;
-    color: #b31b28;
+    color: var(--ues-red);
     margin-bottom: 0.5rem;
 }
 
@@ -241,7 +241,7 @@
 .explorador-card-nombre {
     font-size: 0.85rem;
     font-weight: 600;
-    color: #1e293b;
+    color: var(--panel-ink);
     word-break: break-word;
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -251,7 +251,7 @@
 
 .explorador-card-meta {
     font-size: 0.72rem;
-    color: #94a3b8;
+    color: var(--border-strong);
     margin-top: 0.15rem;
 }
 
@@ -292,8 +292,8 @@
 }
 
 .explorador-card-acciones .explorador-btn-descargar:hover {
-    background: #dcfce7;
-    color: #16a34a;
+    background: var(--stat-success-tint);
+    color: var(--stat-success);
 }
 
 /* ---------- Modo oscuro ----------

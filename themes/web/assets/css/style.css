@@ -2,14 +2,14 @@
     --sidebar-width: 264px;
     --topbar-height: 62px;
 
-    /* Paleta institucional UES */
-    --ues-red: #b3261e;
-    --ues-red-dark: #8e1c17;
-    --ues-red-tint: #fdeeed;
+    /* Paleta institucional UES — heredada de tokens.css (única fuente de verdad) */
+    --ues-red: var(--ies-red-600);
+    --ues-red-dark: var(--ies-red-700);
+    --ues-red-tint: var(--ies-red-100);
 
-    --panel-ink: #1b1c1f;
-    --panel-ink-2: #3f4147;
-    --panel-muted: #6c717a;
+    --panel-ink: var(--ies-ink-900);
+    --panel-ink-2: var(--ies-ink-600);
+    --panel-muted: var(--ies-ink-400);
 
     --sidebar-bg: #1b1c20;
     --sidebar-text: rgba(255, 255, 255, 0.64);
@@ -20,7 +20,8 @@
     --border: #e7e7ea;
     --border-strong: #dcdce0;
 
-    --panel-font: "Inter", "Poppins", -apple-system, "Segoe UI", Roboto, sans-serif;
+    --panel-font: "Inter", -apple-system, "Segoe UI", sans-serif;
+    --panel-heading-font: "Fraunces", Georgia, serif;
 
     /* Alias para reglas heredadas del proyecto */
     --primary: var(--ues-red);

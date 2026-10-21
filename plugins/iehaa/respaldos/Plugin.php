@@ -27,6 +27,7 @@ class Plugin extends PluginBase
     {
         $this->registerConsoleCommand('iehaa.respaldar', \Iehaa\Respaldos\Console\Respaldar::class);
         $this->registerConsoleCommand('iehaa.restaurar', \Iehaa\Respaldos\Console\Restaurar::class);
+        $this->registerConsoleCommand('iehaa.limpiar', \Iehaa\Respaldos\Console\Limpiar::class);
     }
 
     public function boot(): void

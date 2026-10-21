@@ -201,11 +201,11 @@ function onStart()
 
       <div class="row gy-4">
 
-        {% set colores = ['item-cyan', 'item-orange', 'item-teal'] %}
         {% for proyecto in proyectos %}
-        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="{{ loop.index0 * 100 + 100 }}">
-          <div class="service-item {{ colores[loop.index0 % 3] }} position-relative">
-            <div class="icon">
+        <div class="col-lg-4 col-md-6">
+          <div class="record-card">
+            <span class="record-card__index">{{ '%02d'|format(loop.index) }}</span>
+            <div class="record-card__icon">
               <i class="bi bi-award"></i>
             </div>
             <a href="/investigaciones" class="stretched-link">
@@ -213,7 +213,7 @@ function onStart()
             </a>
             <p>{{ proyecto.descripcion|slice(0, 140) }}{{ proyecto.descripcion|length > 140 ? '...' : '' }}</p>
           </div>
-        </div><!-- End Service Item -->
+        </div><!-- End Record Card -->
         {% else %}
         <div class="col-12 text-center text-muted py-4">
           <p class="mb-0">Todavía no hay investigaciones publicadas. <a href="/investigaciones">Ver todas</a></p>
@@ -245,11 +245,11 @@ function onStart()
 
       <div class="row gy-4">
 
-        {% set colores = ['item-red', 'item-indigo', 'item-pink'] %}
         {% for publicacion in publicaciones %}
-        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="{{ loop.index0 * 100 + 100 }}">
-          <div class="service-item {{ colores[loop.index0 % 3] }} position-relative">
-            <div class="icon">
+        <div class="col-lg-4 col-md-6">
+          <div class="record-card">
+            <span class="record-card__index">{{ '%02d'|format(loop.index) }}</span>
+            <div class="record-card__icon">
               <i class="bi bi-journal-text"></i>
             </div>
             <a href="/publicaciones" class="stretched-link">
@@ -257,7 +257,7 @@ function onStart()
             </a>
             <p>{{ publicacion.descripcion|slice(0, 140) }}{{ publicacion.descripcion|length > 140 ? '...' : '' }}</p>
           </div>
-        </div><!-- End Service Item -->
+        </div><!-- End Record Card -->
         {% else %}
         <div class="col-12 text-center text-muted py-4">
           <p class="mb-0">Todavía no hay publicaciones registradas. <a href="/publicaciones">Ver todas</a></p>
