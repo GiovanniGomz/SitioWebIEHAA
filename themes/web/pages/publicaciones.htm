@@ -26,11 +26,11 @@ limite = "24"
 
       <div class="row gy-4 list">
 
-        {% set colores = ['item-cyan', 'item-orange', 'item-teal', 'item-red', 'item-indigo', 'item-pink'] %}
         {% for publicacion in publicaciones %}
-        <div class="col-lg-4 col-md-6 publication-item" data-aos="fade-up" data-aos-delay="{{ (loop.index0 % 6) * 100 + 100 }}">
-          <div class="service-item {{ colores[loop.index0 % 6] }} position-relative d-flex flex-column h-100">
-            <div class="icon">
+        <div class="col-lg-4 col-md-6 publication-item">
+          <div class="record-card d-flex flex-column h-100">
+            <span class="record-card__index">{{ '%02d'|format(loop.index) }}</span>
+            <div class="record-card__icon">
               <i class="bi bi-journal-text"></i>
             </div>
             <h3 class="titulo">{{ publicacion.titulo }}</h3>
@@ -62,7 +62,7 @@ limite = "24"
               {% endif %}
             </div>
           </div>
-        </div><!-- End Service Item -->
+        </div><!-- End Record Card -->
         {% else %}
         <div class="col-12 text-center text-muted py-5">
           <i class="bi bi-journal-text" style="font-size: 2.5rem;"></i>

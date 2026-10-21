@@ -1,0 +1,28 @@
+/*
+ * Tokens de marca — Sitio Web IEHAA
+ * Única fuente de verdad para el rojo institucional y los neutros del
+ * sistema. Se carga ANTES que main.css / style.css / auth.css en los tres
+ * layouts (default.htm, cpanel.htm, auth.htm): esos archivos referencian
+ * estas variables por nombre en vez de repetir valores hexadecimales.
+ */
+:root {
+    /* Rojo institucional — escala única. Antes había 4 valores distintos
+       repartidos entre main.css (#8b0e13), style.css (#b3261e),
+       auth.css (#c1272d) y explorador.css (#b31b28). Se canoniza sobre
+       el de style.css, que es el sistema mejor resuelto del proyecto. */
+    --ies-red-900: #6e1712;
+    --ies-red-700: #8e1c17;
+    --ies-red-600: #b3261e;
+    --ies-red-500: #c1372f;
+    --ies-red-100: #fdeeed;
+
+    /* Neutros cálidos "papel de archivo" — sitio público */
+    --ies-paper: #faf6ef;
+    --ies-paper-alt: #f3ecdf;
+    --ies-rule: #ddd2bd;
+
+    /* Neutros fríos "carbón" — comparten espíritu con el panel */
+    --ies-ink-900: #1b1c1f;
+    --ies-ink-600: #3f4147;
+    --ies-ink-400: #6c717a;
+}
